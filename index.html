@@ -1,0 +1,1546 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nightmare Empire | Black Russia</title>
+    <style>
+        /* ===== ОБЩИЕ СТИЛИ ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+        }
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1a1a1a; }
+        ::-webkit-scrollbar-thumb { background: #d4a843; border-radius: 4px; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* ===== АНИМАЦИЯ ЗАГРУЗКИ ===== */
+        #splashScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #0a0a0a;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            animation: fadeOut 3s forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { opacity: 0; visibility: hidden; }
+        }
+        #splashScreen img {
+            width: 200px;
+            height: 200px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        #splashScreen h1 {
+            color: #d4a843;
+            font-size: 3em;
+            margin-top: 20px;
+            text-shadow: 0 0 20px rgba(212, 168, 67, 0.3);
+            letter-spacing: 4px;
+        }
+        
+        /* ===== АВТОРИЗАЦИЯ ===== */
+        #authPage {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a0f0a 100%);
+        }
+        .auth-box {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 40px;
+            border-radius: 15px;
+            border: 2px solid #d4a843;
+            box-shadow: 0 0 40px rgba(212, 168, 67, 0.1);
+            width: 100%;
+            max-width: 420px;
+        }
+        .auth-box h2 {
+            color: #d4a843;
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2em;
+            letter-spacing: 2px;
+        }
+        .auth-box input {
+            width: 100%;
+            padding: 12px 15px;
+            margin: 8px 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #e0e0e0;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        .auth-box input:focus {
+            outline: none;
+            border-color: #d4a843;
+        }
+        .auth-box label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 10px 0;
+            color: #aaa;
+            font-size: 14px;
+        }
+        .auth-box label input[type="checkbox"] {
+            width: auto;
+            margin: 0;
+        }
+        .btn {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            background: #d4a843;
+            color: #0a0a0a;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: #c49a3a;
+            transform: scale(1.02);
+            box-shadow: 0 0 20px rgba(212, 168, 67, 0.3);
+        }
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid #d4a843;
+            color: #d4a843;
+        }
+        .btn-secondary:hover {
+            background: #d4a843;
+            color: #0a0a0a;
+        }
+        .auth-switch {
+            text-align: center;
+            margin-top: 15px;
+            color: #888;
+        }
+        .auth-switch span {
+            color: #d4a843;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .auth-switch span:hover {
+            color: #c49a3a;
+        }
+        .error-msg {
+            color: #ff4444;
+            font-size: 13px;
+            margin: 5px 0;
+            display: none;
+        }
+        
+        /* ===== ОСНОВНОЕ МЕНЮ ===== */
+        #mainPage {
+            display: none;
+            min-height: 100vh;
+        }
+        .top-bar {
+            background: rgba(20, 20, 20, 0.95);
+            padding: 15px 30px;
+            border-bottom: 2px solid #d4a843;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .top-bar .logo-text {
+            color: #d4a843;
+            font-size: 1.5em;
+            font-weight: bold;
+            letter-spacing: 2px;
+        }
+        .top-bar .user-info {
+            color: #aaa;
+            font-size: 14px;
+        }
+        .top-bar .user-info strong {
+            color: #d4a843;
+        }
+        .btn-logout {
+            padding: 8px 20px;
+            background: transparent;
+            border: 2px solid #ff4444;
+            color: #ff4444;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-logout:hover {
+            background: #ff4444;
+            color: #0a0a0a;
+        }
+        
+        /* ===== НАВИГАЦИЯ ===== */
+        .nav-menu {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 20px;
+            background: rgba(15, 15, 15, 0.95);
+            border-bottom: 1px solid #222;
+        }
+        .nav-menu button {
+            padding: 10px 20px;
+            background: transparent;
+            border: 2px solid #333;
+            color: #aaa;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+        .nav-menu button:hover {
+            border-color: #d4a843;
+            color: #d4a843;
+        }
+        .nav-menu button.active {
+            border-color: #d4a843;
+            background: rgba(212, 168, 67, 0.1);
+            color: #d4a843;
+        }
+        .nav-menu .admin-section {
+            border-top: 1px solid #333;
+            padding-top: 10px;
+            margin-top: 5px;
+            width: 100%;
+        }
+        .nav-menu .admin-section label {
+            color: #d4a843;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            display: block;
+            margin-bottom: 8px;
+        }
+        
+        /* ===== КОНТЕНТ ===== */
+        .content {
+            padding: 30px 20px;
+        }
+        .page {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        .page.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .page h2 {
+            color: #d4a843;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        .page .info-box {
+            background: rgba(20, 20, 20, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid #222;
+            margin-bottom: 15px;
+        }
+        .page .info-box p {
+            margin: 8px 0;
+            color: #ccc;
+        }
+        .page .info-box strong {
+            color: #d4a843;
+        }
+        
+        /* ===== НАРУШЕНИЯ ===== */
+        .violation-item {
+            background: rgba(30, 20, 20, 0.8);
+            border-left: 4px solid #ff4444;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 8px;
+        }
+        .violation-item.resolved {
+            border-left-color: #44ff44;
+            opacity: 0.7;
+        }
+        .violation-item .v-date {
+            color: #888;
+            font-size: 12px;
+        }
+        .violation-item .v-type {
+            color: #ff6666;
+            font-weight: bold;
+        }
+        .violation-item .v-desc {
+            margin: 8px 0;
+        }
+        .violation-item .v-resolved {
+            color: #44ff44;
+        }
+        
+        /* ===== АДМИНКА ===== */
+        .admin-panel {
+            background: rgba(20, 15, 10, 0.9);
+            border: 1px solid #d4a843;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        .admin-panel input, .admin-panel select, .admin-panel textarea {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            color: #e0e0e0;
+        }
+        .admin-panel textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .admin-panel .btn-small {
+            width: auto;
+            padding: 8px 16px;
+            margin: 5px 5px 5px 0;
+            display: inline-block;
+        }
+        .admin-panel .result-box {
+            margin-top: 15px;
+            padding: 15px;
+            background: #0a0a0a;
+            border-radius: 8px;
+            border: 1px solid #222;
+        }
+        .admin-panel .result-box .user-card {
+            background: #151515;
+            padding: 12px;
+            margin: 5px 0;
+            border-radius: 6px;
+        }
+        .admin-panel .result-box .user-card strong {
+            color: #d4a843;
+        }
+        
+        /* ===== БАН ===== */
+        .ban-screen {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: #0a0a0a;
+        }
+        .ban-screen .ban-box {
+            background: rgba(20, 10, 10, 0.95);
+            border: 2px solid #ff4444;
+            border-radius: 15px;
+            padding: 40px;
+            max-width: 500px;
+            text-align: center;
+        }
+        .ban-screen .ban-box h1 {
+            color: #ff4444;
+            margin-bottom: 20px;
+        }
+        .ban-screen .ban-box .ban-info {
+            color: #ccc;
+            margin: 15px 0;
+        }
+        .ban-screen .ban-box .ban-info strong {
+            color: #d4a843;
+        }
+        
+        /* ===== МОДАЛЬНОЕ ОКНО ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-box {
+            background: #1a1a1a;
+            border: 2px solid #d4a843;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-box h3 {
+            color: #d4a843;
+            margin-bottom: 15px;
+        }
+        .modal-box .close-btn {
+            float: right;
+            background: none;
+            border: none;
+            color: #ff4444;
+            font-size: 24px;
+            cursor: pointer;
+        }
+        
+        /* ===== АДАПТИВНОСТЬ ===== */
+        @media (max-width: 768px) {
+            .top-bar {
+                flex-direction: column;
+                text-align: center;
+            }
+            .nav-menu button {
+                flex: 1;
+                min-width: 120px;
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            .auth-box {
+                padding: 20px;
+                margin: 15px;
+            }
+            .modal-box {
+                padding: 20px;
+            }
+        }
+        
+        /* ===== УВЕДОМЛЕНИЕ О НАРУШЕНИИ ===== */
+        .notification-badge {
+            background: #ff4444;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 8px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(20, 20, 20, 0.95);
+            border: 2px solid #d4a843;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 350px;
+            z-index: 2000;
+            animation: slideUp 0.5s;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(50px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .toast .toast-close {
+            float: right;
+            background: none;
+            border: none;
+            color: #d4a843;
+            font-size: 20px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== ЗАГРУЗОЧНЫЙ ЭКРАН ===== -->
+<div id="splashScreen">
+    <div style="font-size:120px; color:#d4a843;">👑</div>
+    <h1>BLACK RUSSIA</h1>
+    <p style="color:#888; margin-top:10px; letter-spacing:3px;">NIGHTMARE EMPIRE</p>
+</div>
+
+<!-- ===== ЭКРАН БАНА ===== -->
+<div id="banScreen" class="ban-screen">
+    <div class="ban-box">
+        <h1>⛔ ДОСТУП ЗАБЛОКИРОВАН</h1>
+        <div id="banInfo" class="ban-info">
+            <p><strong>Причина:</strong> <span id="banReason"></span></p>
+            <p><strong>Забанил:</strong> <span id="banBannedBy"></span></p>
+            <p><strong>Дата бана:</strong> <span id="banDate"></span></p>
+            <p><strong>Разблокировка:</strong> <span id="banUnbanDate"></span></p>
+        </div>
+        <button class="btn" onclick="logout()" style="margin-top:20px;">Выйти</button>
+    </div>
+</div>
+
+<!-- ===== СТРАНИЦА АВТОРИЗАЦИИ ===== -->
+<div id="authPage">
+    <div class="auth-box">
+        <h2>👑 NIGHTMARE</h2>
+        <div id="authForm">
+            <input type="text" id="loginNick" placeholder="Игровой ник или Telegram">
+            <input type="password" id="loginPassword" placeholder="Пароль">
+            <label>
+                <input type="checkbox" id="rememberMe"> Запомнить меня
+            </label>
+            <div id="loginError" class="error-msg">Неверный логин или пароль</div>
+            <button class="btn" onclick="login()">Войти</button>
+            <div class="auth-switch">
+                Нет аккаунта? <span onclick="showRegister()">Зарегистрироваться</span>
+            </div>
+        </div>
+        <div id="registerForm" style="display:none;">
+            <input type="text" id="regNick" placeholder="Игровой ник *">
+            <input type="text" id="regTg" placeholder="Telegram (например @username) *">
+            <input type="email" id="regEmail" placeholder="Email">
+            <input type="password" id="regPassword" placeholder="Пароль *">
+            <input type="password" id="regPassword2" placeholder="Повторите пароль *">
+            <div id="regError" class="error-msg"></div>
+            <button class="btn" onclick="register()">Зарегистрироваться</button>
+            <div class="auth-switch">
+                Уже есть аккаунт? <span onclick="showLogin()">Войти</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== ОСНОВНАЯ СТРАНИЦА ===== -->
+<div id="mainPage">
+
+    <!-- ВЕРХНЯЯ ПАНЕЛЬ -->
+    <div class="top-bar">
+        <div class="logo-text">👑 NIGHTMARE EMPIRE</div>
+        <div class="user-info">
+            <strong id="displayNick"></strong> | ID: <span id="displayId"></span>
+            <span id="adminBadge" style="display:none; color:#d4a843; margin-left:10px;">⭐ АДМИН</span>
+        </div>
+        <button class="btn-logout" onclick="logout()">Выйти</button>
+    </div>
+
+    <!-- НАВИГАЦИЯ -->
+    <div class="nav-menu" id="navMenu">
+        <button class="active" data-page="profile" onclick="showPage('profile')">👤 Профиль</button>
+        <button data-page="family" onclick="showPage('family')">🏠 Информация о семье</button>
+        <button data-page="members" onclick="showPage('members')">👥 Состав семьи</button>
+        <button data-page="violations" onclick="showPage('violations')">⚠️ Мои нарушения</button>
+        
+        <div class="admin-section" id="adminSection" style="display:none;">
+            <label>⚙️ АДМИН-ПАНЕЛЬ</label>
+            <button data-page="adminViolations" onclick="showPage('adminViolations')">📋 Нарушения по ID</button>
+            <button data-page="adminAddViolation" onclick="showPage('adminAddViolation')">➕ Добавить нарушение</button>
+            <button data-page="adminRemoveViolation" onclick="showPage('adminRemoveViolation')">➖ Снять нарушение</button>
+            <button data-page="adminMembers" onclick="showPage('adminMembers')">👥 Список членов</button>
+            <button data-page="adminBan" onclick="showPage('adminBan')">🔨 Блокировка</button>
+            <button data-page="adminSearch" onclick="showPage('adminSearch')">🔍 Поиск пользователя</button>
+        </div>
+    </div>
+
+    <!-- КОНТЕНТ -->
+    <div class="content">
+        
+        <!-- ===== ПРОФИЛЬ ===== -->
+        <div id="page-profile" class="page active">
+            <h2>👤 Мой профиль</h2>
+            <div class="info-box">
+                <p><strong>ID:</strong> <span id="profileId"></span></p>
+                <p><strong>Игровой ник:</strong> <span id="profileNick"></span></p>
+                <p><strong>Telegram:</strong> <span id="profileTg"></span></p>
+                <p><strong>Email:</strong> <span id="profileEmail"></span></p>
+                <p><strong>Дата регистрации:</strong> <span id="profileRegDate"></span></p>
+                <p><strong>Статус:</strong> <span id="profileStatus" style="color:#44ff44;">Активен</span></p>
+            </div>
+            <button class="btn btn-secondary" onclick="openEditProfile()">✏️ Изменить информацию</button>
+        </div>
+
+        <!-- ===== ИНФОРМАЦИЯ О СЕМЬЕ ===== -->
+        <div id="page-family" class="page">
+            <h2>🏠 Информация о семье</h2>
+            <div class="info-box">
+                <h3 style="color:#d4a843;">🚫 ЗАПРЕЩЕНО:</h3>
+                <p>1. Без уважительной причины не являться на строй</p>
+                <p>2. Оскорблять/унижать/угрожать членам семьи</p>
+                <p>3. Устраивать дебаты и конфликты (наказывается строго)</p>
+                <p>4. Неуважать старший состав семьи</p>
+                <p>5. Гнать на кого-либо без причины и доказательств</p>
+                <br>
+                <h3 style="color:#d4a843;">📋 ПРАВИЛА НА СТРОЮ:</h3>
+                <p>• Общаемся со старшим составом на <strong>ВЫ</strong> и без пререканий</p>
+                <p>• Сначала структурируем, ждём, пока договорят, затем просим разрешения</p>
+                <p>• На <strong>ТЫ</strong> обращаемся только по завершению строя</p>
+                <p>• Запрещается разговаривать и делать анимации без разрешения проводящего</p>
+                <p>• Проводящий имеет право задавать вопросы и назначать наказания</p>
+                <br>
+                <h3 style="color:#d4a843;">⏰ НЕЯВКА НА СТРОЙ:</h3>
+                <p>• Предупреждать <strong>НЕ МЕНЕЕ, ЧЕМ ЗА 15-20 МИНУТ</strong></p>
+            </div>
+        </div>
+
+        <!-- ===== СОСТАВ СЕМЬИ ===== -->
+        <div id="page-members" class="page">
+            <h2>👥 Состав семьи</h2>
+            <div class="info-box">
+                <h3 style="color:#d4a843;">👑 Главный зам (ГЗ)</h3>
+                <p><strong>Artemchik_Haunted</strong></p>
+                <br>
+                <h3 style="color:#d4a843;">⭐ ОЗГЗ</h3>
+                <p><strong>Anton_Chebureck</strong></p>
+                <br>
+                <h3 style="color:#d4a843;">🔥 Старшие замы</h3>
+                <p><strong>Roma_VOLOSKIND</strong></p>
+                <p><strong>Kevin_VOLOSKIND</strong></p>
+                <p><strong>Sergey_Prince</strong></p>
+                <p><strong>Black_Fedya</strong></p>
+            </div>
+        </div>
+
+        <!-- ===== МОИ НАРУШЕНИЯ ===== -->
+        <div id="page-violations" class="page">
+            <h2>⚠️ Мои нарушения</h2>
+            <div id="violationsList">
+                <p style="color:#888;">Нарушений нет</p>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: НАРУШЕНИЯ ПО ID ===== -->
+        <div id="page-adminViolations" class="page">
+            <h2>📋 Посмотреть нарушения по ID</h2>
+            <div class="admin-panel">
+                <input type="text" id="adminVioSearchId" placeholder="Введите ID пользователя">
+                <button class="btn btn-small" onclick="adminViewViolations()">🔍 Поиск</button>
+                <div id="adminVioResult" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: ДОБАВИТЬ НАРУШЕНИЕ ===== -->
+        <div id="page-adminAddViolation" class="page">
+            <h2>➕ Добавить нарушение</h2>
+            <div class="admin-panel">
+                <input type="text" id="adminAddVioId" placeholder="Введите ID пользователя">
+                <button class="btn btn-small" onclick="adminFindUserForViolation()">🔍 Найти пользователя</button>
+                <div id="adminAddVioUserInfo" class="result-box" style="display:none;"></div>
+                <div style="margin-top:15px;">
+                    <input type="text" id="adminAddVioType" placeholder="Тип нарушения">
+                    <textarea id="adminAddVioDesc" placeholder="Текст нарушения"></textarea>
+                    <button class="btn" onclick="adminAddViolation()">📌 Выдать нарушение</button>
+                </div>
+                <div id="adminAddVioResult" class="result-box" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: СНЯТЬ НАРУШЕНИЕ ===== -->
+        <div id="page-adminRemoveViolation" class="page">
+            <h2>➖ Снять нарушение</h2>
+            <div class="admin-panel">
+                <input type="text" id="adminRemoveVioId" placeholder="Введите ID пользователя">
+                <button class="btn btn-small" onclick="adminFindUserForRemove()">🔍 Найти пользователя</button>
+                <div id="adminRemoveVioList" class="result-box"></div>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: СПИСОК ЧЛЕНОВ ===== -->
+        <div id="page-adminMembers" class="page">
+            <h2>👥 Список членов семьи</h2>
+            <div class="admin-panel">
+                <div id="adminMembersList" class="result-box">
+                    <p style="color:#888;">Загрузка...</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: БЛОКИРОВКА ===== -->
+        <div id="page-adminBan" class="page">
+            <h2>🔨 Блокировка пользователя</h2>
+            <div class="admin-panel">
+                <input type="text" id="adminBanId" placeholder="Введите ID пользователя">
+                <button class="btn btn-small" onclick="adminFindUserForBan()">🔍 Найти пользователя</button>
+                <div id="adminBanUserInfo" class="result-box" style="display:none;"></div>
+                <div style="margin-top:15px;">
+                    <input type="text" id="adminBanReason" placeholder="Причина блокировки">
+                    <input type="datetime-local" id="adminBanUnbanDate">
+                    <button class="btn" onclick="adminBanUser()">🔨 Заблокировать</button>
+                </div>
+                <div id="adminBanResult" class="result-box" style="display:none;"></div>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: ПОИСК ПОЛЬЗОВАТЕЛЯ ===== -->
+        <div id="page-adminSearch" class="page">
+            <h2>🔍 Поиск пользователя</h2>
+            <div class="admin-panel">
+                <input type="text" id="adminSearchId" placeholder="Введите ID пользователя">
+                <button class="btn btn-small" onclick="adminSearchUser()">🔍 Поиск</button>
+                <div id="adminSearchResult" class="result-box"></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО ДЛЯ РЕДАКТИРОВАНИЯ ===== -->
+<div id="editModal" class="modal-overlay">
+    <div class="modal-box">
+        <button class="close-btn" onclick="closeEditModal()">✕</button>
+        <h3>✏️ Изменить информацию</h3>
+        <input type="text" id="editNick" placeholder="Игровой ник">
+        <input type="text" id="editTg" placeholder="Telegram">
+        <input type="email" id="editEmail" placeholder="Email">
+        <button class="btn" onclick="saveProfile()">💾 Сохранить</button>
+        <div id="editResult" style="margin-top:10px;"></div>
+    </div>
+</div>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО ДЛЯ УВЕДОМЛЕНИЙ ===== -->
+<div id="notificationModal" class="modal-overlay">
+    <div class="modal-box">
+        <h3>⚠️ НОВОЕ НАРУШЕНИЕ!</h3>
+        <p style="color:#ccc;">Вам выписано новое нарушение. Пожалуйста, ознакомьтесь с ним в разделе "Мои нарушения".</p>
+        <button class="btn" onclick="closeNotificationModal()">Понятно</button>
+    </div>
+</div>
+
+<script>
+// ============================================================
+// ===== ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ =====
+// ============================================================
+
+const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/6a80d5fbf5f4af5e291b0df5';
+const MASTER_KEY = '$2a$10$/lKNp2cCj9lOUJxhWQ0uI./vRHpINQt.MWizWPJOnRinj62u0JIgO';
+
+let db = null;
+let currentUser = null;
+let pendingViolationUser = null;
+let pendingRemoveUser = null;
+
+// ============================================================
+// ===== РАБОТА С JSONBIN =====
+// ============================================================
+
+async function loadDB() {
+    try {
+        const response = await fetch(JSONBIN_URL, {
+            headers: { 'X-Master-Key': MASTER_KEY }
+        });
+        const data = await response.json();
+        db = data.record;
+        return db;
+    } catch (e) {
+        console.error('Ошибка загрузки БД:', e);
+        // Если не загрузилась - создаём пустую
+        db = { users: [], usedIds: [], currentSession: null, violationCounter: 0 };
+        return db;
+    }
+}
+
+async function saveDB() {
+    try {
+        await fetch(JSONBIN_URL, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-Master-Key': MASTER_KEY
+            },
+            body: JSON.stringify(db)
+        });
+        return true;
+    } catch (e) {
+        console.error('Ошибка сохранения БД:', e);
+        return false;
+    }
+}
+
+// ============================================================
+// ===== ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ =====
+// ============================================================
+
+function generateId() {
+    let id;
+    let attempts = 0;
+    do {
+        id = String(Math.floor(10000 + Math.random() * 90000));
+        attempts++;
+        if (attempts > 1000) break;
+    } while (db.usedIds.includes(id) || id === '00000' || id === '11111');
+    return id;
+}
+
+function getCurrentUser() {
+    if (!db || !db.currentSession) return null;
+    return db.users.find(u => u.id === db.currentSession);
+}
+
+function formatDate(dateStr) {
+    if (!dateStr) return '-';
+    const d = new Date(dateStr);
+    return d.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+
+function getUserById(id) {
+    return db.users.find(u => u.id === id);
+}
+
+function getUserByNick(nick) {
+    return db.users.find(u => u.gameNick.toLowerCase() === nick.toLowerCase());
+}
+
+function getUserByTg(tg) {
+    return db.users.find(u => u.tgUser.toLowerCase() === tg.toLowerCase());
+}
+
+function isAdmin(user) {
+    return user && user.isAdmin === true;
+}
+
+function getAdminNick(id) {
+    const user = getUserById(id);
+    return user ? user.gameNick : id;
+}
+
+// ============================================================
+// ===== АВТОРИЗАЦИЯ =====
+// ============================================================
+
+async function init() {
+    await loadDB();
+    
+    // Проверяем сессию
+    const sessionId = localStorage.getItem('nightmare_session');
+    if (sessionId) {
+        const user = getUserById(sessionId);
+        if (user) {
+            db.currentSession = sessionId;
+            await saveDB();
+            currentUser = user;
+            // Проверяем бан
+            if (user.isBanned && user.banInfo) {
+                const unbanDate = new Date(user.banInfo.unbanDate);
+                if (unbanDate > new Date()) {
+                    showBanScreen(user);
+                    return;
+                } else {
+                    // Автоматический разбан
+                    user.isBanned = false;
+                    user.banInfo = null;
+                    await saveDB();
+                }
+            }
+            enterMainPage(user);
+            return;
+        }
+    }
+    
+    showAuthPage();
+}
+
+function showAuthPage() {
+    document.getElementById('authPage').style.display = 'flex';
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('banScreen').style.display = 'none';
+}
+
+function showRegister() {
+    document.getElementById('authForm').style.display = 'none';
+    document.getElementById('registerForm').style.display = 'block';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('regError').style.display = 'none';
+}
+
+function showLogin() {
+    document.getElementById('authForm').style.display = 'block';
+    document.getElementById('registerForm').style.display = 'none';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('regError').style.display = 'none';
+}
+
+async function register() {
+    const nick = document.getElementById('regNick').value.trim();
+    const tg = document.getElementById('regTg').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const pass = document.getElementById('regPassword').value;
+    const pass2 = document.getElementById('regPassword2').value;
+    const errorEl = document.getElementById('regError');
+    
+    errorEl.style.display = 'none';
+    
+    if (!nick || !tg || !pass || !pass2) {
+        errorEl.textContent = 'Заполните все обязательные поля (*)';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    if (pass !== pass2) {
+        errorEl.textContent = 'Пароли не совпадают';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    if (pass.length < 4) {
+        errorEl.textContent = 'Пароль должен быть минимум 4 символа';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    if (getUserByNick(nick)) {
+        errorEl.textContent = 'Этот игровой ник уже зарегистрирован';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    if (getUserByTg(tg)) {
+        errorEl.textContent = 'Этот Telegram уже используется';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    const id = generateId();
+    const newUser = {
+        id: id,
+        gameNick: nick,
+        tgUser: tg,
+        email: email || '',
+        password: pass,
+        isAdmin: false,
+        isBanned: false,
+        banInfo: null,
+        registrationDate: new Date().toISOString(),
+        lastLogin: new Date().toISOString(),
+        violations: []
+    };
+    
+    db.users.push(newUser);
+    db.usedIds.push(id);
+    db.currentSession = id;
+    await saveDB();
+    
+    currentUser = newUser;
+    enterMainPage(newUser);
+}
+
+async function login() {
+    const input = document.getElementById('loginNick').value.trim();
+    const pass = document.getElementById('loginPassword').value;
+    const remember = document.getElementById('rememberMe').checked;
+    const errorEl = document.getElementById('loginError');
+    
+    errorEl.style.display = 'none';
+    
+    if (!input || !pass) {
+        errorEl.textContent = 'Заполните все поля';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    // Ищем по нику или tg
+    let user = getUserByNick(input);
+    if (!user) user = getUserByTg(input);
+    
+    if (!user || user.password !== pass) {
+        errorEl.textContent = 'Неверный логин или пароль';
+        errorEl.style.display = 'block';
+        return;
+    }
+    
+    // Проверяем бан
+    if (user.isBanned && user.banInfo) {
+        const unbanDate = new Date(user.banInfo.unbanDate);
+        if (unbanDate > new Date()) {
+            showBanScreen(user);
+            return;
+        } else {
+            user.isBanned = false;
+            user.banInfo = null;
+        }
+    }
+    
+    user.lastLogin = new Date().toISOString();
+    db.currentSession = user.id;
+    await saveDB();
+    
+    if (remember) {
+        localStorage.setItem('nightmare_session', user.id);
+    }
+    
+    currentUser = user;
+    enterMainPage(user);
+}
+
+function logout() {
+    localStorage.removeItem('nightmare_session');
+    db.currentSession = null;
+    saveDB();
+    currentUser = null;
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('banScreen').style.display = 'none';
+    document.getElementById('authPage').style.display = 'flex';
+}
+
+// ============================================================
+// ===== ЭКРАН БАНА =====
+// ============================================================
+
+function showBanScreen(user) {
+    document.getElementById('authPage').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('banScreen').style.display = 'flex';
+    document.getElementById('banReason').textContent = user.banInfo.reason || 'Не указана';
+    document.getElementById('banBannedBy').textContent = getAdminNick(user.banInfo.bannedBy) || 'Неизвестен';
+    document.getElementById('banDate').textContent = formatDate(user.banInfo.banDate);
+    document.getElementById('banUnbanDate').textContent = formatDate(user.banInfo.unbanDate);
+}
+
+// ============================================================
+// ===== ВХОД В ОСНОВНОЙ САЙТ =====
+// ============================================================
+
+function enterMainPage(user) {
+    document.getElementById('authPage').style.display = 'none';
+    document.getElementById('banScreen').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'block';
+    
+    // Обновляем верхнюю панель
+    document.getElementById('displayNick').textContent = user.gameNick;
+    document.getElementById('displayId').textContent = user.id;
+    
+    if (isAdmin(user)) {
+        document.getElementById('adminBadge').style.display = 'inline';
+        document.getElementById('adminSection').style.display = 'block';
+    } else {
+        document.getElementById('adminBadge').style.display = 'none';
+        document.getElementById('adminSection').style.display = 'none';
+    }
+    
+    // Проверяем новые нарушения
+    const newViolations = user.violations.filter(v => !v.resolved && !v._notified);
+    if (newViolations.length > 0) {
+        // Отмечаем как уведомлённые
+        newViolations.forEach(v => v._notified = true);
+        saveDB();
+        document.getElementById('notificationModal').classList.add('active');
+    }
+    
+    // Загружаем профиль
+    loadProfile(user);
+    loadViolations(user);
+    
+    // Если админ, загружаем список членов
+    if (isAdmin(user)) {
+        loadAdminMembers();
+    }
+    
+    showPage('profile');
+}
+
+// ============================================================
+// ===== НАВИГАЦИЯ =====
+// ============================================================
+
+function showPage(pageName) {
+    // Скрываем все страницы
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    // Показываем нужную
+    const target = document.getElementById('page-' + pageName);
+    if (target) target.classList.add('active');
+    
+    // Обновляем кнопки
+    document.querySelectorAll('.nav-menu button[data-page]').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.page === pageName);
+    });
+}
+
+// ============================================================
+// ===== ПРОФИЛЬ =====
+// ============================================================
+
+function loadProfile(user) {
+    document.getElementById('profileId').textContent = user.id;
+    document.getElementById('profileNick').textContent = user.gameNick;
+    document.getElementById('profileTg').textContent = user.tgUser;
+    document.getElementById('profileEmail').textContent = user.email || '-';
+    document.getElementById('profileRegDate').textContent = formatDate(user.registrationDate);
+    document.getElementById('profileStatus').textContent = user.isBanned ? '🔴 Заблокирован' : '🟢 Активен';
+    document.getElementById('profileStatus').style.color = user.isBanned ? '#ff4444' : '#44ff44';
+}
+
+function openEditProfile() {
+    if (!currentUser) return;
+    document.getElementById('editModal').classList.add('active');
+    document.getElementById('editNick').value = currentUser.gameNick;
+    document.getElementById('editTg').value = currentUser.tgUser;
+    document.getElementById('editEmail').value = currentUser.email || '';
+    document.getElementById('editResult').textContent = '';
+}
+
+function closeEditModal() {
+    document.getElementById('editModal').classList.remove('active');
+}
+
+async function saveProfile() {
+    if (!currentUser) return;
+    const nick = document.getElementById('editNick').value.trim();
+    const tg = document.getElementById('editTg').value.trim();
+    const email = document.getElementById('editEmail').value.trim();
+    const resultEl = document.getElementById('editResult');
+    
+    if (!nick || !tg) {
+        resultEl.textContent = 'Ник и Telegram обязательны';
+        resultEl.style.color = '#ff4444';
+        return;
+    }
+    
+    // Проверяем уникальность (кроме текущего пользователя)
+    const nickExists = db.users.find(u => u.id !== currentUser.id && u.gameNick.toLowerCase() === nick.toLowerCase());
+    if (nickExists) {
+        resultEl.textContent = 'Этот ник уже занят';
+        resultEl.style.color = '#ff4444';
+        return;
+    }
+    
+    const tgExists = db.users.find(u => u.id !== currentUser.id && u.tgUser.toLowerCase() === tg.toLowerCase());
+    if (tgExists) {
+        resultEl.textContent = 'Этот Telegram уже используется';
+        resultEl.style.color = '#ff4444';
+        return;
+    }
+    
+    currentUser.gameNick = nick;
+    currentUser.tgUser = tg;
+    currentUser.email = email;
+    
+    await saveDB();
+    resultEl.textContent = '✅ Информация обновлена!';
+    resultEl.style.color = '#44ff44';
+    
+    // Обновляем отображение
+    document.getElementById('displayNick').textContent = nick;
+    loadProfile(currentUser);
+    
+    setTimeout(() => closeEditModal(), 1000);
+}
+
+// ============================================================
+// ===== НАРУШЕНИЯ =====
+// ============================================================
+
+function loadViolations(user) {
+    const container = document.getElementById('violationsList');
+    const violations = user.violations || [];
+    
+    if (violations.length === 0) {
+        container.innerHTML = '<p style="color:#888;">Нарушений нет</p>';
+        return;
+    }
+    
+    // Сортируем: сначала активные, потом снятые, по дате (новые сверху)
+    const sorted = [...violations].sort((a, b) => {
+        if (a.resolved !== b.resolved) return a.resolved ? 1 : -1;
+        return new Date(b.date) - new Date(a.date);
+    });
+    
+    let html = '';
+    sorted.forEach(v => {
+        const isResolved = v.resolved;
+        html += `
+            <div class="violation-item ${isResolved ? 'resolved' : ''}">
+                <div class="v-date">📅 ${formatDate(v.date)}</div>
+                <div class="v-type">${isResolved ? '✅' : '⚠️'} ${v.type || 'Нарушение'}</div>
+                <div class="v-desc">${v.description || 'Нет описания'}</div>
+                <div style="color:#888; font-size:12px;">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
+                ${isResolved ? `<div class="v-resolved">❌ Снято (${formatDate(v.resolvedDate)}) - ${v.resolutionReason || 'Причина не указана'}</div>` : ''}
+            </div>
+        `;
+    });
+    
+    container.innerHTML = html;
+}
+
+function closeNotificationModal() {
+    document.getElementById('notificationModal').classList.remove('active');
+}
+
+// ============================================================
+// ===== АДМИН: НАРУШЕНИЯ ПО ID =====
+// ============================================================
+
+async function adminViewViolations() {
+    const id = document.getElementById('adminVioSearchId').value.trim();
+    const resultEl = document.getElementById('adminVioResult');
+    
+    if (!id) {
+        resultEl.innerHTML = '<p style="color:#ff4444;">Введите ID</p>';
+        return;
+    }
+    
+    const user = getUserById(id);
+    if (!user) {
+        resultEl.innerHTML = '<p style="color:#ff4444;">Пользователь не найден</p>';
+        return;
+    }
+    
+    const violations = user.violations || [];
+    if (violations.length === 0) {
+        resultEl.innerHTML = `<p style="color:#888;">У ${user.gameNick} (${user.id}) нет нарушений</p>`;
+        return;
+    }
+    
+    const sorted = [...violations].sort((a, b) => new Date(b.date) - new Date(a.date));
+    let html = `<p><strong>${user.gameNick}</strong> (${user.id}) - ${violations.length} нарушений</p>`;
+    sorted.forEach(v => {
+        html += `
+            <div class="violation-item ${v.resolved ? 'resolved' : ''}">
+                <div class="v-date">📅 ${formatDate(v.date)}</div>
+                <div class="v-type">${v.resolved ? '✅ СНЯТО' : '⚠️'} ${v.type || 'Нарушение'}</div>
+                <div class="v-desc">${v.description || 'Нет описания'}</div>
+                <div style="color:#888; font-size:12px;">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
+                ${v.resolved ? `<div class="v-resolved">❌ Снято (${formatDate(v.resolvedDate)}) - ${v.resolutionReason || 'Причина не указана'}</div>` : ''}
+            </div>
+        `;
+    });
+    
+    resultEl.innerHTML = html;
+}
+
+// ============================================================
+// ===== АДМИН: ДОБАВИТЬ НАРУШЕНИЕ =====
+// ============================================================
+
+async function adminFindUserForViolation() {
+    const id = document.getElementById('adminAddVioId').value.trim();
+    const infoEl = document.getElementById('adminAddVioUserInfo');
+    
+    if (!id) {
+        infoEl.style.display = 'block';
+        infoEl.innerHTML = '<p style="color:#ff4444;">Введите ID</p>';
+        return;
+    }
+    
+    const user = getUserById(id);
+    if (!user) {
+        infoEl.style.display = 'block';
+        infoEl.innerHTML = '<p style="color:#ff4444;">Пользователь не найден</p>';
+        return;
+    }
+    
+    pendingViolationUser = user;
+    infoEl.style.display = 'block';
+    infoEl.innerHTML = `<p>✅ Найден: <strong>${user.gameNick}</strong> (${user.id})</p>`;
+}
+
+async function adminAddViolation() {
+    if (!pendingViolationUser) {
+        document.getElementById('adminAddVioResult').style.display = 'block';
+        document.getElementById('adminAddVioResult').innerHTML = '<p style="color:#ff4444;">Сначала найдите пользователя</p>';
+        return;
+    }
+    
+    const type = document.getElementById('adminAddVioType').value.trim();
+    const desc = document.getElementById('adminAddVioDesc').value.trim();
+    const resultEl = document.getElementById('adminAddVioResult');
+    
+    if (!type || !desc) {
+        resultEl.style.display = 'block';
+        resultEl.innerHTML = '<p style="color:#ff4444;">Заполните все поля</p>';
+        return;
+    }
+    
+    const violation = {
+        violationId: 'v' + (++db.violationCounter),
+        type: type,
+        description: desc,
+        date: new Date().toISOString(),
+        issuedBy: currentUser.id,
+        issuedByNick: currentUser.gameNick,
+        resolved: false,
+        resolvedDate: null,
+        resolutionReason: null,
+        _notified: false
+    };
+    
+    pendingViolationUser.violations.push(violation);
+    await saveDB();
+    
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `<p style="color:#44ff44;">✅ Нарушение выдано ${pendingViolationUser.gameNick}</p>`;
+    
+    // Очищаем поля
+    document.getElementById('adminAddVioType').value = '';
+    document.getElementById('adminAddVioDesc').value = '';
+    pendingViolationUser = null;
+    document.getElementById('adminAddVioUserInfo').style.display = 'none';
+}
+
+// ============================================================
+// ===== АДМИН: СНЯТЬ НАРУШЕНИЕ =====
+// ============================================================
+
+let pendingRemoveViolation = null;
+
+async function adminFindUserForRemove() {
+    const id = document.getElementById('adminRemoveVioId').value.trim();
+    const listEl = document.getElementById('adminRemoveVioList');
+    
+    if (!id) {
+        listEl.innerHTML = '<p style="color:#ff4444;">Введите ID</p>';
+        return;
+    }
+    
+    const user = getUserById(id);
+    if (!user) {
+        listEl.innerHTML = '<p style="color:#ff4444;">Пользователь не найден</p>';
+        return;
+    }
+    
+    const violations = user.violations.filter(v => !v.resolved);
+    if (violations.length === 0) {
+        listEl.innerHTML = `<p style="color:#888;">У ${user.gameNick} нет активных нарушений</p>`;
+        return;
+    }
+    
+    let html = `<p><strong>${user.gameNick}</strong> - Активные нарушения:</p>`;
+    violations.forEach((v, index) => {
+        html += `
+            <div class="violation-item" style="cursor:pointer;" onclick="selectViolationForRemove('${v.violationId}', '${user.id}')">
+                <div class="v-date">📅 ${formatDate(v.date)}</div>
+                <div class="v-type">⚠️ ${v.type || 'Нарушение'}</div>
+                <div class="v-desc">${v.description || 'Нет описания'}</div>
+                <div style="color:#888; font-size:12px;">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
+            </div>
+        `;
+    });
+    
+    listEl.innerHTML = html;
+}
+
+function selectViolationForRemove(violationId, userId) {
+    const user = getUserById(userId);
+    if (!user) return;
+    
+    const violation = user.violations.find(v => v.violationId === violationId);
+    if (!violation) return;
+    
+    pendingRemoveUser = user;
+    pendingRemoveViolation = violation;
+    
+    const listEl = document.getElementById('adminRemoveVioList');
+    listEl.innerHTML = `
+        <div style="background:#1a1a1a; padding:15px; border-radius:8px; border:2px solid #d4a843;">
+            <p><strong>Выбрано нарушение:</strong></p>
+            <p>Тип: ${violation.type}</p>
+            <p>Описание: ${violation.description}</p>
+            <p>Дата: ${formatDate(violation.date)}</p>
+            <p>Выдал: ${violation.issuedByNick || violation.issuedBy}</p>
+            <div style="margin-top:15px;">
+                <input type="text" id="removeViolationReason" placeholder="Причина снятия" style="width:100%; padding:10px; background:#0a0a0a; border:1px solid #333; border-radius:8px; color:#e0e0e0;">
+                <button class="btn" style="margin-top:10px;" onclick="confirmRemoveViolation()">✅ Снять нарушение</button>
+                <button class="btn btn-secondary" style="margin-top:10px;" onclick="cancelRemoveViolation()">Отмена</button>
+            </div>
+        </div>
+    `;
+}
+
+async function confirmRemoveViolation() {
+    if (!pendingRemoveUser || !pendingRemoveViolation) return;
+    
+    const reason = document.getElementById('removeViolationReason').value.trim();
+    if (!reason) {
+        alert('Введите причину снятия');
+        return;
+    }
+    
+    pendingRemoveViolation.resolved = true;
+    pendingRemoveViolation.resolvedDate = new Date().toISOString();
+    pendingRemoveViolation.resolutionReason = reason;
+    
+    await saveDB();
+    
+    document.getElementById('adminRemoveVioList').innerHTML = `
+        <p style="color:#44ff44;">✅ Нарушение снято у ${pendingRemoveUser.gameNick}</p>
+    `;
+    
+    pendingRemoveUser = null;
+    pendingRemoveViolation = null;
+}
+
+function cancelRemoveViolation() {
+    pendingRemoveUser = null;
+    pendingRemoveViolation = null;
+    document.getElementById('adminRemoveVioList').innerHTML = '<p style="color:#888;">Выберите нарушение для снятия</p>';
+}
+
+// ============================================================
+// ===== АДМИН: СПИСОК ЧЛЕНОВ =====
+// ============================================================
+
+function loadAdminMembers() {
+    const listEl = document.getElementById('adminMembersList');
+    const members = db.users.filter(u => !u.isAdmin);
+    
+    if (members.length === 0) {
+        listEl.innerHTML = '<p style="color:#888;">Нет зарегистрированных членов семьи</p>';
+        return;
+    }
+    
+    let html = `<p>Всего членов: ${members.length}</p>`;
+    members.forEach(u => {
+        html += `
+            <div class="user-card">
+                <strong>${u.gameNick}</strong> | ID: ${u.id} | TG: ${u.tgUser} | ${u.isBanned ? '🔴 Заблокирован' : '🟢 Активен'}
+            </div>
+        `;
+    });
+    
+    listEl.innerHTML = html;
+}
+
+// ============================================================
+// ===== АДМИН: БЛОКИРОВКА =====
+// ============================================================
+
+let pendingBanUser = null;
+
+async function adminFindUserForBan() {
+    const id = document.getElementById('adminBanId').value.trim();
+    const infoEl = document.getElementById('adminBanUserInfo');
+    
+    if (!id) {
+        infoEl.style.display = 'block';
+        infoEl.innerHTML = '<p style="color:#ff4444;">Введите ID</p>';
+        return;
+    }
+    
+    const user = getUserById(id);
+    if (!user) {
+        infoEl.style.display = 'block';
+        infoEl.innerHTML = '<p style="color:#ff4444;">Пользователь не найден</p>';
+        return;
+    }
+    
+    if (user.isAdmin) {
+        infoEl.style.display = 'block';
+        infoEl.innerHTML = '<p style="color:#ff4444;">Нельзя заблокировать администратора</p>';
+        return;
+    }
+    
+    pendingBanUser = user;
+    infoEl.style.display = 'block';
+    infoEl.innerHTML = `<p>✅ Найден: <strong>${user.gameNick}</strong> (${user.id}) - ${user.isBanned ? '🔴 УЖЕ ЗАБЛОКИРОВАН' : '🟢 Активен'}</p>`;
+}
+
+async function adminBanUser() {
+    if (!pendingBanUser) {
+        document.getElementById('adminBanResult').style.display = 'block';
+        document.getElementById('adminBanResult').innerHTML = '<p style="color:#ff4444;">Сначала найдите пользователя</p>';
+        return;
+    }
+    
+    const reason = document.getElementById('adminBanReason').value.trim();
+    const unbanDate = document.getElementById('adminBanUnbanDate').value;
+    const resultEl = document.getElementById('adminBanResult');
+    
+    if (!reason || !unbanDate) {
+        resultEl.style.display = 'block';
+        resultEl.innerHTML = '<p style="color:#ff4444;">Заполните все поля</p>';
+        return;
+    }
+    
+    const unbanDateTime = new Date(unbanDate);
+    if (unbanDateTime <= new Date()) {
+        resultEl.style.display = 'block';
+        resultEl.innerHTML = '<p style="color:#ff4444;">Дата разблокировки должна быть в будущем</p>';
+        return;
+    }
+    
+    pendingBanUser.isBanned = true;
+    pendingBanUser.banInfo = {
+        bannedBy: currentUser.id,
+        reason: reason,
+        banDate: new Date().toISOString(),
+        unbanDate: unbanDateTime.toISOString()
+    };
+    
+    await saveDB();
+    
+    resultEl.style.display = 'block';
+    resultEl.innerHTML = `<p style="color:#44ff44;">✅ ${pendingBanUser.gameNick} заблокирован до ${formatDate(unbanDate)}</p>`;
+    
+    document.getElementById('adminBanReason').value = '';
+    document.getElementById('adminBanUnbanDate').value = '';
+    pendingBanUser = null;
+    document.getElementById('adminBanUserInfo').style.display = 'none';
+}
+
+// ============================================================
+// ===== АДМИН: ПОИСК ПОЛЬЗОВАТЕЛЯ =====
+// ============================================================
+
+async function adminSearchUser() {
+    const id = document.getElementById('adminSearchId').value.trim();
+    const resultEl = document.getElementById('adminSearchResult');
+    
+    if (!id) {
+        resultEl.innerHTML = '<p style="color:#ff4444;">Введите ID</p>';
+        return;
+    }
+    
+    const user = getUserById(id);
+    if (!user) {
+        resultEl.innerHTML = '<p style="color:#ff4444;">Пользователь не найден</p>';
+        return;
+    }
+    
+    resultEl.innerHTML = `
+        <div class="user-card">
+            <p><strong>ID:</strong> ${user.id}</p>
+            <p><strong>Игровой ник:</strong> ${user.gameNick}</p>
+            <p><strong>Telegram:</strong> ${user.tgUser}</p>
+            <p><strong>Email:</strong> ${user.email || '-'}</p>
+            <p><strong>Статус:</strong> ${user.isBanned ? '🔴 Заблокирован' : '🟢 Активен'}</p>
+            <p><strong>Админ:</strong> ${user.isAdmin ? '✅ Да' : '❌ Нет'}</p>
+            <p><strong>Нарушений:</strong> ${(user.violations || []).length}</p>
+            <p><strong>Дата регистрации:</strong> ${formatDate(user.registrationDate)}</p>
+        </div>
+    `;
+}
+
+// ============================================================
+// ===== ЗАПУСК =====
+// ============================================================
+
+// Скрываем сплеш после анимации
+setTimeout(() => {
+    document.getElementById('splashScreen').style.display = 'none';
+    init();
+}, 3000);
+
+</script>
+</body>
+</html>
