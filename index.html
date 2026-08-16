@@ -202,6 +202,13 @@
         .btn-secondary:hover {
             background: #333333;
         }
+        .btn-green {
+            background: #00cc44;
+            color: #000000;
+        }
+        .btn-green:hover {
+            background: #00dd55;
+        }
         
         .auth-switch {
             text-align: center;
@@ -316,6 +323,25 @@
             margin-left: 8px;
             font-size: 11px;
             letter-spacing: 1px;
+        }
+        .top-bar .notification-icon {
+            color: #fff;
+            cursor: pointer;
+            font-size: 18px;
+            position: relative;
+            margin-left: 10px;
+        }
+        .top-bar .notification-icon .badge {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: #cc0000;
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 0;
+            min-width: 18px;
+            text-align: center;
         }
         .btn-logout {
             padding: 6px 18px;
@@ -499,6 +525,74 @@
         }
         
         /* ============================================================
+           ПРАВИЛА СТРОЯ
+           ============================================================ */
+        .rules-doc {
+            border: 1px solid #1a1a1a;
+            padding: 30px;
+            background: #050505;
+        }
+        .rules-doc .header {
+            text-align: center;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .rules-doc .header .title {
+            font-size: 1.6rem;
+            font-weight: 300;
+            letter-spacing: 6px;
+            color: #fff;
+        }
+        .rules-doc .header .subtitle {
+            color: #555;
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            margin-top: 6px;
+        }
+        .rules-doc .section {
+            margin: 20px 0;
+        }
+        .rules-doc .section h3 {
+            font-weight: 300;
+            letter-spacing: 3px;
+            font-size: 1rem;
+            color: #fff;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 8px;
+            margin-bottom: 12px;
+        }
+        .rules-doc .section .rule {
+            padding: 4px 0 4px 16px;
+            border-left: 1px solid #222;
+            margin: 3px 0;
+            color: #aaa;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .rules-doc .section .rule strong {
+            color: #fff;
+            font-weight: 400;
+        }
+        .rules-doc .section .rule .code {
+            color: #555;
+            font-size: 11px;
+            letter-spacing: 1px;
+            margin-right: 8px;
+        }
+        .rules-doc .footer {
+            border-top: 1px solid #1a1a1a;
+            padding-top: 16px;
+            margin-top: 16px;
+            color: #444;
+            font-size: 12px;
+            letter-spacing: 1px;
+        }
+        .rules-doc .footer span {
+            color: #fff;
+        }
+        
+        /* ============================================================
            НАРУШЕНИЯ
            ============================================================ */
         .violation-item {
@@ -562,13 +656,16 @@
         }
         .modal-box {
             width: 100%;
-            max-width: 500px;
+            max-width: 520px;
             max-height: 85vh;
             overflow-y: auto;
             background: #0a0a0a;
             border: 1px solid #222;
             padding: 30px;
             animation: modalIn 0.3s ease;
+        }
+        .modal-box.wide {
+            max-width: 700px;
         }
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.98); }
@@ -647,6 +744,21 @@
         }
         .modal-box .result-msg.info {
             color: #fff;
+        }
+        .modal-box .request-item {
+            border: 1px solid #1a1a1a;
+            padding: 12px 16px;
+            margin: 6px 0;
+            background: #050505;
+        }
+        .modal-box .request-item .req-meta {
+            color: #444;
+            font-size: 11px;
+        }
+        .modal-box .request-item .req-text {
+            color: #aaa;
+            font-size: 13px;
+            margin: 4px 0;
         }
         
         /* ============================================================
@@ -729,10 +841,11 @@
             .content {
                 padding: 16px;
             }
-            .uksp-doc {
+            .uksp-doc, .rules-doc {
                 padding: 16px;
             }
-            .uksp-doc .header .title {
+            .uksp-doc .header .title,
+            .rules-doc .header .title {
                 font-size: 1.2rem;
             }
             .modal-box {
@@ -765,7 +878,8 @@
             .modal-box .modal-header h3 {
                 font-size: 0.95rem;
             }
-            .uksp-doc .section .rule {
+            .uksp-doc .section .rule,
+            .rules-doc .section .rule {
                 font-size: 12px;
                 padding-left: 10px;
             }
@@ -819,7 +933,7 @@
             </div>
         </div>
         <div id="registerForm" style="display:none;">
-            <input type="text" id="regNick" placeholder="Игровой ник *">
+            <input type="text" id="regNick" placeholder="Игровой ник (только буквы) *">
             <input type="text" id="regTg" placeholder="Telegram (например @username) *">
             <input type="email" id="regEmail" placeholder="Email">
             <input type="password" id="regPassword" placeholder="Пароль *">
@@ -843,15 +957,24 @@
             <strong id="displayNick"></strong> · ID <span id="displayId"></span>
             <span class="admin-badge" id="adminBadge" style="display:none;">АДМИН</span>
         </div>
-        <button class="btn-logout" onclick="logout()">ВЫЙТИ</button>
+        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+            <span class="notification-icon" onclick="openNotifications()">
+                🔔
+                <span class="badge" id="notifBadge" style="display:none;">0</span>
+            </span>
+            <button class="btn-logout" onclick="logout()">ВЫЙТИ</button>
+        </div>
     </div>
 
     <!-- Навигация -->
     <div class="nav-menu" id="navMenu">
         <button class="active" data-page="profile" onclick="showPage('profile')">Профиль</button>
         <button data-page="uksp" onclick="showPage('uksp')">УКСП</button>
+        <button data-page="rules" onclick="showPage('rules')">Правила строя</button>
         <button data-page="members" onclick="showPage('members')">Состав</button>
         <button data-page="violations" onclick="showPage('violations')">Нарушения</button>
+        <button data-page="requests" onclick="showPage('requests')">Заявки</button>
+        <button data-page="build" onclick="showPage('build')">Провести строй</button>
         
         <div class="admin-section" id="adminSection" style="display:none;">
             <div class="label">УПРАВЛЕНИЕ</div>
@@ -861,6 +984,11 @@
             <button data-page="adminMembers" onclick="showPage('adminMembers')">Список членов</button>
             <button data-page="adminBan" onclick="showPage('adminBan')">Блокировка</button>
             <button data-page="adminUnban" onclick="showPage('adminUnban')">Досрочный разбан</button>
+            <button data-page="adminRequests" onclick="showPage('adminRequests')">Заявки (ответы)</button>
+            <button data-page="adminBuild" onclick="showPage('adminBuild')">Заявки на строй</button>
+            <button data-page="adminEdit" onclick="showPage('adminEdit')">Изменить информацию</button>
+            <button data-page="adminHistory" onclick="showPage('adminHistory')">История</button>
+            <button data-page="adminFamilies" onclick="showPage('adminFamilies')">Семьи</button>
             <button data-page="adminSearch" onclick="showPage('adminSearch')">Поиск</button>
         </div>
     </div>
@@ -959,6 +1087,88 @@
             </div>
         </div>
 
+        <!-- ===== ПРАВИЛА СТРОЯ ===== -->
+        <div id="page-rules" class="page">
+            <h2>ПРАВИЛА СТРОЯ</h2>
+            <div class="rules-doc">
+                <div class="header">
+                    <div class="title">ПРАВИЛА ПРОВЕДЕНИЯ СТРОЯ</div>
+                    <div class="subtitle">NIGHTMARE EMPIRE · BLACK RUSSIA</div>
+                    <div class="meta">
+                        Утверждено: <span>Robert_Salamanca</span> · 
+                        Дата: <span>12.08.2026</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <h3>Статья 1. Общие положения</h3>
+                    <div class="rule"><span class="code">1.1.</span> <strong>Строй</strong> — официальное собрание членов семьи для обсуждения текущих вопросов, принятия решений и доведения приказов.</div>
+                    <div class="rule"><span class="code">1.2.</span> Строй проводится по решению <strong>главы семьи</strong> или <strong>главного зама</strong>.</div>
+                    <div class="rule"><span class="code">1.3.</span> Информация о времени и месте сбора доводится до всех членов семьи <strong>не позднее чем за два часа</strong> до начала.</div>
+                </div>
+
+                <div class="section">
+                    <h3>Статья 2. Виды строев</h3>
+                    <div class="rule"><span class="code">2.1.</span> <strong>Общий строй</strong> — для всех членов семьи.</div>
+                    <div class="rule"><span class="code">2.2.</span> <strong>Строй зам-состава</strong> — только для замов, старших замов, ОЗГЗ и главного зама.</div>
+                    <div class="rule"><span class="code">2.3.</span> <strong>Экстренный строй</strong> — созывается в случае срочной угрозы или необходимости немедленного решения.</div>
+                </div>
+
+                <div class="section">
+                    <h3>Статья 3. Обязанности членов семьи на строю</h3>
+                    <div class="rule"><span class="code">3.1.</span> Являться в указанное место <strong>строго к назначенному времени</strong>.</div>
+                    <div class="rule"><span class="code">3.2.</span> Иметь при себе средства связи в режиме <strong>«без звука»</strong>.</div>
+                    <div class="rule"><span class="code">3.3.</span> Слушать докладывающих, <strong>не перебивать</strong>.</div>
+                    <div class="rule"><span class="code">3.4.</span> Задавать вопросы <strong>только после завершения</strong> основной части строя.</div>
+                    <div class="rule"><span class="code">3.5.</span> <strong>Не разглашать</strong> информацию, полученную на строю, третьим лицам.</div>
+                    <div class="rule" style="border-left-color:#cc0000; color:#cc0000;"><strong>3.6.</strong> <strong>ЗАПРЕЩАЕТСЯ</strong> разговаривать без разрешения проводящего.</div>
+                    <div class="rule" style="border-left-color:#cc0000; color:#cc0000;"><strong>3.7.</strong> <strong>ЗАПРЕЩАЕТСЯ</strong> вставлять анимации без разрешения проводящего.</div>
+                    <div class="rule" style="border-left-color:#cc0000; color:#cc0000;"><strong>3.8.</strong> <strong>ЗАПРЕЩАЕТСЯ</strong> делать что-либо без разрешения проводящего.</div>
+                    <div class="rule" style="border-left-color:#cc0000; color:#cc0000;"><strong>3.9.</strong> <strong>ЗАПРЕЩАЕТСЯ</strong> перебивать старший состав и проводящего строя.</div>
+                    <div class="rule"><span class="code">3.10.</span> Разговаривать со старшим составом <strong>ИСКЛЮЧИТЕЛЬНО НА ВЫ</strong>.</div>
+                </div>
+
+                <div class="section">
+                    <h3>Статья 4. Ответственность за нарушение правил строя</h3>
+                    <div class="rule"><span class="code">4.1.</span> За опоздание на строй без уважительной причины — <strong>выговор</strong>.</div>
+                    <div class="rule"><span class="code">4.2.</span> За неявку на строй без уважительной причины — <strong>строгий выговор</strong>.</div>
+                    <div class="rule"><span class="code">4.3.</span> За разглашение информации со строя — <strong>увольнение из семьи</strong>.</div>
+                    <div class="rule"><span class="code">4.4.</span> За повторную неявку — <strong>понижение в ранге</strong>.</div>
+                </div>
+
+                <div class="section">
+                    <h3>Статья 5. Порядок проведения строя</h3>
+                    <div class="rule"><span class="code">5.1.</span> <strong>Сбор и проверка присутствующих</strong> — проводится младшими замами.</div>
+                    <div class="rule"><span class="code">5.2.</span> <strong>Доклад о явке</strong> — старшие замы передают ОЗГЗ.</div>
+                    <div class="rule"><span class="code">5.3.</span> <strong>Объявление повестки</strong> — главный зам или глава семьи.</div>
+                    <div class="rule"><span class="code">5.4.</span> <strong>Обсуждение вопросов</strong> — выступают только назначенные лица.</div>
+                    <div class="rule"><span class="code">5.5.</span> <strong>Принятие решений</strong> — фиксируются в протоколе строя.</div>
+                    <div class="rule"><span class="code">5.6.</span> <strong>Подведение итогов</strong> — главный зам или глава семьи.</div>
+                </div>
+
+                <div class="section">
+                    <h3>Статья 6. Права проводящего строй</h3>
+                    <div class="rule"><span class="code">6.1.</span> Проводящий <strong>ИМЕЕТ ПРАВО</strong> на вынесение замечаний и подачи заявки на сайте для вынесения наказания.</div>
+                    <div class="rule"><span class="code">6.2.</span> Проводящий <strong>ОБЯЗАН</strong> делать фрапс строя.</div>
+                    <div class="rule"><span class="code">6.3.</span> Проводящий <strong>ОБЯЗАН</strong> донести достоверную информацию до каждого.</div>
+                    <div class="rule"><span class="code">6.4.</span> Проводящий <strong>ОБЯЗАН</strong> обеспечивать комфортную и спокойную обстановку.</div>
+                    <div class="rule"><span class="code">6.5.</span> Проводящий <strong>ОБЯЗАН</strong> докладывать о КАЖДОМ нарушении лидеру семьи или ОЗГЗ.</div>
+                    <div class="rule"><span class="code">6.6.</span> Проводящий <strong>НЕ ЗАВЕРШАЕТ</strong> съёмку до полного окончания строя.</div>
+                </div>
+
+                <div class="section">
+                    <h3>Статья 7. Заключительные положения</h3>
+                    <div class="rule"><span class="code">7.1.</span> Правила вступают в силу с момента подписания.</div>
+                    <div class="rule"><span class="code">7.2.</span> Все члены семьи обязаны ознакомиться с правилами под подпись.</div>
+                    <div class="rule"><span class="code">7.3.</span> Контроль исполнения возлагается на главного зама <strong>Artemchik_Haunted</strong>.</div>
+                </div>
+
+                <div class="footer">
+                    <span>Ответственные за исполнение:</span> Robert_Salamanca · Artemchik_Haunted · Anton_Chebureck
+                </div>
+            </div>
+        </div>
+
         <!-- ===== СОСТАВ СЕМЬИ ===== -->
         <div id="page-members" class="page">
             <h2>СОСТАВ СЕМЬИ</h2>
@@ -980,6 +1190,33 @@
             <h2>НАРУШЕНИЯ</h2>
             <div id="violationsList">
                 <p style="color:#444;">Нет нарушений</p>
+            </div>
+        </div>
+
+        <!-- ===== ЗАЯВКИ ===== -->
+        <div id="page-requests" class="page">
+            <h2>ЗАЯВКИ</h2>
+            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+                <button class="btn btn-small" onclick="openRequestRemove()">Заявка на снятие нарушения</button>
+                <button class="btn btn-small" onclick="openRequestAdd()">Заявка на выдачу нарушения</button>
+            </div>
+            <div id="userRequestsList">
+                <p style="color:#444;">Ваши заявки будут отображаться здесь</p>
+            </div>
+        </div>
+
+        <!-- ===== ПРОВЕСТИ СТРОЙ ===== -->
+        <div id="page-build" class="page">
+            <h2>ПРОВЕСТИ СТРОЙ</h2>
+            <div style="border:1px solid #1a1a1a; padding:20px; background:#050505;">
+                <p style="color:#aaa; margin-bottom:16px;">Заполните информацию о строе. Все поля обязательны.</p>
+                <input type="datetime-local" id="buildStart" placeholder="Дата и время начала">
+                <input type="datetime-local" id="buildEnd" placeholder="Дата и время окончания">
+                <input type="text" id="buildTopic" placeholder="Тема строя">
+                <input type="text" id="buildRequired" placeholder="Кто обязан явиться (через запятую)">
+                <input type="text" id="buildForbidden" placeholder="Кому нельзя появляться (через запятую)">
+                <button class="btn" onclick="submitBuildRequest()">Отправить заявку</button>
+                <div id="buildResult" class="result-msg" style="margin-top:10px;"></div>
             </div>
         </div>
 
@@ -1056,6 +1293,70 @@
             </div>
         </div>
 
+        <!-- ===== АДМИН: ЗАЯВКИ (ОТВЕТЫ) ===== -->
+        <div id="page-adminRequests" class="page">
+            <h2>ЗАЯВКИ (ОТВЕТЫ)</h2>
+            <div id="adminRequestsList">
+                <p style="color:#444;">Нет активных заявок</p>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: ЗАЯВКИ НА СТРОЙ ===== -->
+        <div id="page-adminBuild" class="page">
+            <h2>ЗАЯВКИ НА СТРОЙ</h2>
+            <div id="adminBuildList">
+                <p style="color:#444;">Нет заявок на строй</p>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: ИЗМЕНИТЬ ИНФОРМАЦИЮ ===== -->
+        <div id="page-adminEdit" class="page">
+            <h2>ИЗМЕНИТЬ ИНФОРМАЦИЮ</h2>
+            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
+                <p style="color:#aaa; margin-bottom:12px;">Выберите раздел для редактирования:</p>
+                <select id="editSection" style="width:100%; padding:10px; background:#111; border:1px solid #222; color:#fff; outline:none;">
+                    <option value="uksp">УКСП</option>
+                    <option value="rules">Правила строя</option>
+                    <option value="members">Состав семьи</option>
+                    <option value="family_info">Информация о семье</option>
+                </select>
+                <textarea id="editContent" rows="10" placeholder="Текст раздела"></textarea>
+                <button class="btn" onclick="saveEditContent()">Сохранить изменения</button>
+                <div id="editResult" class="result-msg" style="margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: ИСТОРИЯ ===== -->
+        <div id="page-adminHistory" class="page">
+            <h2>ИСТОРИЯ</h2>
+            <div id="historyList" style="border:1px solid #1a1a1a; padding:16px; background:#050505; max-height:500px; overflow-y:auto;">
+                <p style="color:#444;">История пуста</p>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: СЕМЬИ ===== -->
+        <div id="page-adminFamilies" class="page">
+            <h2>СЕМЬИ</h2>
+            <div style="display:flex; gap:20px; flex-wrap:wrap;">
+                <div style="flex:1; min-width:250px; border:1px solid #1a1a1a; padding:16px; background:#050505;">
+                    <h3 style="color:#44ff44; font-weight:300; letter-spacing:2px; margin-bottom:12px;">СОЮЗНИКИ</h3>
+                    <div id="alliesList"><p style="color:#444;">Нет союзников</p></div>
+                    <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+                        <input type="text" id="newAlly" placeholder="Название семьи" style="flex:1; min-width:120px; padding:8px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
+                        <button class="btn btn-small" onclick="addAlly()" style="width:auto;">Добавить</button>
+                    </div>
+                </div>
+                <div style="flex:1; min-width:250px; border:1px solid #1a1a1a; padding:16px; background:#050505;">
+                    <h3 style="color:#cc0000; font-weight:300; letter-spacing:2px; margin-bottom:12px;">НЕДРУЖЕСТВЕННЫЕ</h3>
+                    <div id="enemiesList"><p style="color:#444;">Нет недружественных семей</p></div>
+                    <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
+                        <input type="text" id="newEnemy" placeholder="Название семьи" style="flex:1; min-width:120px; padding:8px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
+                        <button class="btn btn-small" onclick="addEnemy()" style="width:auto;">Добавить</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- ===== АДМИН: ПОИСК ===== -->
         <div id="page-adminSearch" class="page">
             <h2>ПОИСК ПОЛЬЗОВАТЕЛЯ</h2>
@@ -1076,7 +1377,7 @@
             <h3>Изменить информацию</h3>
             <button class="close-btn" onclick="closeEditModal()">✕</button>
         </div>
-        <input type="text" id="editNick" placeholder="Игровой ник">
+        <input type="text" id="editNick" placeholder="Игровой ник (только буквы)">
         <input type="text" id="editTg" placeholder="Telegram">
         <input type="email" id="editEmail" placeholder="Email">
         <button class="btn" onclick="saveProfile()">Сохранить</button>
@@ -1096,6 +1397,39 @@
         <input type="password" id="newPassword2" placeholder="Повторите новый пароль">
         <button class="btn" onclick="changePassword()">Сменить пароль</button>
         <div id="passwordResult" class="result-msg"></div>
+    </div>
+</div>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО: ЗАЯВКА НА СНЯТИЕ ===== -->
+<div class="modal-overlay" id="requestRemoveModal">
+    <div class="modal-box wide">
+        <div class="modal-header">
+            <h3>Заявка на снятие нарушения</h3>
+            <button class="close-btn" onclick="closeRequestModal('requestRemoveModal')">✕</button>
+        </div>
+        <input type="text" id="rrTarget" placeholder="ID, ник или Telegram (если не для себя)">
+        <textarea id="rrReason" placeholder="Причина нарушения"></textarea>
+        <input type="text" id="rrIssuedBy" placeholder="Кто выдал нарушение">
+        <input type="datetime-local" id="rrIssuedDate" placeholder="Когда выдали">
+        <textarea id="rrRemoveReason" placeholder="Причина снятия"></textarea>
+        <button class="btn" onclick="submitRequestRemove()">Отправить заявку</button>
+        <div id="rrResult" class="result-msg" style="margin-top:10px;"></div>
+    </div>
+</div>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО: ЗАЯВКА НА ВЫДАЧУ ===== -->
+<div class="modal-overlay" id="requestAddModal">
+    <div class="modal-box wide">
+        <div class="modal-header">
+            <h3>Заявка на выдачу нарушения</h3>
+            <button class="close-btn" onclick="closeRequestModal('requestAddModal')">✕</button>
+        </div>
+        <input type="text" id="raTarget" placeholder="ID, ник или Telegram нарушителя">
+        <textarea id="raReason" placeholder="Причина нарушения"></textarea>
+        <input type="datetime-local" id="raDate" placeholder="Дата и время нарушения">
+        <input type="text" id="raPlace" placeholder="Место нарушения">
+        <button class="btn" onclick="submitRequestAdd()">Отправить заявку</button>
+        <div id="raResult" class="result-msg" style="margin-top:10px;"></div>
     </div>
 </div>
 
@@ -1120,6 +1454,19 @@
         </div>
         <p style="color:#aaa; font-size:14px; line-height:1.6;">С вас снято дисциплинарное взыскание. Подробности в разделе <strong style="color:#fff;">«Нарушения»</strong>.</p>
         <button class="btn" onclick="closeResolvedModal()" style="margin-top:12px;">Понятно</button>
+    </div>
+</div>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО: УВЕДОМЛЕНИЯ ===== -->
+<div class="modal-overlay" id="notificationsModal">
+    <div class="modal-box wide">
+        <div class="modal-header">
+            <h3>УВЕДОМЛЕНИЯ</h3>
+            <button class="close-btn" onclick="closeNotifications()">✕</button>
+        </div>
+        <div id="notificationsList">
+            <p style="color:#444;">Нет уведомлений</p>
+        </div>
     </div>
 </div>
 
@@ -1151,9 +1498,33 @@ async function loadDB() {
         if (!db.users) db.users = [];
         if (!db.usedIds) db.usedIds = ['00000', '11111'];
         if (!db.violationCounter) db.violationCounter = 0;
+        if (!db.requests) db.requests = [];
+        if (!db.buildRequests) db.buildRequests = [];
+        if (!db.notifications) db.notifications = [];
+        if (!db.history) db.history = [];
+        if (!db.allies) db.allies = [];
+        if (!db.enemies) db.enemies = [];
+        if (!db.siteContent) {
+            db.siteContent = {
+                uksp: 'Полный текст УКСП...',
+                rules: 'Полный текст правил строя...',
+                members: 'Состав семьи...',
+                family_info: 'Информация о семье...'
+            };
+        }
         return db;
     } catch (e) {
-        db = { users: [], usedIds: ['00000', '11111'], currentSession: null, violationCounter: 0 };
+        db = { 
+            users: [], usedIds: ['00000', '11111'], currentSession: null, violationCounter: 0,
+            requests: [], buildRequests: [], notifications: [], history: [],
+            allies: [], enemies: [],
+            siteContent: {
+                uksp: 'Полный текст УКСП...',
+                rules: 'Полный текст правил строя...',
+                members: 'Состав семьи...',
+                family_info: 'Информация о семье...'
+            }
+        };
         return db;
     }
 }
@@ -1187,16 +1558,51 @@ function generateId() {
 function getUserById(id) { return db.users.find(u => u.id === id); }
 function getUserByNick(nick) { return db.users.find(u => u.gameNick.toLowerCase() === nick.toLowerCase()); }
 function getUserByTg(tg) { return db.users.find(u => u.tgUser.toLowerCase() === tg.toLowerCase()); }
+function findUserByInput(input) {
+    if (!input) return null;
+    let user = getUserById(input);
+    if (!user) user = getUserByNick(input);
+    if (!user) user = getUserByTg(input);
+    return user;
+}
 function isAdmin(u) { return u && u.isAdmin === true; }
 function formatDate(d) {
     if (!d) return '-';
     const dt = new Date(d);
     return dt.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
-
 function getAdminNick(id) {
     const u = getUserById(id);
     return u ? u.gameNick : id;
+}
+function addNotification(userId, title, text, type = 'info') {
+    if (!db.notifications) db.notifications = [];
+    db.notifications.push({
+        id: 'n' + Date.now(),
+        userId: userId,
+        title: title,
+        text: text,
+        type: type,
+        date: new Date().toISOString(),
+        read: false
+    });
+}
+function addHistory(userId, action, details) {
+    if (!db.history) db.history = [];
+    const user = getUserById(userId);
+    db.history.push({
+        id: 'h' + Date.now(),
+        userId: userId,
+        userNick: user ? user.gameNick : 'Неизвестен',
+        action: action,
+        details: details,
+        date: new Date().toISOString()
+    });
+}
+
+function isValidNick(nick) {
+    // только буквы (латиница или кириллица), подчёркивание и дефис
+    return /^[a-zA-Zа-яА-ЯёЁ_\-]+$/.test(nick);
 }
 
 // ================================================================
@@ -1277,6 +1683,10 @@ async function register() {
     
     if (!nick || !tg || !pass || !pass2) {
         err.textContent = 'Заполните все обязательные поля (*)';
+        err.style.display = 'block'; return;
+    }
+    if (!isValidNick(nick)) {
+        err.textContent = 'Ник может содержать только буквы, _ и -';
         err.style.display = 'block'; return;
     }
     if (pass !== pass2) { err.textContent = 'Пароли не совпадают'; err.style.display = 'block'; return; }
@@ -1375,10 +1785,30 @@ function enterMainPage(user) {
     }
     
     checkViolationNotifications(user);
+    updateNotificationBadge();
     loadProfile(user);
     loadViolations(user);
-    if (isAdmin(user)) loadAdminMembers();
+    loadUserRequests();
+    if (isAdmin(user)) {
+        loadAdminMembers();
+        loadAdminRequests();
+        loadAdminBuildRequests();
+        loadHistory();
+        loadFamilies();
+    }
     showPage('profile');
+}
+
+function updateNotificationBadge() {
+    if (!db.notifications) db.notifications = [];
+    const unread = db.notifications.filter(n => !n.read && n.userId === currentUser.id);
+    const badge = document.getElementById('notifBadge');
+    if (unread.length > 0) {
+        badge.style.display = 'inline';
+        badge.textContent = unread.length;
+    } else {
+        badge.style.display = 'none';
+    }
 }
 
 function checkViolationNotifications(user) {
@@ -1388,6 +1818,7 @@ function checkViolationNotifications(user) {
         newViolations.forEach(v => v._notified = true);
         saveDB();
         document.getElementById('violationNotifyModal').classList.add('active');
+        addNotification(user.id, '⚠️ НОВОЕ НАРУШЕНИЕ', 'Вам выписано дисциплинарное взыскание', 'danger');
         showToast('⚠️ НОВОЕ НАРУШЕНИЕ', 'Вам выписано дисциплинарное взыскание', 'danger');
     }
     
@@ -1396,6 +1827,7 @@ function checkViolationNotifications(user) {
         resolvedViolations.forEach(v => v._notifiedResolved = true);
         saveDB();
         document.getElementById('violationResolvedModal').classList.add('active');
+        addNotification(user.id, '✅ НАРУШЕНИЕ СНЯТО', 'С вас снято дисциплинарное взыскание', 'info');
         showToast('✅ НАРУШЕНИЕ СНЯТО', 'С вас снято дисциплинарное взыскание', 'info');
     }
 }
@@ -1462,6 +1894,11 @@ async function saveProfile() {
         res.className = 'result-msg error'; 
         return; 
     }
+    if (!isValidNick(nick)) {
+        res.textContent = 'Ник может содержать только буквы, _ и -';
+        res.className = 'result-msg error';
+        return;
+    }
     
     const nickExists = db.users.find(u => u.id !== currentUser.id && u.gameNick.toLowerCase() === nick.toLowerCase());
     if (nickExists) { 
@@ -1484,6 +1921,7 @@ async function saveProfile() {
     loadProfile(currentUser);
     res.textContent = '✅ Информация обновлена';
     res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Обновление профиля', 'Изменены данные профиля');
     setTimeout(() => closeEditModal(), 800);
 }
 
@@ -1546,6 +1984,7 @@ async function changePassword() {
     await saveDB();
     res.textContent = '✅ Пароль успешно изменён!';
     res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Смена пароля', 'Пароль успешно изменён');
     showToast('✅ ПАРОЛЬ ИЗМЕНЁН', 'Ваш пароль успешно обновлён', 'info');
     setTimeout(() => closePasswordModal(), 1000);
 }
@@ -1578,6 +2017,237 @@ function loadViolations(user) {
         `;
     });
     container.innerHTML = html;
+}
+
+// ================================================================
+// ЗАЯВКИ
+// ================================================================
+
+function openRequestRemove() {
+    document.getElementById('requestRemoveModal').classList.add('active');
+    document.getElementById('rrTarget').value = '';
+    document.getElementById('rrReason').value = '';
+    document.getElementById('rrIssuedBy').value = '';
+    document.getElementById('rrIssuedDate').value = '';
+    document.getElementById('rrRemoveReason').value = '';
+    document.getElementById('rrResult').textContent = '';
+    document.getElementById('rrResult').className = 'result-msg';
+}
+
+function openRequestAdd() {
+    document.getElementById('requestAddModal').classList.add('active');
+    document.getElementById('raTarget').value = '';
+    document.getElementById('raReason').value = '';
+    document.getElementById('raDate').value = '';
+    document.getElementById('raPlace').value = '';
+    document.getElementById('raResult').textContent = '';
+    document.getElementById('raResult').className = 'result-msg';
+}
+
+function closeRequestModal(id) {
+    document.getElementById(id).classList.remove('active');
+}
+
+async function submitRequestRemove() {
+    const target = document.getElementById('rrTarget').value.trim();
+    const reason = document.getElementById('rrReason').value.trim();
+    const issuedBy = document.getElementById('rrIssuedBy').value.trim();
+    const issuedDate = document.getElementById('rrIssuedDate').value;
+    const removeReason = document.getElementById('rrRemoveReason').value.trim();
+    const res = document.getElementById('rrResult');
+    
+    if (!reason || !issuedBy || !issuedDate || !removeReason) {
+        res.textContent = 'Заполните все поля';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    if (!db.requests) db.requests = [];
+    const request = {
+        id: 'r' + Date.now(),
+        type: 'remove',
+        userId: currentUser.id,
+        userNick: currentUser.gameNick,
+        target: target || currentUser.id,
+        targetNick: target ? (findUserByInput(target)?.gameNick || target) : currentUser.gameNick,
+        reason: reason,
+        issuedBy: issuedBy,
+        issuedDate: issuedDate,
+        removeReason: removeReason,
+        status: 'pending',
+        date: new Date().toISOString(),
+        response: null
+    };
+    db.requests.push(request);
+    await saveDB();
+    res.textContent = '✅ Заявка отправлена! Ожидайте ответа администрации.';
+    res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Заявка на снятие нарушения', `Заявка на снятие нарушения для ${request.targetNick}`);
+    showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Ваша заявка на снятие нарушения отправлена', 'info');
+    setTimeout(() => closeRequestModal('requestRemoveModal'), 1500);
+    loadUserRequests();
+}
+
+async function submitRequestAdd() {
+    const target = document.getElementById('raTarget').value.trim();
+    const reason = document.getElementById('raReason').value.trim();
+    const date = document.getElementById('raDate').value;
+    const place = document.getElementById('raPlace').value.trim();
+    const res = document.getElementById('raResult');
+    
+    if (!target || !reason || !date || !place) {
+        res.textContent = 'Заполните все поля';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    const targetUser = findUserByInput(target);
+    if (!targetUser) {
+        res.textContent = 'Пользователь не найден';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    if (!db.requests) db.requests = [];
+    const request = {
+        id: 'r' + Date.now(),
+        type: 'add',
+        userId: currentUser.id,
+        userNick: currentUser.gameNick,
+        targetId: targetUser.id,
+        targetNick: targetUser.gameNick,
+        reason: reason,
+        date: date,
+        place: place,
+        status: 'pending',
+        requestDate: new Date().toISOString(),
+        response: null
+    };
+    db.requests.push(request);
+    await saveDB();
+    res.textContent = '✅ Заявка отправлена! Есть 5 минут на отправку фрапса строя ОЗГЗ.';
+    res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Заявка на выдачу нарушения', `Заявка на выдачу нарушения для ${targetUser.gameNick}`);
+    showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Не забудьте отправить фрапс строя ОЗГЗ!', 'info');
+    setTimeout(() => closeRequestModal('requestAddModal'), 2000);
+    loadUserRequests();
+}
+
+function loadUserRequests() {
+    if (!currentUser) return;
+    const container = document.getElementById('userRequestsList');
+    if (!db.requests) db.requests = [];
+    const userRequests = db.requests.filter(r => r.userId === currentUser.id);
+    if (userRequests.length === 0) {
+        container.innerHTML = '<p style="color:#444;">У вас нет заявок</p>';
+        return;
+    }
+    let html = '';
+    userRequests.sort((a, b) => new Date(b.date || b.requestDate) - new Date(a.date || a.requestDate));
+    userRequests.forEach(r => {
+        const statusText = r.status === 'pending' ? '⏳ Ожидает' : r.status === 'approved' ? '✅ Одобрена' : '❌ Отклонена';
+        const statusColor = r.status === 'pending' ? '#ffaa00' : r.status === 'approved' ? '#44ff44' : '#cc0000';
+        const typeText = r.type === 'remove' ? 'Снятие нарушения' : 'Выдача нарушения';
+        html += `
+            <div class="request-item">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                    <span style="color:#fff;">${typeText}</span>
+                    <span style="color:${statusColor};">${statusText}</span>
+                </div>
+                <div class="req-text">${r.type === 'remove' ? r.reason : r.reason}</div>
+                <div class="req-meta">${formatDate(r.date || r.requestDate)}</div>
+                ${r.response ? `<div class="req-text" style="color:#555;">Ответ: ${r.response}</div>` : ''}
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// ================================================================
+// ЗАЯВКА НА СТРОЙ
+// ================================================================
+
+async function submitBuildRequest() {
+    const start = document.getElementById('buildStart').value;
+    const end = document.getElementById('buildEnd').value;
+    const topic = document.getElementById('buildTopic').value.trim();
+    const required = document.getElementById('buildRequired').value.trim();
+    const forbidden = document.getElementById('buildForbidden').value.trim();
+    const res = document.getElementById('buildResult');
+    
+    if (!start || !end || !topic || !required || !forbidden) {
+        res.textContent = 'Заполните все поля';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    if (new Date(end) <= new Date(start)) {
+        res.textContent = 'Время окончания должно быть позже времени начала';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    if (!db.buildRequests) db.buildRequests = [];
+    const request = {
+        id: 'b' + Date.now(),
+        userId: currentUser.id,
+        userNick: currentUser.gameNick,
+        start: start,
+        end: end,
+        topic: topic,
+        required: required.split(',').map(s => s.trim()),
+        forbidden: forbidden.split(',').map(s => s.trim()),
+        status: 'pending',
+        date: new Date().toISOString(),
+        response: null
+    };
+    db.buildRequests.push(request);
+    await saveDB();
+    res.textContent = '✅ Заявка отправлена! Не забудьте прочитать правила строя.';
+    res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Заявка на строй', `Заявка на строй: ${topic}`);
+    showToast('✅ ЗАЯВКА НА СТРОЙ', 'Заявка отправлена администрации', 'info');
+    document.getElementById('buildStart').value = '';
+    document.getElementById('buildEnd').value = '';
+    document.getElementById('buildTopic').value = '';
+    document.getElementById('buildRequired').value = '';
+    document.getElementById('buildForbidden').value = '';
+}
+
+// ================================================================
+// УВЕДОМЛЕНИЯ
+// ================================================================
+
+function openNotifications() {
+    if (!db.notifications) db.notifications = [];
+    const userNotifs = db.notifications.filter(n => n.userId === currentUser.id);
+    userNotifs.forEach(n => n.read = true);
+    saveDB();
+    updateNotificationBadge();
+    
+    const container = document.getElementById('notificationsList');
+    if (userNotifs.length === 0) {
+        container.innerHTML = '<p style="color:#444;">Нет уведомлений</p>';
+    } else {
+        let html = '';
+        userNotifs.sort((a, b) => new Date(b.date) - new Date(a.date));
+        userNotifs.forEach(n => {
+            const color = n.type === 'danger' ? '#cc0000' : '#44ff44';
+            html += `
+                <div style="border-bottom:1px solid #1a1a1a; padding:10px 0;">
+                    <div style="color:${color};">${n.title}</div>
+                    <div style="color:#aaa; font-size:13px;">${n.text}</div>
+                    <div style="color:#444; font-size:11px;">${formatDate(n.date)}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+    document.getElementById('notificationsModal').classList.add('active');
+}
+
+function closeNotifications() {
+    document.getElementById('notificationsModal').classList.remove('active');
 }
 
 // ================================================================
@@ -1656,6 +2326,8 @@ async function adminAddViolation() {
     await saveDB();
     res.textContent = `✅ Нарушение выдано ${pendingAddUser.gameNick}`;
     res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Выдача нарушения', `Выдано нарушение ${pendingAddUser.gameNick}: ${type}`);
+    addNotification(pendingAddUser.id, '⚠️ НОВОЕ НАРУШЕНИЕ', `Вам выписано нарушение: ${type}`, 'danger');
     document.getElementById('adminAddType').value = '';
     document.getElementById('adminAddDesc').value = '';
     if (db.currentSession === pendingAddUser.id) {
@@ -1729,6 +2401,8 @@ async function confirmRemove() {
     pendingRemoveViolation._notifiedResolved = false;
     await saveDB();
     document.getElementById('adminRemoveList').innerHTML = `<p style="color:#fff;">✅ Нарушение снято у ${pendingRemoveUser.gameNick}</p>`;
+    addHistory(currentUser.id, 'Снятие нарушения', `Снято нарушение у ${pendingRemoveUser.gameNick}: ${reason}`);
+    addNotification(pendingRemoveUser.id, '✅ НАРУШЕНИЕ СНЯТО', `С вас снято нарушение. Причина: ${reason}`, 'info');
     if (db.currentSession === pendingRemoveUser.id) {
         showToast('✅ НАРУШЕНИЕ СНЯТО', 'С вас снято дисциплинарное взыскание', 'info');
         document.getElementById('violationResolvedModal').classList.add('active');
@@ -1810,6 +2484,8 @@ async function adminBanUser() {
     await saveDB();
     res.textContent = `✅ ${pendingBanUser.gameNick} заблокирован до ${formatDate(unbanDate)}`;
     res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Блокировка', `Заблокирован ${pendingBanUser.gameNick}: ${reason}`);
+    addNotification(pendingBanUser.id, '🔴 ВЫ ЗАБЛОКИРОВАНЫ', `Причина: ${reason}. Разблокировка: ${formatDate(unbanDate)}`, 'danger');
     document.getElementById('adminBanReason').value = '';
     document.getElementById('adminBanUnbanDate').value = '';
     pendingBanUser = null;
@@ -1867,6 +2543,8 @@ async function adminUnbanUser() {
     
     res.textContent = `✅ ${pendingUnbanUser.gameNick} разблокирован досрочно`;
     res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Досрочный разбан', `Разблокирован ${pendingUnbanUser.gameNick}: ${reason || 'Досрочный разбан'}`);
+    addNotification(pendingUnbanUser.id, '✅ ВЫ РАЗБЛОКИРОВАНЫ', 'Вы разблокированы досрочно', 'info');
     
     if (db.currentSession === pendingUnbanUser.id) {
         showToast('✅ ДОСРОЧНЫЙ РАЗБАН', 'Вы разблокированы досрочно', 'info');
@@ -1876,6 +2554,237 @@ async function adminUnbanUser() {
     pendingUnbanUser = null;
     document.getElementById('adminUnbanUserInfo').style.display = 'none';
     loadAdminMembers();
+}
+
+// ================================================================
+// АДМИН: ЗАЯВКИ (ОТВЕТЫ)
+// ================================================================
+
+function loadAdminRequests() {
+    const container = document.getElementById('adminRequestsList');
+    if (!db.requests) db.requests = [];
+    const pending = db.requests.filter(r => r.status === 'pending');
+    if (pending.length === 0) {
+        container.innerHTML = '<p style="color:#444;">Нет активных заявок</p>';
+        return;
+    }
+    let html = '';
+    pending.forEach(r => {
+        const typeText = r.type === 'remove' ? 'Снятие нарушения' : 'Выдача нарушения';
+        html += `
+            <div class="request-item">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                    <span style="color:#fff;">${typeText}</span>
+                    <span style="color:#ffaa00;">⏳ Ожидает</span>
+                </div>
+                <div class="req-text">От: ${r.userNick} → ${r.targetNick || r.target}</div>
+                <div class="req-text" style="color:#aaa;">${r.type === 'remove' ? r.reason : r.reason}</div>
+                <div class="req-meta">${formatDate(r.date || r.requestDate)}</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                    <button class="btn btn-small btn-green" onclick="respondRequest('${r.id}', 'approved')" style="width:auto;">Принять</button>
+                    <button class="btn btn-small btn-danger" onclick="respondRequest('${r.id}', 'rejected')" style="width:auto;">Отклонить</button>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+async function respondRequest(requestId, status) {
+    const request = db.requests.find(r => r.id === requestId);
+    if (!request) return;
+    
+    const reason = prompt(`Введите причину ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
+    if (reason === null) return;
+    
+    request.status = status;
+    request.response = reason;
+    await saveDB();
+    
+    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
+    addNotification(request.userId, `📩 ЗАЯВКА ${statusText.toUpperCase()}`, `Ваша заявка ${statusText}. Причина: ${reason}`, status === 'approved' ? 'info' : 'danger');
+    addHistory(currentUser.id, `Заявка ${statusText}`, `Заявка ${requestId} ${statusText}: ${reason}`);
+    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка ${statusText}`, status === 'approved' ? 'info' : 'danger');
+    
+    loadAdminRequests();
+    loadUserRequests();
+}
+
+// ================================================================
+// АДМИН: ЗАЯВКИ НА СТРОЙ
+// ================================================================
+
+function loadAdminBuildRequests() {
+    const container = document.getElementById('adminBuildList');
+    if (!db.buildRequests) db.buildRequests = [];
+    const pending = db.buildRequests.filter(r => r.status === 'pending');
+    if (pending.length === 0) {
+        container.innerHTML = '<p style="color:#444;">Нет заявок на строй</p>';
+        return;
+    }
+    let html = '';
+    pending.forEach(r => {
+        html += `
+            <div class="request-item">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                    <span style="color:#fff;">${r.topic}</span>
+                    <span style="color:#ffaa00;">⏳ Ожидает</span>
+                </div>
+                <div class="req-text">От: ${r.userNick}</div>
+                <div class="req-text" style="color:#aaa;">Начало: ${formatDate(r.start)} · Окончание: ${formatDate(r.end)}</div>
+                <div class="req-text" style="color:#555;">Обязаны: ${r.required.join(', ')}</div>
+                <div class="req-text" style="color:#555;">Запрещено: ${r.forbidden.join(', ')}</div>
+                <div class="req-meta">${formatDate(r.date)}</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                    <button class="btn btn-small btn-green" onclick="respondBuildRequest('${r.id}', 'approved')" style="width:auto;">Одобрить</button>
+                    <button class="btn btn-small btn-danger" onclick="respondBuildRequest('${r.id}', 'rejected')" style="width:auto;">Отклонить</button>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+async function respondBuildRequest(requestId, status) {
+    const request = db.buildRequests.find(r => r.id === requestId);
+    if (!request) return;
+    
+    const comment = prompt(`Введите комментарий для ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
+    if (comment === null) return;
+    
+    request.status = status;
+    request.response = comment;
+    await saveDB();
+    
+    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
+    addNotification(request.userId, `📩 ЗАЯВКА НА СТРОЙ ${statusText.toUpperCase()}`, `Ваша заявка на строй ${statusText}. Комментарий: ${comment}`, status === 'approved' ? 'info' : 'danger');
+    addHistory(currentUser.id, `Заявка на строй ${statusText}`, `Заявка ${requestId} ${statusText}: ${comment}`);
+    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка на строй ${statusText}`, status === 'approved' ? 'info' : 'danger');
+    
+    loadAdminBuildRequests();
+}
+
+// ================================================================
+// АДМИН: ИЗМЕНИТЬ ИНФОРМАЦИЮ
+// ================================================================
+
+async function saveEditContent() {
+    const section = document.getElementById('editSection').value;
+    const content = document.getElementById('editContent').value;
+    const res = document.getElementById('editResult');
+    
+    if (!db.siteContent) db.siteContent = {};
+    db.siteContent[section] = content;
+    await saveDB();
+    res.textContent = '✅ Информация обновлена';
+    res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Изменение информации сайта', `Обновлён раздел: ${section}`);
+    showToast('✅ ИНФОРМАЦИЯ ОБНОВЛЕНА', `Раздел ${section} обновлён`, 'info');
+}
+
+// ================================================================
+// АДМИН: ИСТОРИЯ
+// ================================================================
+
+function loadHistory() {
+    const container = document.getElementById('historyList');
+    if (!db.history || db.history.length === 0) {
+        container.innerHTML = '<p style="color:#444;">История пуста</p>';
+        return;
+    }
+    let html = '';
+    db.history.slice(-50).reverse().forEach(h => {
+        html += `
+            <div style="border-bottom:1px solid #1a1a1a; padding:6px 0; color:#aaa; font-size:13px;">
+                <span style="color:#fff;">${h.userNick}</span> · ${h.action}
+                <span style="color:#444; font-size:11px; display:block;">${h.details} · ${formatDate(h.date)}</span>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// ================================================================
+// АДМИН: СЕМЬИ
+// ================================================================
+
+function loadFamilies() {
+    if (!db.allies) db.allies = [];
+    if (!db.enemies) db.enemies = [];
+    
+    const alliesContainer = document.getElementById('alliesList');
+    if (db.allies.length === 0) {
+        alliesContainer.innerHTML = '<p style="color:#444;">Нет союзников</p>';
+    } else {
+        let html = '';
+        db.allies.forEach((a, i) => {
+            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #1a1a1a;">
+                <span style="color:#aaa;">${a}</span>
+                <button class="btn btn-small btn-danger" onclick="removeAlly(${i})" style="width:auto; padding:2px 10px; font-size:10px;">✕</button>
+            </div>`;
+        });
+        alliesContainer.innerHTML = html;
+    }
+    
+    const enemiesContainer = document.getElementById('enemiesList');
+    if (db.enemies.length === 0) {
+        enemiesContainer.innerHTML = '<p style="color:#444;">Нет недружественных семей</p>';
+    } else {
+        let html = '';
+        db.enemies.forEach((e, i) => {
+            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #1a1a1a;">
+                <span style="color:#aaa;">${e}</span>
+                <button class="btn btn-small btn-danger" onclick="removeEnemy(${i})" style="width:auto; padding:2px 10px; font-size:10px;">✕</button>
+            </div>`;
+        });
+        enemiesContainer.innerHTML = html;
+    }
+}
+
+async function addAlly() {
+    const name = document.getElementById('newAlly').value.trim();
+    if (!name) { showToast('Ошибка', 'Введите название семьи', 'danger'); return; }
+    if (!db.allies) db.allies = [];
+    if (db.allies.includes(name)) { showToast('Ошибка', 'Такая семья уже в списке', 'danger'); return; }
+    db.allies.push(name);
+    await saveDB();
+    document.getElementById('newAlly').value = '';
+    loadFamilies();
+    addHistory(currentUser.id, 'Добавление союзника', `Добавлена семья: ${name}`);
+    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в союзники`, 'info');
+}
+
+async function removeAlly(index) {
+    if (!db.allies) return;
+    const name = db.allies[index];
+    db.allies.splice(index, 1);
+    await saveDB();
+    loadFamilies();
+    addHistory(currentUser.id, 'Удаление союзника', `Удалена семья: ${name}`);
+    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из союзников`, 'info');
+}
+
+async function addEnemy() {
+    const name = document.getElementById('newEnemy').value.trim();
+    if (!name) { showToast('Ошибка', 'Введите название семьи', 'danger'); return; }
+    if (!db.enemies) db.enemies = [];
+    if (db.enemies.includes(name)) { showToast('Ошибка', 'Такая семья уже в списке', 'danger'); return; }
+    db.enemies.push(name);
+    await saveDB();
+    document.getElementById('newEnemy').value = '';
+    loadFamilies();
+    addHistory(currentUser.id, 'Добавление недружественной семьи', `Добавлена семья: ${name}`);
+    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
+}
+
+async function removeEnemy(index) {
+    if (!db.enemies) return;
+    const name = db.enemies[index];
+    db.enemies.splice(index, 1);
+    await saveDB();
+    loadFamilies();
+    addHistory(currentUser.id, 'Удаление недружественной семьи', `Удалена семья: ${name}`);
+    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из недружественных`, 'info');
 }
 
 // ================================================================
