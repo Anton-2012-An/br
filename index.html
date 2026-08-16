@@ -597,6 +597,130 @@
         }
         
         /* ============================================================
+           ЗАПЛАНИРОВАННЫЕ СТРОИ
+           ============================================================ */
+        .build-item {
+            border: 1px solid #1a1a1a;
+            padding: 16px 20px;
+            margin: 8px 0;
+            background: #050505;
+            border-left: 2px solid #44ff44;
+        }
+        .build-item .build-topic {
+            color: #fff;
+            font-size: 15px;
+            font-weight: 500;
+            letter-spacing: 1px;
+        }
+        .build-item .build-meta {
+            color: #444;
+            font-size: 12px;
+            margin: 4px 0;
+        }
+        .build-item .build-meta strong {
+            color: #aaa;
+            font-weight: 400;
+        }
+        .build-item .build-details {
+            color: #666;
+            font-size: 13px;
+            margin: 4px 0;
+        }
+        .build-item .build-organizer {
+            color: #555;
+            font-size: 12px;
+            margin-top: 6px;
+        }
+        .build-item .build-organizer strong {
+            color: #888;
+            font-weight: 400;
+        }
+        .build-item .build-status {
+            display: inline-block;
+            padding: 2px 12px;
+            background: #00cc44;
+            color: #000;
+            font-size: 10px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            margin-top: 6px;
+        }
+        
+        /* ============================================================
+           ДИНАМИЧЕСКИЕ РАЗДЕЛЫ
+           ============================================================ */
+        .dynamic-page {
+            border: 1px solid #1a1a1a;
+            padding: 24px;
+            background: #050505;
+            margin-bottom: 16px;
+        }
+        .dynamic-page .page-title {
+            font-size: 1.2rem;
+            font-weight: 300;
+            letter-spacing: 3px;
+            color: #fff;
+            border-bottom: 1px solid #1a1a1a;
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+        }
+        .dynamic-page .page-content {
+            color: #aaa;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .dynamic-page .page-content p {
+            margin: 6px 0;
+        }
+        .dynamic-page .page-meta {
+            color: #444;
+            font-size: 11px;
+            margin-top: 12px;
+            border-top: 1px solid #1a1a1a;
+            padding-top: 10px;
+        }
+        
+        /* ============================================================
+           ФОРМЫ ЗАЯВОК В ДИНАМИЧЕСКИХ РАЗДЕЛАХ
+           ============================================================ */
+        .request-form .form-field {
+            margin: 10px 0;
+        }
+        .request-form .form-field label {
+            display: block;
+            color: #aaa;
+            font-size: 13px;
+            margin-bottom: 4px;
+        }
+        .request-form .form-field input,
+        .request-form .form-field select,
+        .request-form .form-field textarea {
+            width: 100%;
+            padding: 10px 12px;
+            background: #111;
+            border: 1px solid #222;
+            color: #fff;
+            font-size: 13px;
+            outline: none;
+            transition: border 0.3s;
+            border-radius: 0;
+            font-family: inherit;
+        }
+        .request-form .form-field input:focus,
+        .request-form .form-field select:focus,
+        .request-form .form-field textarea:focus {
+            border-color: #fff;
+        }
+        .request-form .form-field textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        .request-form .form-field .required {
+            color: #cc0000;
+            margin-left: 4px;
+        }
+        
+        /* ============================================================
            НАРУШЕНИЯ
            ============================================================ */
         .violation-item {
@@ -701,7 +825,7 @@
         }
         .modal-box {
             width: 100%;
-            max-width: 520px;
+            max-width: 600px;
             max-height: 85vh;
             overflow-y: auto;
             background: #0a0a0a;
@@ -710,7 +834,10 @@
             animation: modalIn 0.3s ease;
         }
         .modal-box.wide {
-            max-width: 700px;
+            max-width: 750px;
+        }
+        .modal-box.full {
+            max-width: 900px;
         }
         @keyframes modalIn {
             from { opacity: 0; transform: scale(0.98); }
@@ -758,7 +885,8 @@
             font-family: inherit;
         }
         .modal-box input:focus,
-        .modal-box textarea:focus {
+        .modal-box textarea:focus,
+        .modal-box select:focus {
             border-color: #fff;
         }
         .modal-box textarea {
@@ -804,6 +932,25 @@
             color: #aaa;
             font-size: 13px;
             margin: 4px 0;
+        }
+        .modal-box .field-builder {
+            border: 1px solid #222;
+            padding: 12px 16px;
+            margin: 8px 0;
+            background: #050505;
+        }
+        .modal-box .field-builder .field-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-box .field-builder .field-header .field-label {
+            color: #aaa;
+            font-size: 13px;
+        }
+        .modal-box .field-builder .field-header .field-type {
+            color: #444;
+            font-size: 11px;
         }
         
         /* ============================================================
@@ -1023,7 +1170,9 @@
         <button data-page="violations" onclick="showPage('violations')">Нарушения</button>
         <button data-page="requests" onclick="showPage('requests')">Заявки</button>
         <button data-page="build" onclick="showPage('build')">Провести строй</button>
+        <button data-page="scheduled" onclick="showPage('scheduled')">Запланированные строи</button>
         <button data-page="families" onclick="showPage('families')">Семьи</button>
+        <button data-page="dynamic" onclick="showPage('dynamic')">Разделы</button>
         
         <div class="admin-section" id="adminSection" style="display:none;">
             <div class="label">УПРАВЛЕНИЕ</div>
@@ -1036,6 +1185,7 @@
             <button data-page="adminRequests" onclick="showPage('adminRequests')">Заявки (ответы)</button>
             <button data-page="adminBuild" onclick="showPage('adminBuild')">Заявки на строй</button>
             <button data-page="adminEdit" onclick="showPage('adminEdit')">Изменить информацию</button>
+            <button data-page="adminAddPage" onclick="showPage('adminAddPage')">➕ Добавить раздел</button>
             <button data-page="adminHistory" onclick="showPage('adminHistory')">История</button>
             <button data-page="adminFamilies" onclick="showPage('adminFamilies')">Управление семьями</button>
             <button data-page="adminSearch" onclick="showPage('adminSearch')">Поиск</button>
@@ -1121,6 +1271,14 @@
             </div>
         </div>
 
+        <!-- ===== ЗАПЛАНИРОВАННЫЕ СТРОИ ===== -->
+        <div id="page-scheduled" class="page">
+            <h2>ЗАПЛАНИРОВАННЫЕ СТРОИ</h2>
+            <div id="scheduledBuildsList">
+                <p style="color:#444;">Нет запланированных строев</p>
+            </div>
+        </div>
+
         <!-- ===== СЕМЬИ (для всех) ===== -->
         <div id="page-families" class="page">
             <h2>СЕМЬИ</h2>
@@ -1137,6 +1295,14 @@
                         <p class="empty">Нет недружественных семей</p>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <!-- ===== ДИНАМИЧЕСКИЕ РАЗДЕЛЫ ===== -->
+        <div id="page-dynamic" class="page">
+            <h2>РАЗДЕЛЫ</h2>
+            <div id="dynamicPagesList">
+                <p style="color:#444;">Нет доступных разделов</p>
             </div>
         </div>
 
@@ -1240,9 +1406,23 @@
                     <option value="members">Состав семьи</option>
                     <option value="family_info">Информация о семье</option>
                 </select>
-                <textarea id="editContent" rows="10" placeholder="Текст раздела"></textarea>
+                <div style="margin:10px 0; border:1px solid #1a1a1a; padding:12px; background:#050505; max-height:300px; overflow-y:auto;">
+                    <p style="color:#555; font-size:11px; margin-bottom:8px;">ТЕКУЩЕЕ СОДЕРЖИМОЕ:</p>
+                    <div id="editContentPreview" style="color:#aaa; font-size:13px; white-space:pre-wrap; word-wrap:break-word;"></div>
+                </div>
+                <textarea id="editContent" rows="10" placeholder="Введите новый текст раздела здесь..."></textarea>
                 <button class="btn" onclick="saveEditContent()">Сохранить изменения</button>
                 <div id="editResult" class="result-msg" style="margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: ДОБАВИТЬ РАЗДЕЛ ===== -->
+        <div id="page-adminAddPage" class="page">
+            <h2>➕ ДОБАВИТЬ РАЗДЕЛ</h2>
+            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
+                <p style="color:#aaa; margin-bottom:16px;">Создайте новый раздел для сайта.</p>
+                <button class="btn" onclick="openAddPageModal()">Создать новый раздел</button>
+                <div id="addPageResult" class="result-msg" style="margin-top:10px;"></div>
             </div>
         </div>
 
@@ -1353,6 +1533,63 @@
     </div>
 </div>
 
+<!-- ===== МОДАЛЬНОЕ ОКНО: ДОБАВИТЬ РАЗДЕЛ ===== -->
+<div class="modal-overlay" id="addPageModal">
+    <div class="modal-box full">
+        <div class="modal-header">
+            <h3>➕ Добавить новый раздел</h3>
+            <button class="close-btn" onclick="closeAddPageModal()">✕</button>
+        </div>
+        
+        <!-- Шаг 1: Выбор типа -->
+        <div id="addPageStep1">
+            <p style="color:#aaa; margin-bottom:12px;">Выберите тип раздела:</p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn btn-small" onclick="addPageSelectType('public')" style="width:auto;">Публичный</button>
+                <button class="btn btn-small btn-outline" onclick="addPageSelectType('admin')" style="width:auto;">Для админов</button>
+            </div>
+            <div id="addPageTypeResult" class="result-msg" style="margin-top:10px;"></div>
+        </div>
+        
+        <!-- Шаг 2: Выбор подтипа (для публичных) -->
+        <div id="addPageStep2" style="display:none;">
+            <p style="color:#aaa; margin-bottom:12px;">Выберите тип публичного раздела:</p>
+            <div style="display:flex; gap:12px; flex-wrap:wrap;">
+                <button class="btn btn-small" onclick="addPageSelectSubtype('info')" style="width:auto;">Информационный</button>
+                <button class="btn btn-small btn-outline" onclick="addPageSelectSubtype('request')" style="width:auto;">С заявками</button>
+            </div>
+            <div id="addPageSubtypeResult" class="result-msg" style="margin-top:10px;"></div>
+        </div>
+        
+        <!-- Шаг 3: Заполнение -->
+        <div id="addPageStep3" style="display:none;">
+            <div style="margin-bottom:12px;">
+                <label style="color:#aaa; font-size:13px;">Название раздела <span style="color:#cc0000;">*</span></label>
+                <input type="text" id="addPageName" placeholder="Введите название раздела">
+            </div>
+            
+            <div id="addPageInfoFields" style="display:none;">
+                <label style="color:#aaa; font-size:13px;">Содержание <span style="color:#cc0000;">*</span></label>
+                <textarea id="addPageContent" rows="12" placeholder="Введите текст раздела..."></textarea>
+            </div>
+            
+            <div id="addPageRequestFields" style="display:none;">
+                <p style="color:#aaa; font-size:13px; margin-bottom:10px;">Конструктор полей для заявок:</p>
+                <div id="requestFieldsBuilder">
+                    <!-- Поля добавляются сюда -->
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
+                    <button class="btn btn-small btn-secondary" onclick="addRequestField('text')" style="width:auto;">➕ Поле ввода</button>
+                    <button class="btn btn-small btn-secondary" onclick="addRequestField('select')" style="width:auto;">➕ Выбор</button>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="publishNewPage()" style="margin-top:16px;">📢 Опубликовать раздел</button>
+            <div id="addPageResult" class="result-msg" style="margin-top:10px;"></div>
+        </div>
+    </div>
+</div>
+
 <!-- ===== МОДАЛЬНОЕ ОКНО: УВЕДОМЛЕНИЕ О НАРУШЕНИИ ===== -->
 <div class="modal-overlay" id="violationNotifyModal">
     <div class="modal-box">
@@ -1398,13 +1635,21 @@
 const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/6a80d5fbf5f4af5e291b0df5';
 const MASTER_KEY = '$2a$10$/lKNp2cCj9lOUJxhWQ0uI./vRHpINQt.MWizWPJOnRinj62u0JIgO';
 
+const PAGES_URL = 'https://api.jsonbin.io/v3/b/6a81fabfda38895dfeec240d';
+const PAGES_KEY = '$2a$10$/lKNp2cCj9lOUJxhWQ0uI./vRHpINQt.MWizWPJOnRinj62u0JIgO';
+
 let db = null;
+let pagesDb = null;
 let currentUser = null;
 let pendingAddUser = null;
 let pendingRemoveUser = null;
 let pendingRemoveViolation = null;
 let pendingBanUser = null;
 let pendingUnbanUser = null;
+
+let addPageType = null;
+let addPageSubtype = null;
+let addPageFields = [];
 
 // ================================================================
 // РАБОТА С JSONBIN
@@ -1420,6 +1665,7 @@ async function loadDB() {
         if (!db.violationCounter) db.violationCounter = 0;
         if (!db.requests) db.requests = [];
         if (!db.buildRequests) db.buildRequests = [];
+        if (!db.scheduledBuilds) db.scheduledBuilds = [];
         if (!db.notifications) db.notifications = [];
         if (!db.history) db.history = [];
         if (!db.allies) db.allies = [];
@@ -1436,7 +1682,7 @@ async function loadDB() {
     } catch (e) {
         db = { 
             users: [], usedIds: ['00000', '11111'], currentSession: null, violationCounter: 0,
-            requests: [], buildRequests: [], notifications: [], history: [],
+            requests: [], buildRequests: [], scheduledBuilds: [], notifications: [], history: [],
             allies: [], enemies: [],
             siteContent: {
                 uksp: 'Полный текст УКСП...',
@@ -1455,6 +1701,32 @@ async function saveDB() {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY },
             body: JSON.stringify(db)
+        });
+        return true;
+    } catch (e) { return false; }
+}
+
+async function loadPagesDB() {
+    try {
+        const res = await fetch(PAGES_URL, { headers: { 'X-Master-Key': PAGES_KEY } });
+        const data = await res.json();
+        pagesDb = data.record;
+        if (!pagesDb.publicPages) pagesDb.publicPages = [];
+        if (!pagesDb.adminPages) pagesDb.adminPages = [];
+        if (!pagesDb.pageCounter) pagesDb.pageCounter = 0;
+        return pagesDb;
+    } catch (e) {
+        pagesDb = { publicPages: [], adminPages: [], pageCounter: 0 };
+        return pagesDb;
+    }
+}
+
+async function savePagesDB() {
+    try {
+        await fetch(PAGES_URL, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'X-Master-Key': PAGES_KEY },
+            body: JSON.stringify(pagesDb)
         });
         return true;
     } catch (e) { return false; }
@@ -1490,6 +1762,11 @@ function formatDate(d) {
     if (!d) return '-';
     const dt = new Date(d);
     return dt.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
+}
+function formatDateShort(d) {
+    if (!d) return '-';
+    const dt = new Date(d);
+    return dt.toLocaleString('ru-RU', { day: '2-digit', month: '2-digit', hour: '2-digit', minute: '2-digit' });
 }
 function getAdminNick(id) {
     const u = getUserById(id);
@@ -1552,6 +1829,7 @@ function showToast(title, text, type = 'info') {
 
 async function init() {
     await loadDB();
+    await loadPagesDB();
     const sessionId = localStorage.getItem('nightmare_session');
     if (sessionId) {
         const user = getUserById(sessionId);
@@ -1708,8 +1986,10 @@ function enterMainPage(user) {
     loadProfile(user);
     loadViolations(user);
     loadUserRequests();
+    loadScheduledBuilds();
     loadFamiliesDisplay();
     loadSiteContent();
+    loadDynamicPages();
     if (isAdmin(user)) {
         loadAdminMembers();
         loadAdminRequests();
@@ -1781,23 +2061,135 @@ function showPage(name) {
 function loadSiteContent() {
     if (!db.siteContent) return;
     
-    // УКСП
     const ukspEl = document.getElementById('ukspContent');
     if (db.siteContent.uksp) {
         ukspEl.innerHTML = db.siteContent.uksp;
     }
     
-    // Правила строя
     const rulesEl = document.getElementById('rulesContent');
     if (db.siteContent.rules) {
         rulesEl.innerHTML = db.siteContent.rules;
     }
     
-    // Состав семьи
     const membersEl = document.getElementById('membersContent');
     if (db.siteContent.members) {
         membersEl.innerHTML = db.siteContent.members;
     }
+}
+
+// ================================================================
+// ДИНАМИЧЕСКИЕ РАЗДЕЛЫ
+// ================================================================
+
+function loadDynamicPages() {
+    const container = document.getElementById('dynamicPagesList');
+    if (!pagesDb) return;
+    
+    let allPages = [];
+    
+    // Публичные страницы
+    if (pagesDb.publicPages) {
+        allPages = allPages.concat(pagesDb.publicPages.map(p => ({ ...p, isPublic: true })));
+    }
+    
+    // Админские страницы (только для админов)
+    if (isAdmin(currentUser) && pagesDb.adminPages) {
+        allPages = allPages.concat(pagesDb.adminPages.map(p => ({ ...p, isPublic: false })));
+    }
+    
+    if (allPages.length === 0) {
+        container.innerHTML = '<p style="color:#444;">Нет доступных разделов</p>';
+        return;
+    }
+    
+    let html = '';
+    allPages.forEach(p => {
+        const typeLabel = p.type === 'info' ? '📄 Информация' : '📝 Заявки';
+        const adminLabel = p.isPublic ? '' : ' [АДМИН]';
+        html += `
+            <div class="dynamic-page">
+                <div class="page-title">${p.name} ${adminLabel}</div>
+                ${p.type === 'info' ? `
+                    <div class="page-content">${p.content || 'Нет содержимого'}</div>
+                ` : `
+                    <div class="page-content">
+                        <p style="color:#555; margin-bottom:10px;">${p.content || ''}</p>
+                        <div class="request-form" data-page-id="${p.id}" data-page-name="${p.name}">
+                            ${p.fields ? p.fields.map(f => `
+                                <div class="form-field">
+                                    <label>${f.label} ${f.required ? '<span class="required">*</span>' : ''}</label>
+                                    ${f.type === 'text' ? `<input type="text" class="req-field" data-field="${f.label}" placeholder="${f.label}">` : ''}
+                                    ${f.type === 'textarea' ? `<textarea class="req-field" data-field="${f.label}" placeholder="${f.label}"></textarea>` : ''}
+                                    ${f.type === 'select' ? `
+                                        <select class="req-field" data-field="${f.label}">
+                                            ${f.options ? f.options.map(o => `<option value="${o}">${o}</option>`).join('') : ''}
+                                        </select>
+                                    ` : ''}
+                                </div>
+                            `).join('') : ''}
+                            <button class="btn btn-small" onclick="submitDynamicRequest('${p.id}')" style="width:auto; margin-top:10px;">📤 Отправить заявку</button>
+                        </div>
+                        <div id="dynamicReqResult_${p.id}" class="result-msg" style="margin-top:10px;"></div>
+                    </div>
+                `}
+                <div class="page-meta">Создан: ${formatDate(p.createdAt)} · ${p.createdBy || 'Неизвестен'}</div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+async function submitDynamicRequest(pageId) {
+    const page = pagesDb.publicPages.find(p => p.id === pageId);
+    if (!page) return;
+    
+    const container = document.querySelector(`.request-form[data-page-id="${pageId}"]`);
+    if (!container) return;
+    
+    const fields = container.querySelectorAll('.req-field');
+    const answers = {};
+    let allFilled = true;
+    
+    fields.forEach(f => {
+        const label = f.dataset.field;
+        const value = f.value.trim();
+        answers[label] = value;
+        // Проверка на обязательность
+        const fieldDef = page.fields.find(pf => pf.label === label);
+        if (fieldDef && fieldDef.required && !value) {
+            allFilled = false;
+        }
+    });
+    
+    if (!allFilled) {
+        document.getElementById(`dynamicReqResult_${pageId}`).textContent = 'Заполните все обязательные поля!';
+        document.getElementById(`dynamicReqResult_${pageId}`).className = 'result-msg error';
+        return;
+    }
+    
+    if (!page.requests) page.requests = [];
+    page.requests.push({
+        id: 'dr' + Date.now(),
+        userId: currentUser.id,
+        userNick: currentUser.gameNick,
+        answers: answers,
+        status: 'pending',
+        date: new Date().toISOString(),
+        response: null
+    });
+    
+    await savePagesDB();
+    document.getElementById(`dynamicReqResult_${pageId}`).textContent = '✅ Заявка отправлена!';
+    document.getElementById(`dynamicReqResult_${pageId}`).className = 'result-msg success';
+    showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Ваша заявка отправлена', 'info');
+    addHistory(currentUser.id, 'Заявка в разделе', `Заявка в разделе "${page.name}"`);
+    
+    // Уведомление админам
+    db.users.forEach(u => {
+        if (isAdmin(u)) {
+            addNotification(u.id, '📩 НОВАЯ ЗАЯВКА', `Новая заявка в разделе "${page.name}" от ${currentUser.gameNick}`, 'info');
+        }
+    });
 }
 
 // ================================================================
@@ -2162,6 +2554,49 @@ async function submitBuildRequest() {
 }
 
 // ================================================================
+// ЗАПЛАНИРОВАННЫЕ СТРОИ
+// ================================================================
+
+function loadScheduledBuilds() {
+    const container = document.getElementById('scheduledBuildsList');
+    if (!db.scheduledBuilds) db.scheduledBuilds = [];
+    
+    const now = new Date();
+    db.scheduledBuilds = db.scheduledBuilds.filter(b => new Date(b.end) > now);
+    
+    if (db.scheduledBuilds.length === 0) {
+        container.innerHTML = '<p style="color:#444;">Нет запланированных строев</p>';
+        return;
+    }
+    
+    const sorted = [...db.scheduledBuilds].sort((a, b) => new Date(a.start) - new Date(b.start));
+    
+    let html = '';
+    sorted.forEach(b => {
+        html += `
+            <div class="build-item">
+                <div class="build-topic">${b.topic}</div>
+                <div class="build-meta">
+                    <strong>Начало:</strong> ${formatDateShort(b.start)} &nbsp;·&nbsp;
+                    <strong>Окончание:</strong> ${formatDateShort(b.end)}
+                </div>
+                <div class="build-details">
+                    <strong>Обязаны явиться:</strong> ${b.required.join(', ')}
+                </div>
+                <div class="build-details" style="color:#555;">
+                    <strong>Нельзя появляться:</strong> ${b.forbidden.join(', ')}
+                </div>
+                <div class="build-organizer">
+                    <strong>Организатор:</strong> ${b.organizerNick || b.userNick || 'Неизвестен'}
+                </div>
+                <div class="build-status">✅ ОДОБРЕН</div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// ================================================================
 // СЕМЬИ (общий раздел для всех)
 // ================================================================
 
@@ -2169,7 +2604,6 @@ function loadFamiliesDisplay() {
     if (!db.allies) db.allies = [];
     if (!db.enemies) db.enemies = [];
     
-    // Союзники
     const alliesContainer = document.getElementById('alliesDisplay');
     if (db.allies.length === 0) {
         alliesContainer.innerHTML = '<p class="empty">Нет союзников</p>';
@@ -2181,7 +2615,6 @@ function loadFamiliesDisplay() {
         alliesContainer.innerHTML = html;
     }
     
-    // Недружественные
     const enemiesContainer = document.getElementById('enemiesDisplay');
     if (db.enemies.length === 0) {
         enemiesContainer.innerHTML = '<p class="empty">Нет недружественных семей</p>';
@@ -2611,7 +3044,7 @@ function loadAdminBuildRequests() {
                     <span style="color:#ffaa00;">⏳ Ожидает</span>
                 </div>
                 <div class="req-text">От: ${r.userNick}</div>
-                <div class="req-text" style="color:#aaa;">Начало: ${formatDate(r.start)} · Окончание: ${formatDate(r.end)}</div>
+                <div class="req-text" style="color:#aaa;">Начало: ${formatDateShort(r.start)} · Окончание: ${formatDateShort(r.end)}</div>
                 <div class="req-text" style="color:#555;">Обязаны: ${r.required.join(', ')}</div>
                 <div class="req-text" style="color:#555;">Запрещено: ${r.forbidden.join(', ')}</div>
                 <div class="req-meta">${formatDate(r.date)}</div>
@@ -2634,6 +3067,28 @@ async function respondBuildRequest(requestId, status) {
     
     request.status = status;
     request.response = comment;
+    
+    if (status === 'approved') {
+        if (!db.scheduledBuilds) db.scheduledBuilds = [];
+        db.scheduledBuilds.push({
+            id: 's' + Date.now(),
+            topic: request.topic,
+            start: request.start,
+            end: request.end,
+            required: request.required,
+            forbidden: request.forbidden,
+            userNick: request.userNick,
+            organizerNick: request.userNick,
+            date: new Date().toISOString()
+        });
+        db.users.forEach(u => {
+            if (!u.isAdmin) {
+                addNotification(u.id, '📢 НОВЫЙ СТРОЙ', `Запланирован строй: ${request.topic}`, 'info');
+            }
+        });
+        showToast('📢 НОВЫЙ СТРОЙ', `Строй "${request.topic}" запланирован!`, 'info');
+    }
+    
     await saveDB();
     
     const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
@@ -2642,11 +3097,26 @@ async function respondBuildRequest(requestId, status) {
     showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка на строй ${statusText}`, status === 'approved' ? 'info' : 'danger');
     
     loadAdminBuildRequests();
+    loadScheduledBuilds();
 }
 
 // ================================================================
 // АДМИН: ИЗМЕНИТЬ ИНФОРМАЦИЮ
 // ================================================================
+
+async function loadEditContent() {
+    const section = document.getElementById('editSection').value;
+    const preview = document.getElementById('editContentPreview');
+    const textarea = document.getElementById('editContent');
+    
+    if (db.siteContent && db.siteContent[section]) {
+        preview.textContent = db.siteContent[section];
+        textarea.value = db.siteContent[section];
+    } else {
+        preview.textContent = 'Нет содержимого';
+        textarea.value = '';
+    }
+}
 
 async function saveEditContent() {
     const section = document.getElementById('editSection').value;
@@ -2661,6 +3131,251 @@ async function saveEditContent() {
     addHistory(currentUser.id, 'Изменение информации сайта', `Обновлён раздел: ${section}`);
     showToast('✅ ИНФОРМАЦИЯ ОБНОВЛЕНА', `Раздел ${section} обновлён`, 'info');
     loadSiteContent();
+    loadEditContent();
+}
+
+// ================================================================
+// АДМИН: ДОБАВИТЬ РАЗДЕЛ
+// ================================================================
+
+function openAddPageModal() {
+    document.getElementById('addPageModal').classList.add('active');
+    document.getElementById('addPageStep1').style.display = 'block';
+    document.getElementById('addPageStep2').style.display = 'none';
+    document.getElementById('addPageStep3').style.display = 'none';
+    document.getElementById('addPageTypeResult').textContent = '';
+    document.getElementById('addPageTypeResult').className = 'result-msg';
+    document.getElementById('addPageSubtypeResult').textContent = '';
+    document.getElementById('addPageSubtypeResult').className = 'result-msg';
+    document.getElementById('addPageResult').textContent = '';
+    document.getElementById('addPageResult').className = 'result-msg';
+    document.getElementById('addPageName').value = '';
+    document.getElementById('addPageContent').value = '';
+    document.getElementById('requestFieldsBuilder').innerHTML = '';
+    addPageFields = [];
+    addPageType = null;
+    addPageSubtype = null;
+}
+
+function closeAddPageModal() {
+    document.getElementById('addPageModal').classList.remove('active');
+}
+
+function addPageSelectType(type) {
+    addPageType = type;
+    if (type === 'public') {
+        document.getElementById('addPageStep2').style.display = 'block';
+        document.getElementById('addPageStep1').style.display = 'none';
+        document.getElementById('addPageTypeResult').textContent = '✅ Выбран: Публичный раздел';
+        document.getElementById('addPageTypeResult').className = 'result-msg success';
+    } else {
+        // Админский раздел - сразу информационный
+        addPageSubtype = 'info';
+        document.getElementById('addPageStep1').style.display = 'none';
+        document.getElementById('addPageStep2').style.display = 'none';
+        document.getElementById('addPageStep3').style.display = 'block';
+        document.getElementById('addPageInfoFields').style.display = 'block';
+        document.getElementById('addPageRequestFields').style.display = 'none';
+        document.getElementById('addPageTypeResult').textContent = '✅ Выбран: Админский раздел';
+        document.getElementById('addPageTypeResult').className = 'result-msg success';
+    }
+}
+
+function addPageSelectSubtype(subtype) {
+    addPageSubtype = subtype;
+    document.getElementById('addPageStep2').style.display = 'none';
+    document.getElementById('addPageStep3').style.display = 'block';
+    document.getElementById('addPageSubtypeResult').textContent = `✅ Выбран: ${subtype === 'info' ? 'Информационный' : 'С заявками'}`;
+    document.getElementById('addPageSubtypeResult').className = 'result-msg success';
+    
+    if (subtype === 'info') {
+        document.getElementById('addPageInfoFields').style.display = 'block';
+        document.getElementById('addPageRequestFields').style.display = 'none';
+    } else {
+        document.getElementById('addPageInfoFields').style.display = 'none';
+        document.getElementById('addPageRequestFields').style.display = 'block';
+        document.getElementById('requestFieldsBuilder').innerHTML = '';
+        addPageFields = [];
+    }
+}
+
+function addRequestField(type) {
+    const builder = document.getElementById('requestFieldsBuilder');
+    const fieldId = 'field_' + Date.now();
+    
+    if (type === 'text') {
+        builder.innerHTML += `
+            <div class="field-builder" id="${fieldId}">
+                <div class="field-header">
+                    <span class="field-label">📝 Поле ввода</span>
+                    <span class="field-type">текст</span>
+                </div>
+                <input type="text" id="${fieldId}_label" placeholder="Название поля" style="margin-top:6px;">
+                <label style="color:#555; font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
+                    <input type="checkbox" id="${fieldId}_required"> Обязательное
+                </label>
+                <button class="btn btn-small btn-danger" onclick="removeField('${fieldId}')" style="width:auto; margin-top:6px; padding:4px 12px; font-size:10px;">✕ Удалить</button>
+            </div>
+        `;
+        addPageFields.push({ id: fieldId, type: 'text' });
+    } else if (type === 'select') {
+        builder.innerHTML += `
+            <div class="field-builder" id="${fieldId}">
+                <div class="field-header">
+                    <span class="field-label">📋 Выбор</span>
+                    <span class="field-type">выбор</span>
+                </div>
+                <input type="text" id="${fieldId}_label" placeholder="Название поля" style="margin-top:6px;">
+                <input type="text" id="${fieldId}_options" placeholder="Варианты через запятую" style="margin-top:4px;">
+                <label style="color:#555; font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
+                    <input type="checkbox" id="${fieldId}_required"> Обязательное
+                </label>
+                <button class="btn btn-small btn-danger" onclick="removeField('${fieldId}')" style="width:auto; margin-top:6px; padding:4px 12px; font-size:10px;">✕ Удалить</button>
+            </div>
+        `;
+        addPageFields.push({ id: fieldId, type: 'select' });
+    }
+}
+
+function removeField(fieldId) {
+    const el = document.getElementById(fieldId);
+    if (el) el.remove();
+    addPageFields = addPageFields.filter(f => f.id !== fieldId);
+}
+
+async function publishNewPage() {
+    const name = document.getElementById('addPageName').value.trim();
+    const result = document.getElementById('addPageResult');
+    
+    if (!name) {
+        result.textContent = 'Введите название раздела';
+        result.className = 'result-msg error';
+        return;
+    }
+    
+    if (!addPageType || !addPageSubtype) {
+        result.textContent = 'Выберите тип раздела';
+        result.className = 'result-msg error';
+        return;
+    }
+    
+    if (addPageSubtype === 'info') {
+        const content = document.getElementById('addPageContent').value.trim();
+        if (!content) {
+            result.textContent = 'Введите содержимое раздела';
+            result.className = 'result-msg error';
+            return;
+        }
+        
+        const newPage = {
+            id: 'p' + (++pagesDb.pageCounter),
+            name: name,
+            type: 'info',
+            content: content,
+            createdBy: currentUser.gameNick,
+            createdAt: new Date().toISOString(),
+            isPublic: addPageType === 'public'
+        };
+        
+        if (addPageType === 'public') {
+            pagesDb.publicPages.push(newPage);
+        } else {
+            pagesDb.adminPages.push(newPage);
+        }
+        
+        await savePagesDB();
+        result.textContent = '✅ Раздел опубликован!';
+        result.className = 'result-msg success';
+        showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
+        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
+        loadDynamicPages();
+        setTimeout(() => closeAddPageModal(), 1500);
+        
+    } else if (addPageSubtype === 'request') {
+        // Собираем поля
+        const fields = [];
+        let allValid = true;
+        let errorMsg = '';
+        
+        addPageFields.forEach(f => {
+            const labelEl = document.getElementById(f.id + '_label');
+            const label = labelEl ? labelEl.value.trim() : '';
+            if (!label) {
+                allValid = false;
+                errorMsg = 'Заполните названия всех полей';
+                return;
+            }
+            
+            const required = document.getElementById(f.id + '_required') ? document.getElementById(f.id + '_required').checked : false;
+            
+            if (f.type === 'text') {
+                fields.push({ type: 'text', label: label, required: required });
+            } else if (f.type === 'select') {
+                const optionsEl = document.getElementById(f.id + '_options');
+                const options = optionsEl ? optionsEl.value.split(',').map(s => s.trim()).filter(s => s) : [];
+                if (options.length === 0) {
+                    allValid = false;
+                    errorMsg = 'Укажите варианты для выбора';
+                    return;
+                }
+                fields.push({ type: 'select', label: label, options: options, required: required });
+            }
+        });
+        
+        if (!allValid) {
+            result.textContent = errorMsg || 'Заполните все поля корректно';
+            result.className = 'result-msg error';
+            return;
+        }
+        
+        if (fields.length === 0) {
+            result.textContent = 'Добавьте хотя бы одно поле';
+            result.className = 'result-msg error';
+            return;
+        }
+        
+        const newPage = {
+            id: 'p' + (++pagesDb.pageCounter),
+            name: name,
+            type: 'request',
+            content: '',
+            fields: fields,
+            requests: [],
+            createdBy: currentUser.gameNick,
+            createdAt: new Date().toISOString(),
+            isPublic: addPageType === 'public'
+        };
+        
+        if (addPageType === 'public') {
+            pagesDb.publicPages.push(newPage);
+            
+            // Автоматически создаём админскую версию с заявками
+            const adminPage = {
+                id: 'p' + (++pagesDb.pageCounter),
+                name: name + ' (заявки)',
+                type: 'request',
+                content: '',
+                fields: fields,
+                requests: [],
+                createdBy: currentUser.gameNick,
+                createdAt: new Date().toISOString(),
+                isPublic: false,
+                parentId: newPage.id
+            };
+            pagesDb.adminPages.push(adminPage);
+            
+        } else {
+            pagesDb.adminPages.push(newPage);
+        }
+        
+        await savePagesDB();
+        result.textContent = '✅ Раздел опубликован!';
+        result.className = 'result-msg success';
+        showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
+        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
+        loadDynamicPages();
+        setTimeout(() => closeAddPageModal(), 1500);
+    }
 }
 
 // ================================================================
@@ -2797,6 +3512,9 @@ async function adminSearchUser() {
 // ЗАПУСК
 // ================================================================
 
+// Загружаем содержимое при выборе раздела
+document.getElementById('editSection').addEventListener('change', loadEditContent);
+
 setTimeout(() => {
     document.getElementById('splashScreen').style.display = 'none';
     init();
@@ -2804,4 +3522,4 @@ setTimeout(() => {
 
 </script>
 </body>
-</html>
+                                                  </html>
