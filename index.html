@@ -605,6 +605,11 @@
             margin: 8px 0;
             background: #050505;
             border-left: 2px solid #44ff44;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .build-item:hover {
+            border-color: #fff;
         }
         .build-item .build-topic {
             color: #fff;
@@ -645,6 +650,11 @@
             text-transform: uppercase;
             margin-top: 6px;
         }
+        .build-item .build-actions {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #1a1a1a;
+        }
         
         /* ============================================================
            ДИНАМИЧЕСКИЕ РАЗДЕЛЫ
@@ -663,6 +673,10 @@
             border-bottom: 1px solid #1a1a1a;
             padding-bottom: 10px;
             margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
         }
         .dynamic-page .page-content {
             color: #aaa;
@@ -1186,6 +1200,7 @@
             <button data-page="adminBuild" onclick="showPage('adminBuild')">Заявки на строй</button>
             <button data-page="adminEdit" onclick="showPage('adminEdit')">Изменить информацию</button>
             <button data-page="adminAddPage" onclick="showPage('adminAddPage')">➕ Добавить раздел</button>
+            <button data-page="adminManagePages" onclick="showPage('adminManagePages')">📋 Управление разделами</button>
             <button data-page="adminHistory" onclick="showPage('adminHistory')">История</button>
             <button data-page="adminFamilies" onclick="showPage('adminFamilies')">Управление семьями</button>
             <button data-page="adminSearch" onclick="showPage('adminSearch')">Поиск</button>
@@ -1426,6 +1441,17 @@
             </div>
         </div>
 
+        <!-- ===== АДМИН: УПРАВЛЕНИЕ РАЗДЕЛАМИ ===== -->
+        <div id="page-adminManagePages" class="page">
+            <h2>📋 УПРАВЛЕНИЕ РАЗДЕЛАМИ</h2>
+            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
+                <p style="color:#aaa; margin-bottom:12px;">Здесь вы можете удалять созданные разделы.</p>
+                <div id="adminPagesList">
+                    <p style="color:#444;">Нет созданных разделов</p>
+                </div>
+            </div>
+        </div>
+
         <!-- ===== АДМИН: ИСТОРИЯ ===== -->
         <div id="page-adminHistory" class="page">
             <h2>ИСТОРИЯ</h2>
@@ -1587,6 +1613,17 @@
             <button class="btn" onclick="publishNewPage()" style="margin-top:16px;">📢 Опубликовать раздел</button>
             <div id="addPageResult" class="result-msg" style="margin-top:10px;"></div>
         </div>
+    </div>
+</div>
+
+<!-- ===== МОДАЛЬНОЕ ОКНО: ДЕТАЛИ СТРОЯ ===== -->
+<div class="modal-overlay" id="buildDetailModal">
+    <div class="modal-box wide">
+        <div class="modal-header">
+            <h3>📋 ДЕТАЛИ СТРОЯ</h3>
+            <button class="close-btn" onclick="closeBuildDetail()">✕</button>
+        </div>
+        <div id="buildDetailContent"></div>
     </div>
 </div>
 
@@ -1830,6 +1867,13 @@ function showToast(title, text, type = 'info') {
 async function init() {
     await loadDB();
     await loadPagesDB();
+    
+    // Очищаем созданные админами разделы
+    pagesDb.publicPages = [];
+    pagesDb.adminPages = [];
+    pagesDb.pageCounter = 0;
+    await savePagesDB();
+    
     const sessionId = localStorage.getItem('nightmare_session');
     if (sessionId) {
         const user = getUserById(sessionId);
@@ -1990,6 +2034,7 @@ function enterMainPage(user) {
     loadFamiliesDisplay();
     loadSiteContent();
     loadDynamicPages();
+    loadAdminPagesManagement();
     if (isAdmin(user)) {
         loadAdminMembers();
         loadAdminRequests();
@@ -2087,12 +2132,10 @@ function loadDynamicPages() {
     
     let allPages = [];
     
-    // Публичные страницы
     if (pagesDb.publicPages) {
         allPages = allPages.concat(pagesDb.publicPages.map(p => ({ ...p, isPublic: true })));
     }
     
-    // Админские страницы (только для админов)
     if (isAdmin(currentUser) && pagesDb.adminPages) {
         allPages = allPages.concat(pagesDb.adminPages.map(p => ({ ...p, isPublic: false })));
     }
@@ -2108,7 +2151,9 @@ function loadDynamicPages() {
         const adminLabel = p.isPublic ? '' : ' [АДМИН]';
         html += `
             <div class="dynamic-page">
-                <div class="page-title">${p.name} ${adminLabel}</div>
+                <div class="page-title">
+                    <span>${p.name} ${adminLabel}</span>
+                </div>
                 ${p.type === 'info' ? `
                     <div class="page-content">${p.content || 'Нет содержимого'}</div>
                 ` : `
@@ -2154,7 +2199,6 @@ async function submitDynamicRequest(pageId) {
         const label = f.dataset.field;
         const value = f.value.trim();
         answers[label] = value;
-        // Проверка на обязательность
         const fieldDef = page.fields.find(pf => pf.label === label);
         if (fieldDef && fieldDef.required && !value) {
             allFilled = false;
@@ -2184,7 +2228,6 @@ async function submitDynamicRequest(pageId) {
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Ваша заявка отправлена', 'info');
     addHistory(currentUser.id, 'Заявка в разделе', `Заявка в разделе "${page.name}"`);
     
-    // Уведомление админам
     db.users.forEach(u => {
         if (isAdmin(u)) {
             addNotification(u.id, '📩 НОВАЯ ЗАЯВКА', `Новая заявка в разделе "${page.name}" от ${currentUser.gameNick}`, 'info');
@@ -2574,26 +2617,63 @@ function loadScheduledBuilds() {
     let html = '';
     sorted.forEach(b => {
         html += `
-            <div class="build-item">
+            <div class="build-item" onclick="openBuildDetail('${b.id}')">
                 <div class="build-topic">${b.topic}</div>
                 <div class="build-meta">
-                    <strong>Начало:</strong> ${formatDateShort(b.start)} &nbsp;·&nbsp;
-                    <strong>Окончание:</strong> ${formatDateShort(b.end)}
-                </div>
-                <div class="build-details">
-                    <strong>Обязаны явиться:</strong> ${b.required.join(', ')}
-                </div>
-                <div class="build-details" style="color:#555;">
-                    <strong>Нельзя появляться:</strong> ${b.forbidden.join(', ')}
-                </div>
-                <div class="build-organizer">
-                    <strong>Организатор:</strong> ${b.organizerNick || b.userNick || 'Неизвестен'}
+                    <strong>Начало:</strong> ${formatDateShort(b.start)}
                 </div>
                 <div class="build-status">✅ ОДОБРЕН</div>
+                <div style="color:#444; font-size:11px; margin-top:4px;">Нажмите для подробностей</div>
             </div>
         `;
     });
     container.innerHTML = html;
+}
+
+function openBuildDetail(buildId) {
+    const build = db.scheduledBuilds.find(b => b.id === buildId);
+    if (!build) return;
+    
+    const container = document.getElementById('buildDetailContent');
+    let html = `
+        <div style="border-bottom:1px solid #1a1a1a; padding-bottom:12px; margin-bottom:12px;">
+            <h3 style="color:#fff; font-weight:300; letter-spacing:2px;">${build.topic}</h3>
+        </div>
+        <div style="color:#aaa; font-size:14px; line-height:1.8;">
+            <p><strong style="color:#fff;">Начало:</strong> ${formatDate(build.start)}</p>
+            <p><strong style="color:#fff;">Окончание:</strong> ${formatDate(build.end)}</p>
+            <p><strong style="color:#fff;">Организатор:</strong> ${build.organizerNick || build.userNick || 'Неизвестен'}</p>
+            <p><strong style="color:#fff;">Обязаны явиться:</strong> ${build.required.join(', ')}</p>
+            <p><strong style="color:#fff;">Нельзя появляться:</strong> ${build.forbidden.join(', ')}</p>
+            <p><strong style="color:#fff;">Статус:</strong> <span style="color:#44ff44;">✅ Одобрен</span></p>
+        </div>
+    `;
+    
+    if (isAdmin(currentUser)) {
+        html += `
+            <div style="margin-top:16px; padding-top:16px; border-top:1px solid #1a1a1a;">
+                <button class="btn btn-danger" onclick="deleteBuild('${build.id}')" style="width:auto; padding:8px 24px;">🗑️ Удалить строй</button>
+            </div>
+        `;
+    }
+    
+    container.innerHTML = html;
+    document.getElementById('buildDetailModal').classList.add('active');
+}
+
+function closeBuildDetail() {
+    document.getElementById('buildDetailModal').classList.remove('active');
+}
+
+async function deleteBuild(buildId) {
+    if (!confirm('Вы уверены, что хотите удалить этот строй?')) return;
+    
+    db.scheduledBuilds = db.scheduledBuilds.filter(b => b.id !== buildId);
+    await saveDB();
+    closeBuildDetail();
+    loadScheduledBuilds();
+    addHistory(currentUser.id, 'Удаление строя', `Удалён строй из запланированных`);
+    showToast('🗑️ СТРОЙ УДАЛЁН', 'Строй удалён из запланированных', 'info');
 }
 
 // ================================================================
@@ -3169,7 +3249,6 @@ function addPageSelectType(type) {
         document.getElementById('addPageTypeResult').textContent = '✅ Выбран: Публичный раздел';
         document.getElementById('addPageTypeResult').className = 'result-msg success';
     } else {
-        // Админский раздел - сразу информационный
         addPageSubtype = 'info';
         document.getElementById('addPageStep1').style.display = 'none';
         document.getElementById('addPageStep2').style.display = 'none';
@@ -3289,10 +3368,10 @@ async function publishNewPage() {
         showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
         addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
         loadDynamicPages();
+        loadAdminPagesManagement();
         setTimeout(() => closeAddPageModal(), 1500);
         
     } else if (addPageSubtype === 'request') {
-        // Собираем поля
         const fields = [];
         let allValid = true;
         let errorMsg = '';
@@ -3349,7 +3428,6 @@ async function publishNewPage() {
         if (addPageType === 'public') {
             pagesDb.publicPages.push(newPage);
             
-            // Автоматически создаём админскую версию с заявками
             const adminPage = {
                 id: 'p' + (++pagesDb.pageCounter),
                 name: name + ' (заявки)',
@@ -3374,8 +3452,71 @@ async function publishNewPage() {
         showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
         addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
         loadDynamicPages();
+        loadAdminPagesManagement();
         setTimeout(() => closeAddPageModal(), 1500);
     }
+}
+
+// ================================================================
+// АДМИН: УПРАВЛЕНИЕ РАЗДЕЛАМИ (УДАЛЕНИЕ)
+// ================================================================
+
+function loadAdminPagesManagement() {
+    const container = document.getElementById('adminPagesList');
+    if (!pagesDb) return;
+    
+    let allPages = [];
+    
+    if (pagesDb.publicPages) {
+        allPages = allPages.concat(pagesDb.publicPages.map(p => ({ ...p, typeLabel: 'Публичный' })));
+    }
+    if (pagesDb.adminPages) {
+        allPages = allPages.concat(pagesDb.adminPages.map(p => ({ ...p, typeLabel: 'Админский' })));
+    }
+    
+    if (allPages.length === 0) {
+        container.innerHTML = '<p style="color:#444;">Нет созданных разделов</p>';
+        return;
+    }
+    
+    let html = '';
+    allPages.forEach(p => {
+        const typeIcon = p.type === 'info' ? '📄' : '📝';
+        html += `
+            <div style="border:1px solid #1a1a1a; padding:12px 16px; margin:6px 0; background:#050505; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                <div>
+                    <span style="color:#fff;">${typeIcon} ${p.name}</span>
+                    <span style="color:#444; font-size:11px; margin-left:10px;">${p.typeLabel}</span>
+                    <span style="color:#555; font-size:11px; margin-left:10px;">${formatDate(p.createdAt)}</span>
+                </div>
+                <button class="btn btn-small btn-danger" onclick="deletePage('${p.id}')" style="width:auto; padding:4px 16px;">🗑️ Удалить</button>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+async function deletePage(pageId) {
+    if (!confirm('Вы уверены, что хотите удалить этот раздел?')) return;
+    
+    // Удаляем из публичных
+    if (pagesDb.publicPages) {
+        pagesDb.publicPages = pagesDb.publicPages.filter(p => p.id !== pageId);
+    }
+    
+    // Удаляем из админских
+    if (pagesDb.adminPages) {
+        pagesDb.adminPages = pagesDb.adminPages.filter(p => p.id !== pageId);
+        
+        // Также удаляем связанные админские разделы (заявки)
+        pagesDb.adminPages = pagesDb.adminPages.filter(p => p.parentId !== pageId);
+    }
+    
+    await savePagesDB();
+    loadAdminPagesManagement();
+    loadDynamicPages();
+    addHistory(currentUser.id, 'Удаление раздела', `Удалён раздел ${pageId}`);
+    showToast('🗑️ РАЗДЕЛ УДАЛЁН', 'Раздел удалён', 'info');
 }
 
 // ================================================================
@@ -3512,7 +3653,6 @@ async function adminSearchUser() {
 // ЗАПУСК
 // ================================================================
 
-// Загружаем содержимое при выборе раздела
 document.getElementById('editSection').addEventListener('change', loadEditContent);
 
 setTimeout(() => {
@@ -3522,4 +3662,4 @@ setTimeout(() => {
 
 </script>
 </body>
-                                                  </html>
+</html>
