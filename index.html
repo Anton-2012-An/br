@@ -580,6 +580,10 @@
             letter-spacing: 1px;
             margin-right: 8px;
         }
+        .rules-doc .section .rule.danger {
+            border-left-color: #cc0000;
+            color: #cc0000;
+        }
         .rules-doc .footer {
             border-top: 1px solid #1a1a1a;
             padding-top: 16px;
@@ -633,6 +637,47 @@
             color: #555;
             font-size: 12px;
             margin-top: 4px;
+        }
+        
+        /* ============================================================
+           СЕМЬИ (общий раздел)
+           ============================================================ */
+        .families-grid {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+        }
+        .families-grid .family-block {
+            flex: 1;
+            min-width: 250px;
+            border: 1px solid #1a1a1a;
+            padding: 20px 24px;
+            background: #050505;
+        }
+        .families-grid .family-block h3 {
+            font-weight: 300;
+            letter-spacing: 3px;
+            font-size: 1.1rem;
+            margin-bottom: 12px;
+        }
+        .families-grid .family-block .ally-color {
+            color: #44ff44;
+        }
+        .families-grid .family-block .enemy-color {
+            color: #cc0000;
+        }
+        .families-grid .family-block .family-item {
+            padding: 6px 0;
+            border-bottom: 1px solid #1a1a1a;
+            color: #aaa;
+            font-size: 14px;
+        }
+        .families-grid .family-block .family-item:last-child {
+            border-bottom: none;
+        }
+        .families-grid .family-block .empty {
+            color: #444;
+            font-size: 13px;
         }
         
         /* ============================================================
@@ -864,6 +909,9 @@
                 left: 10px;
                 max-width: none;
             }
+            .families-grid {
+                flex-direction: column;
+            }
         }
         
         @media (max-width: 480px) {
@@ -975,6 +1023,7 @@
         <button data-page="violations" onclick="showPage('violations')">Нарушения</button>
         <button data-page="requests" onclick="showPage('requests')">Заявки</button>
         <button data-page="build" onclick="showPage('build')">Провести строй</button>
+        <button data-page="families" onclick="showPage('families')">Семьи</button>
         
         <div class="admin-section" id="adminSection" style="display:none;">
             <div class="label">УПРАВЛЕНИЕ</div>
@@ -988,7 +1037,7 @@
             <button data-page="adminBuild" onclick="showPage('adminBuild')">Заявки на строй</button>
             <button data-page="adminEdit" onclick="showPage('adminEdit')">Изменить информацию</button>
             <button data-page="adminHistory" onclick="showPage('adminHistory')">История</button>
-            <button data-page="adminFamilies" onclick="showPage('adminFamilies')">Семьи</button>
+            <button data-page="adminFamilies" onclick="showPage('adminFamilies')">Управление семьями</button>
             <button data-page="adminSearch" onclick="showPage('adminSearch')">Поиск</button>
         </div>
     </div>
@@ -1016,172 +1065,24 @@
         <!-- ===== УКСП ===== -->
         <div id="page-uksp" class="page">
             <h2>УКСП</h2>
-            <div class="uksp-doc">
-                <div class="header">
-                    <div class="title">УГОЛОВНО-КОДЕКС СЕМЕЙНЫХ ПРАВОНАРУШЕНИЙ</div>
-                    <div class="subtitle">NIGHTMARE EMPIRE · BLACK RUSSIA</div>
-                    <div class="meta">
-                        Гриф: <span>Для служебного пользования</span> · 
-                        Тип: <span>Федеральное постановление</span><br>
-                        Глава семьи: <span>Robert_Salamanca</span> · 
-                        Дата введения: <span>12.08.2026</span>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h3>Глава 1. Нарушения внутреннего распорядка</h3>
-                    <div class="rule"><span class="code">ФП 1.1</span> <strong>Нарушение субординации</strong> — неподчинение приказу вышестоящего руководства.</div>
-                    <div class="rule"><span class="code">ФП 1.2</span> <strong>Оскорбление члена семьи</strong> — публичное или личное унижение участника организации.</div>
-                    <div class="rule"><span class="code">ФП 1.3</span> <strong>Нахождение на вражеской территории</strong> без согласования с главой или главным замом.</div>
-                    <div class="rule"><span class="code">ФП 1.4</span> <strong>Использование семейного оружия</strong> в личных целях вне боевых операций.</div>
-                    <div class="rule"><span class="code">ФП 1.5</span> <strong>Нахождение в розыске</strong> у других семей без уведомления руководства.</div>
-                    <div class="rule"><span class="code">ФП 1.6</span> <strong>Сотрудничество с враждебными семьями</strong> без разрешения главы.</div>
-                    <div class="rule"><span class="code">ФП 1.7</span> <strong>Ношение отличительных знаков</strong> других семей без согласования.</div>
-                    <div class="rule"><span class="code">ФП 1.8</span> <strong>Хранение и использование запрещённых ресурсов</strong> на территории семьи.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Глава 2. Нарушения в ходе строевых сборов</h3>
-                    <div class="rule"><span class="code">ФП 2.1</span> <strong>Неявка на строй</strong> без уважительной причины.</div>
-                    <div class="rule"><span class="code">ФП 2.2</span> <strong>Опоздание на строй</strong> более чем на 10 минут.</div>
-                    <div class="rule"><span class="code">ФП 2.3</span> <strong>Покидание строя</strong> без разрешения старшего по рангу.</div>
-                    <div class="rule"><span class="code">ФП 2.4</span> <strong>Разглашение информации</strong>, полученной на строю, третьим лицам.</div>
-                    <div class="rule"><span class="code">ФП 2.5</span> <strong>Нахождение на строю</strong> в состоянии, не позволяющем выполнять приказы.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Глава 3. Боевые и оперативные нарушения</h3>
-                    <div class="rule"><span class="code">ФП 3.1</span> <strong>Использование семейного транспорта</strong> и средств связи в личных целях.</div>
-                    <div class="rule"><span class="code">ФП 3.2</span> <strong>Объявление войны</strong> или провокация конфликта без приказа главы.</div>
-                    <div class="rule"><span class="code">ФП 3.3</span> <strong>Препятствие действиям</strong> членов своей семьи при выполнении задачи.</div>
-                    <div class="rule"><span class="code">ФП 3.4</span> <strong>Открытие огня</strong> без приказа или без прямой угрозы.</div>
-                    <div class="rule"><span class="code">ФП 3.5</span> <strong>Оставление боевой позиции</strong> без разрешения командования.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Глава 4. Нарушения в работе с информацией</h3>
-                    <div class="rule"><span class="code">ФП 4.1</span> <strong>Передача информации</strong> о семье сторонним лицам.</div>
-                    <div class="rule"><span class="code">ФП 4.2</span> <strong>Фальсификация отчётов</strong> о выполнении задач.</div>
-                    <div class="rule"><span class="code">ФП 4.3</span> <strong>Сокрытие информации</strong> о готовящейся угрозе.</div>
-                    <div class="rule"><span class="code">ФП 4.4</span> <strong>Ведение несанкционированных переговоров</strong> с другими семьями.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Глава 5. Особые положения</h3>
-                    <div class="rule"><span class="code">ФП 5.1</span> <strong>Наказания назначаются</strong> главой семьи Robert_Salamanca или главным замом Artemchik_Haunted.</div>
-                    <div class="rule"><span class="code">ФП 5.2</span> <strong>Письменный отчёт</strong> — после каждого наказания оставляется отчёт с указанием нарушения, виновного и меры.</div>
-                    <div class="rule"><span class="code">ФП 5.3</span> <strong>Предательство, слив информации, шпионаж</strong> — исключение из семьи с объявлением в розыск.</div>
-                    <div class="rule"><span class="code">ФП 5.4</span> <strong>Наказания применяются</strong> исключительно за нарушения, прописанные в кодексе.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Статья 6. Заключительные положения</h3>
-                    <div class="rule"><strong>6.1.</strong> Все члены семьи обязаны ознакомиться с настоящим постановлением под подпись.</div>
-                    <div class="rule"><strong>6.2.</strong> Незнание кодекса не освобождает от ответственности.</div>
-                    <div class="rule"><strong>6.3.</strong> Контроль исполнения возлагается на главного зама <strong>Artemchik_Haunted</strong>.</div>
-                </div>
-
-                <div class="footer">
-                    <span>Ответственные за исполнение:</span> Robert_Salamanca · Artemchik_Haunted · Anton_Chebureck
-                </div>
+            <div class="uksp-doc" id="ukspContent">
+                <!-- Загружается из БД -->
             </div>
         </div>
 
         <!-- ===== ПРАВИЛА СТРОЯ ===== -->
         <div id="page-rules" class="page">
             <h2>ПРАВИЛА СТРОЯ</h2>
-            <div class="rules-doc">
-                <div class="header">
-                    <div class="title">ПРАВИЛА ПРОВЕДЕНИЯ СТРОЯ</div>
-                    <div class="subtitle">NIGHTMARE EMPIRE · BLACK RUSSIA</div>
-                    <div class="meta">
-                        Утверждено: <span>Robert_Salamanca</span> · 
-                        Дата: <span>12.08.2026</span>
-                    </div>
-                </div>
-
-                <div class="section">
-                    <h3>Статья 1. Общие положения</h3>
-                    <div class="rule"><span class="code">1.1.</span> <strong>Строй</strong> — официальное собрание членов семьи для обсуждения текущих вопросов, принятия решений и доведения приказов.</div>
-                    <div class="rule"><span class="code">1.2.</span> Строй проводится по решению <strong>главы семьи</strong> или <strong>главного зама</strong>.</div>
-                    <div class="rule"><span class="code">1.3.</span> Информация о времени и месте сбора доводится до всех членов семьи <strong>не позднее чем за два часа</strong> до начала.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Статья 2. Виды строев</h3>
-                    <div class="rule"><span class="code">2.1.</span> <strong>Общий строй</strong> — для всех членов семьи.</div>
-                    <div class="rule"><span class="code">2.2.</span> <strong>Строй зам-состава</strong> — только для замов, старших замов, ОЗГЗ и главного зама.</div>
-                    <div class="rule"><span class="code">2.3.</span> <strong>Экстренный строй</strong> — созывается в случае срочной угрозы или необходимости немедленного решения.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Статья 3. Обязанности членов семьи на строю</h3>
-                    <div class="rule"><span class="code">3.1.</span> Являться в указанное место <strong>строго к назначенному времени</strong>.</div>
-                    <div class="rule"><span class="code">3.2.</span> Иметь при себе средства связи в режиме <strong>«без звука»</strong>.</div>
-                    <div class="rule"><span class="code">3.3.</span> Слушать докладывающих, <strong>не перебивать</strong>.</div>
-                    <div class="rule"><span class="code">3.4.</span> Задавать вопросы <strong>только после завершения</strong> основной части строя.</div>
-                    <div class="rule"><span class="code">3.5.</span> <strong>Не разглашать</strong> информацию, полученную на строю, третьим лицам.</div>
-                    <div class="rule" style="border-left-color:#cc0000; color:#cc0000;"><strong>3.6.</strong> <strong>ЗАПРЕЩАЕТСЯ</strong> разговаривать без разрешения проводящего.</div>
-                    <div class="rule" style="border-left-color:#cc0000; color:#cc0000;"><strong>3.7.</strong> <strong>ЗАПРЕЩАЕТСЯ</strong> вставлять анимации без разрешения проводящего.</div>
-                    <div class="rule" style="border-left-color:#cc0000; color:#cc0000;"><strong>3.8.</strong> <strong>ЗАПРЕЩАЕТСЯ</strong> делать что-либо без разрешения проводящего.</div>
-                    <div class="rule" style="border-left-color:#cc0000; color:#cc0000;"><strong>3.9.</strong> <strong>ЗАПРЕЩАЕТСЯ</strong> перебивать старший состав и проводящего строя.</div>
-                    <div class="rule"><span class="code">3.10.</span> Разговаривать со старшим составом <strong>ИСКЛЮЧИТЕЛЬНО НА ВЫ</strong>.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Статья 4. Ответственность за нарушение правил строя</h3>
-                    <div class="rule"><span class="code">4.1.</span> За опоздание на строй без уважительной причины — <strong>выговор</strong>.</div>
-                    <div class="rule"><span class="code">4.2.</span> За неявку на строй без уважительной причины — <strong>строгий выговор</strong>.</div>
-                    <div class="rule"><span class="code">4.3.</span> За разглашение информации со строя — <strong>увольнение из семьи</strong>.</div>
-                    <div class="rule"><span class="code">4.4.</span> За повторную неявку — <strong>понижение в ранге</strong>.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Статья 5. Порядок проведения строя</h3>
-                    <div class="rule"><span class="code">5.1.</span> <strong>Сбор и проверка присутствующих</strong> — проводится младшими замами.</div>
-                    <div class="rule"><span class="code">5.2.</span> <strong>Доклад о явке</strong> — старшие замы передают ОЗГЗ.</div>
-                    <div class="rule"><span class="code">5.3.</span> <strong>Объявление повестки</strong> — главный зам или глава семьи.</div>
-                    <div class="rule"><span class="code">5.4.</span> <strong>Обсуждение вопросов</strong> — выступают только назначенные лица.</div>
-                    <div class="rule"><span class="code">5.5.</span> <strong>Принятие решений</strong> — фиксируются в протоколе строя.</div>
-                    <div class="rule"><span class="code">5.6.</span> <strong>Подведение итогов</strong> — главный зам или глава семьи.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Статья 6. Права проводящего строй</h3>
-                    <div class="rule"><span class="code">6.1.</span> Проводящий <strong>ИМЕЕТ ПРАВО</strong> на вынесение замечаний и подачи заявки на сайте для вынесения наказания.</div>
-                    <div class="rule"><span class="code">6.2.</span> Проводящий <strong>ОБЯЗАН</strong> делать фрапс строя.</div>
-                    <div class="rule"><span class="code">6.3.</span> Проводящий <strong>ОБЯЗАН</strong> донести достоверную информацию до каждого.</div>
-                    <div class="rule"><span class="code">6.4.</span> Проводящий <strong>ОБЯЗАН</strong> обеспечивать комфортную и спокойную обстановку.</div>
-                    <div class="rule"><span class="code">6.5.</span> Проводящий <strong>ОБЯЗАН</strong> докладывать о КАЖДОМ нарушении лидеру семьи или ОЗГЗ.</div>
-                    <div class="rule"><span class="code">6.6.</span> Проводящий <strong>НЕ ЗАВЕРШАЕТ</strong> съёмку до полного окончания строя.</div>
-                </div>
-
-                <div class="section">
-                    <h3>Статья 7. Заключительные положения</h3>
-                    <div class="rule"><span class="code">7.1.</span> Правила вступают в силу с момента подписания.</div>
-                    <div class="rule"><span class="code">7.2.</span> Все члены семьи обязаны ознакомиться с правилами под подпись.</div>
-                    <div class="rule"><span class="code">7.3.</span> Контроль исполнения возлагается на главного зама <strong>Artemchik_Haunted</strong>.</div>
-                </div>
-
-                <div class="footer">
-                    <span>Ответственные за исполнение:</span> Robert_Salamanca · Artemchik_Haunted · Anton_Chebureck
-                </div>
+            <div class="rules-doc" id="rulesContent">
+                <!-- Загружается из БД -->
             </div>
         </div>
 
         <!-- ===== СОСТАВ СЕМЬИ ===== -->
         <div id="page-members" class="page">
             <h2>СОСТАВ СЕМЬИ</h2>
-            <div class="info-block">
-                <p style="color:#fff; letter-spacing:2px; font-size:13px;">ГЛАВНЫЙ ЗАМ (ГЗ)</p>
-                <p><strong>Artemchik_Haunted</strong></p>
-                <p style="color:#fff; letter-spacing:2px; font-size:13px; margin-top:12px;">ОЗГЗ</p>
-                <p><strong>Anton_Chebureck</strong></p>
-                <p style="color:#fff; letter-spacing:2px; font-size:13px; margin-top:12px;">СТАРШИЕ ЗАМЫ</p>
-                <p><strong>Roma_VOLOSKIND</strong></p>
-                <p><strong>Kevin_VOLOSKIND</strong></p>
-                <p><strong>Sergey_Prince</strong></p>
-                <p><strong>Black_Fedya</strong></p>
+            <div class="info-block" id="membersContent">
+                <!-- Загружается из БД -->
             </div>
         </div>
 
@@ -1217,6 +1118,25 @@
                 <input type="text" id="buildForbidden" placeholder="Кому нельзя появляться (через запятую)">
                 <button class="btn" onclick="submitBuildRequest()">Отправить заявку</button>
                 <div id="buildResult" class="result-msg" style="margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===== СЕМЬИ (для всех) ===== -->
+        <div id="page-families" class="page">
+            <h2>СЕМЬИ</h2>
+            <div class="families-grid">
+                <div class="family-block">
+                    <h3 class="ally-color">🤝 СОЮЗНИКИ</h3>
+                    <div id="alliesDisplay">
+                        <p class="empty">Нет союзников</p>
+                    </div>
+                </div>
+                <div class="family-block">
+                    <h3 class="enemy-color">⚔️ НЕДРУЖЕСТВЕННЫЕ</h3>
+                    <div id="enemiesDisplay">
+                        <p class="empty">Нет недружественных семей</p>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1334,24 +1254,24 @@
             </div>
         </div>
 
-        <!-- ===== АДМИН: СЕМЬИ ===== -->
+        <!-- ===== АДМИН: УПРАВЛЕНИЕ СЕМЬЯМИ ===== -->
         <div id="page-adminFamilies" class="page">
-            <h2>СЕМЬИ</h2>
+            <h2>УПРАВЛЕНИЕ СЕМЬЯМИ</h2>
             <div style="display:flex; gap:20px; flex-wrap:wrap;">
                 <div style="flex:1; min-width:250px; border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                    <h3 style="color:#44ff44; font-weight:300; letter-spacing:2px; margin-bottom:12px;">СОЮЗНИКИ</h3>
+                    <h3 style="color:#44ff44; font-weight:300; letter-spacing:2px; margin-bottom:12px;">🤝 СОЮЗНИКИ</h3>
                     <div id="alliesList"><p style="color:#444;">Нет союзников</p></div>
                     <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
                         <input type="text" id="newAlly" placeholder="Название семьи" style="flex:1; min-width:120px; padding:8px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                        <button class="btn btn-small" onclick="addAlly()" style="width:auto;">Добавить</button>
+                        <button class="btn btn-small btn-green" onclick="addAlly()" style="width:auto;">Добавить</button>
                     </div>
                 </div>
                 <div style="flex:1; min-width:250px; border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                    <h3 style="color:#cc0000; font-weight:300; letter-spacing:2px; margin-bottom:12px;">НЕДРУЖЕСТВЕННЫЕ</h3>
+                    <h3 style="color:#cc0000; font-weight:300; letter-spacing:2px; margin-bottom:12px;">⚔️ НЕДРУЖЕСТВЕННЫЕ</h3>
                     <div id="enemiesList"><p style="color:#444;">Нет недружественных семей</p></div>
                     <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
                         <input type="text" id="newEnemy" placeholder="Название семьи" style="flex:1; min-width:120px; padding:8px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                        <button class="btn btn-small" onclick="addEnemy()" style="width:auto;">Добавить</button>
+                        <button class="btn btn-small btn-danger" onclick="addEnemy()" style="width:auto;">Добавить</button>
                     </div>
                 </div>
             </div>
@@ -1506,10 +1426,10 @@ async function loadDB() {
         if (!db.enemies) db.enemies = [];
         if (!db.siteContent) {
             db.siteContent = {
-                uksp: 'Полный текст УКСП...',
-                rules: 'Полный текст правил строя...',
-                members: 'Состав семьи...',
-                family_info: 'Информация о семье...'
+                uksp: 'Полный текст УКСП будет загружен...',
+                rules: 'Полный текст правил строя будет загружен...',
+                members: 'Состав семьи будет загружен...',
+                family_info: 'Информация о семье будет загружена...'
             };
         }
         return db;
@@ -1601,7 +1521,6 @@ function addHistory(userId, action, details) {
 }
 
 function isValidNick(nick) {
-    // только буквы (латиница или кириллица), подчёркивание и дефис
     return /^[a-zA-Zа-яА-ЯёЁ_\-]+$/.test(nick);
 }
 
@@ -1789,12 +1708,14 @@ function enterMainPage(user) {
     loadProfile(user);
     loadViolations(user);
     loadUserRequests();
+    loadFamiliesDisplay();
+    loadSiteContent();
     if (isAdmin(user)) {
         loadAdminMembers();
         loadAdminRequests();
         loadAdminBuildRequests();
         loadHistory();
-        loadFamilies();
+        loadFamiliesAdmin();
     }
     showPage('profile');
 }
@@ -1851,6 +1772,32 @@ function showPage(name) {
     document.querySelectorAll('.nav-menu button[data-page]').forEach(b => {
         b.classList.toggle('active', b.dataset.page === name);
     });
+}
+
+// ================================================================
+// ЗАГРУЗКА КОНТЕНТА САЙТА
+// ================================================================
+
+function loadSiteContent() {
+    if (!db.siteContent) return;
+    
+    // УКСП
+    const ukspEl = document.getElementById('ukspContent');
+    if (db.siteContent.uksp) {
+        ukspEl.innerHTML = db.siteContent.uksp;
+    }
+    
+    // Правила строя
+    const rulesEl = document.getElementById('rulesContent');
+    if (db.siteContent.rules) {
+        rulesEl.innerHTML = db.siteContent.rules;
+    }
+    
+    // Состав семьи
+    const membersEl = document.getElementById('membersContent');
+    if (db.siteContent.members) {
+        membersEl.innerHTML = db.siteContent.members;
+    }
 }
 
 // ================================================================
@@ -2212,6 +2159,39 @@ async function submitBuildRequest() {
     document.getElementById('buildTopic').value = '';
     document.getElementById('buildRequired').value = '';
     document.getElementById('buildForbidden').value = '';
+}
+
+// ================================================================
+// СЕМЬИ (общий раздел для всех)
+// ================================================================
+
+function loadFamiliesDisplay() {
+    if (!db.allies) db.allies = [];
+    if (!db.enemies) db.enemies = [];
+    
+    // Союзники
+    const alliesContainer = document.getElementById('alliesDisplay');
+    if (db.allies.length === 0) {
+        alliesContainer.innerHTML = '<p class="empty">Нет союзников</p>';
+    } else {
+        let html = '';
+        db.allies.forEach(a => {
+            html += `<div class="family-item">🤝 ${a}</div>`;
+        });
+        alliesContainer.innerHTML = html;
+    }
+    
+    // Недружественные
+    const enemiesContainer = document.getElementById('enemiesDisplay');
+    if (db.enemies.length === 0) {
+        enemiesContainer.innerHTML = '<p class="empty">Нет недружественных семей</p>';
+    } else {
+        let html = '';
+        db.enemies.forEach(e => {
+            html += `<div class="family-item">⚔️ ${e}</div>`;
+        });
+        enemiesContainer.innerHTML = html;
+    }
 }
 
 // ================================================================
@@ -2680,6 +2660,7 @@ async function saveEditContent() {
     res.className = 'result-msg success';
     addHistory(currentUser.id, 'Изменение информации сайта', `Обновлён раздел: ${section}`);
     showToast('✅ ИНФОРМАЦИЯ ОБНОВЛЕНА', `Раздел ${section} обновлён`, 'info');
+    loadSiteContent();
 }
 
 // ================================================================
@@ -2705,10 +2686,10 @@ function loadHistory() {
 }
 
 // ================================================================
-// АДМИН: СЕМЬИ
+// АДМИН: УПРАВЛЕНИЕ СЕМЬЯМИ
 // ================================================================
 
-function loadFamilies() {
+function loadFamiliesAdmin() {
     if (!db.allies) db.allies = [];
     if (!db.enemies) db.enemies = [];
     
@@ -2749,7 +2730,8 @@ async function addAlly() {
     db.allies.push(name);
     await saveDB();
     document.getElementById('newAlly').value = '';
-    loadFamilies();
+    loadFamiliesAdmin();
+    loadFamiliesDisplay();
     addHistory(currentUser.id, 'Добавление союзника', `Добавлена семья: ${name}`);
     showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в союзники`, 'info');
 }
@@ -2759,7 +2741,8 @@ async function removeAlly(index) {
     const name = db.allies[index];
     db.allies.splice(index, 1);
     await saveDB();
-    loadFamilies();
+    loadFamiliesAdmin();
+    loadFamiliesDisplay();
     addHistory(currentUser.id, 'Удаление союзника', `Удалена семья: ${name}`);
     showToast('✅ УДАЛЕНО', `Семья ${name} удалена из союзников`, 'info');
 }
@@ -2772,7 +2755,8 @@ async function addEnemy() {
     db.enemies.push(name);
     await saveDB();
     document.getElementById('newEnemy').value = '';
-    loadFamilies();
+    loadFamiliesAdmin();
+    loadFamiliesDisplay();
     addHistory(currentUser.id, 'Добавление недружественной семьи', `Добавлена семья: ${name}`);
     showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
 }
@@ -2782,7 +2766,8 @@ async function removeEnemy(index) {
     const name = db.enemies[index];
     db.enemies.splice(index, 1);
     await saveDB();
-    loadFamilies();
+    loadFamiliesAdmin();
+    loadFamiliesDisplay();
     addHistory(currentUser.id, 'Удаление недружественной семьи', `Удалена семья: ${name}`);
     showToast('✅ УДАЛЕНО', `Семья ${name} удалена из недружественных`, 'info');
 }
