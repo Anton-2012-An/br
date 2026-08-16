@@ -23,7 +23,7 @@
         }
         
         ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
         ::-webkit-scrollbar-thumb { background: #333; }
         ::-webkit-scrollbar-thumb:hover { background: #555; }
         
@@ -124,7 +124,7 @@
             border-color: #fff;
         }
         .auth-box input::placeholder {
-            color: #444;
+            color: #555;
         }
         .auth-box label {
             display: flex;
@@ -141,12 +141,14 @@
             margin: 0;
             accent-color: #fff;
         }
+        
+        /* ===== КНОПКИ - БЕЛЫЕ НА ТЁМНОМ ===== */
         .btn {
             width: 100%;
             padding: 13px;
             margin: 6px 0;
-            background: #fff;
-            color: #000;
+            background: #ffffff;
+            color: #000000;
             border: none;
             font-size: 14px;
             font-weight: 500;
@@ -157,20 +159,24 @@
             text-transform: uppercase;
         }
         .btn:hover {
-            background: #ccc;
+            background: #dddddd;
+            transform: scale(1.01);
+        }
+        .btn:active {
+            transform: scale(0.98);
         }
         .btn-outline {
             background: transparent;
-            border: 1px solid #333;
-            color: #fff;
+            border: 1px solid #ffffff;
+            color: #ffffff;
         }
         .btn-outline:hover {
-            background: #fff;
-            color: #000;
+            background: #ffffff;
+            color: #000000;
         }
         .btn-danger {
             background: #cc0000;
-            color: #fff;
+            color: #ffffff;
         }
         .btn-danger:hover {
             background: #ff0000;
@@ -183,12 +189,20 @@
             margin: 4px 4px 4px 0;
         }
         .btn-success {
-            background: #fff;
-            color: #000;
+            background: #ffffff;
+            color: #000000;
         }
         .btn-success:hover {
-            background: #ccc;
+            background: #dddddd;
         }
+        .btn-secondary {
+            background: #222222;
+            color: #ffffff;
+        }
+        .btn-secondary:hover {
+            background: #333333;
+        }
+        
         .auth-switch {
             text-align: center;
             margin-top: 16px;
@@ -211,7 +225,7 @@
             display: none;
         }
         .success-msg {
-            color: #fff;
+            color: #44ff44;
             font-size: 13px;
             margin: 5px 0;
             display: none;
@@ -269,7 +283,7 @@
         /* Верхняя панель */
         .top-bar {
             padding: 18px 30px;
-            border-bottom: 1px solid #111;
+            border-bottom: 1px solid #1a1a1a;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -306,8 +320,8 @@
         .btn-logout {
             padding: 6px 18px;
             background: transparent;
-            border: 1px solid #222;
-            color: #555;
+            border: 1px solid #333;
+            color: #888;
             cursor: pointer;
             font-size: 12px;
             transition: all 0.3s;
@@ -326,13 +340,13 @@
             gap: 2px;
             padding: 12px 30px;
             background: #050505;
-            border-bottom: 1px solid #111;
+            border-bottom: 1px solid #1a1a1a;
         }
         .nav-menu button {
             padding: 8px 18px;
             background: transparent;
             border: none;
-            color: #444;
+            color: #666;
             cursor: pointer;
             font-size: 12px;
             letter-spacing: 1px;
@@ -348,7 +362,7 @@
             border-bottom: 1px solid #fff;
         }
         .nav-menu .admin-section {
-            border-top: 1px solid #111;
+            border-top: 1px solid #1a1a1a;
             padding-top: 10px;
             margin-top: 6px;
             width: 100%;
@@ -357,7 +371,7 @@
             gap: 2px;
         }
         .nav-menu .admin-section .label {
-            color: #333;
+            color: #444;
             font-size: 10px;
             letter-spacing: 2px;
             width: 100%;
@@ -386,12 +400,12 @@
             letter-spacing: 4px;
             font-size: 1.4rem;
             color: #fff;
-            border-bottom: 1px solid #111;
+            border-bottom: 1px solid #1a1a1a;
             padding-bottom: 12px;
             margin-bottom: 20px;
         }
         .page .info-block {
-            border: 1px solid #111;
+            border: 1px solid #1a1a1a;
             padding: 20px 24px;
             background: #050505;
             margin-bottom: 14px;
@@ -411,13 +425,13 @@
            УКСП - СТИЛИ
            ============================================================ */
         .uksp-doc {
-            border: 1px solid #111;
+            border: 1px solid #1a1a1a;
             padding: 30px;
             background: #050505;
         }
         .uksp-doc .header {
             text-align: center;
-            border-bottom: 1px solid #111;
+            border-bottom: 1px solid #1a1a1a;
             padding-bottom: 20px;
             margin-bottom: 20px;
         }
@@ -450,7 +464,7 @@
             letter-spacing: 3px;
             font-size: 1rem;
             color: #fff;
-            border-bottom: 1px solid #111;
+            border-bottom: 1px solid #1a1a1a;
             padding-bottom: 8px;
             margin-bottom: 12px;
         }
@@ -473,7 +487,7 @@
             margin-right: 8px;
         }
         .uksp-doc .footer {
-            border-top: 1px solid #111;
+            border-top: 1px solid #1a1a1a;
             padding-top: 20px;
             margin-top: 20px;
             color: #444;
@@ -488,7 +502,7 @@
            НАРУШЕНИЯ
            ============================================================ */
         .violation-item {
-            border: 1px solid #111;
+            border: 1px solid #1a1a1a;
             padding: 14px 18px;
             margin: 6px 0;
             background: #050505;
@@ -537,7 +551,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.92);
+            background: rgba(0,0,0,0.95);
             z-index: 1000;
             justify-content: center;
             align-items: center;
@@ -564,7 +578,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #111;
+            border-bottom: 1px solid #1a1a1a;
             padding-bottom: 12px;
             margin-bottom: 18px;
         }
@@ -626,10 +640,13 @@
             font-size: 13px;
         }
         .modal-box .result-msg.success {
-            color: #fff;
+            color: #44ff44;
         }
         .modal-box .result-msg.error {
             color: #cc0000;
+        }
+        .modal-box .result-msg.info {
+            color: #fff;
         }
         
         /* ============================================================
@@ -673,7 +690,7 @@
             color: #cc0000;
         }
         .toast .toast-content .toast-title.success {
-            color: #fff;
+            color: #44ff44;
         }
         .toast .toast-content .toast-text {
             font-size: 12px;
@@ -862,7 +879,10 @@
                 <p><strong>Дата регистрации:</strong> <span id="profileRegDate"></span></p>
                 <p><strong>Статус:</strong> <span id="profileStatus" style="color:#44ff44;">Активен</span></p>
             </div>
-            <button class="btn btn-outline btn-small" onclick="openEditProfile()">Изменить информацию</button>
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-outline btn-small" onclick="openEditProfile()">Изменить информацию</button>
+                <button class="btn btn-outline btn-small" onclick="openChangePassword()">Сменить пароль</button>
+            </div>
         </div>
 
         <!-- ===== УКСП ===== -->
@@ -980,8 +1000,8 @@
                 <input type="text" id="adminAddId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
                 <button class="btn btn-small" onclick="adminFindForAdd()" style="width:auto;">Найти</button>
             </div>
-            <div id="adminAddUserInfo" style="display:none; border:1px solid #111; padding:14px; background:#050505; margin-bottom:12px;"></div>
-            <div style="border:1px solid #111; padding:16px; background:#050505;">
+            <div id="adminAddUserInfo" style="display:none; border:1px solid #1a1a1a; padding:14px; background:#050505; margin-bottom:12px;"></div>
+            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
                 <input type="text" id="adminAddType" placeholder="Тип нарушения (например ФП 1.1)">
                 <textarea id="adminAddDesc" placeholder="Текст нарушения"></textarea>
                 <button class="btn" onclick="adminAddViolation()">Выдать нарушение</button>
@@ -1002,7 +1022,7 @@
         <!-- ===== АДМИН: СПИСОК ЧЛЕНОВ ===== -->
         <div id="page-adminMembers" class="page">
             <h2>СПИСОК ЧЛЕНОВ</h2>
-            <div id="adminMembersList" style="border:1px solid #111; padding:16px; background:#050505;"></div>
+            <div id="adminMembersList" style="border:1px solid #1a1a1a; padding:16px; background:#050505;"></div>
         </div>
 
         <!-- ===== АДМИН: БЛОКИРОВКА ===== -->
@@ -1012,8 +1032,8 @@
                 <input type="text" id="adminBanId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
                 <button class="btn btn-small" onclick="adminFindForBan()" style="width:auto;">Найти</button>
             </div>
-            <div id="adminBanUserInfo" style="display:none; border:1px solid #111; padding:14px; background:#050505; margin-bottom:12px;"></div>
-            <div style="border:1px solid #111; padding:16px; background:#050505;">
+            <div id="adminBanUserInfo" style="display:none; border:1px solid #1a1a1a; padding:14px; background:#050505; margin-bottom:12px;"></div>
+            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
                 <input type="text" id="adminBanReason" placeholder="Причина блокировки">
                 <input type="datetime-local" id="adminBanUnbanDate">
                 <button class="btn" onclick="adminBanUser()">Заблокировать</button>
@@ -1028,10 +1048,10 @@
                 <input type="text" id="adminUnbanId" placeholder="ID заблокированного пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
                 <button class="btn btn-small" onclick="adminFindForUnban()" style="width:auto;">Найти</button>
             </div>
-            <div id="adminUnbanUserInfo" style="display:none; border:1px solid #111; padding:14px; background:#050505; margin-bottom:12px;"></div>
-            <div style="border:1px solid #111; padding:16px; background:#050505;">
+            <div id="adminUnbanUserInfo" style="display:none; border:1px solid #1a1a1a; padding:14px; background:#050505; margin-bottom:12px;"></div>
+            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
                 <input type="text" id="adminUnbanReason" placeholder="Причина досрочного разбана (опционально)">
-                <button class="btn btn-success" onclick="adminUnbanUser()">✅ Разблокировать досрочно</button>
+                <button class="btn btn-success" onclick="adminUnbanUser()">Разблокировать досрочно</button>
                 <div id="adminUnbanResult" class="result-msg" style="margin-top:10px;"></div>
             </div>
         </div>
@@ -1043,7 +1063,7 @@
                 <input type="text" id="adminSearchId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
                 <button class="btn btn-small" onclick="adminSearchUser()" style="width:auto;">Найти</button>
             </div>
-            <div id="adminSearchResult" style="border:1px solid #111; padding:16px; background:#050505;"></div>
+            <div id="adminSearchResult" style="border:1px solid #1a1a1a; padding:16px; background:#050505;"></div>
         </div>
 
     </div>
@@ -1064,6 +1084,21 @@
     </div>
 </div>
 
+<!-- ===== МОДАЛЬНОЕ ОКНО: СМЕНА ПАРОЛЯ ===== -->
+<div class="modal-overlay" id="passwordModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3>Сменить пароль</h3>
+            <button class="close-btn" onclick="closePasswordModal()">✕</button>
+        </div>
+        <input type="password" id="oldPassword" placeholder="Текущий пароль">
+        <input type="password" id="newPassword" placeholder="Новый пароль">
+        <input type="password" id="newPassword2" placeholder="Повторите новый пароль">
+        <button class="btn" onclick="changePassword()">Сменить пароль</button>
+        <div id="passwordResult" class="result-msg"></div>
+    </div>
+</div>
+
 <!-- ===== МОДАЛЬНОЕ ОКНО: УВЕДОМЛЕНИЕ О НАРУШЕНИИ ===== -->
 <div class="modal-overlay" id="violationNotifyModal">
     <div class="modal-box">
@@ -1076,7 +1111,7 @@
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: СНЯТИЕ НАРУШЕНИЯ (ДЛЯ ПОЛЬЗОВАТЕЛЯ) ===== -->
+<!-- ===== МОДАЛЬНОЕ ОКНО: СНЯТИЕ НАРУШЕНИЯ ===== -->
 <div class="modal-overlay" id="violationResolvedModal">
     <div class="modal-box">
         <div class="modal-header">
@@ -1103,7 +1138,6 @@ let pendingRemoveUser = null;
 let pendingRemoveViolation = null;
 let pendingBanUser = null;
 let pendingUnbanUser = null;
-let notifiedViolations = [];
 
 // ================================================================
 // РАБОТА С JSONBIN
@@ -1409,6 +1443,7 @@ function openEditProfile() {
     document.getElementById('editTg').value = currentUser.tgUser;
     document.getElementById('editEmail').value = currentUser.email || '';
     document.getElementById('editResult').textContent = '';
+    document.getElementById('editResult').className = 'result-msg';
 }
 
 function closeEditModal() {
@@ -1422,12 +1457,24 @@ async function saveProfile() {
     const email = document.getElementById('editEmail').value.trim();
     const res = document.getElementById('editResult');
     
-    if (!nick || !tg) { res.textContent = 'Ник и Telegram обязательны'; res.className = 'result-msg error'; return; }
+    if (!nick || !tg) { 
+        res.textContent = 'Ник и Telegram обязательны'; 
+        res.className = 'result-msg error'; 
+        return; 
+    }
     
     const nickExists = db.users.find(u => u.id !== currentUser.id && u.gameNick.toLowerCase() === nick.toLowerCase());
-    if (nickExists) { res.textContent = 'Этот ник уже занят'; res.className = 'result-msg error'; return; }
+    if (nickExists) { 
+        res.textContent = 'Этот ник уже занят'; 
+        res.className = 'result-msg error'; 
+        return; 
+    }
     const tgExists = db.users.find(u => u.id !== currentUser.id && u.tgUser.toLowerCase() === tg.toLowerCase());
-    if (tgExists) { res.textContent = 'Этот Telegram уже используется'; res.className = 'result-msg error'; return; }
+    if (tgExists) { 
+        res.textContent = 'Этот Telegram уже используется'; 
+        res.className = 'result-msg error'; 
+        return; 
+    }
     
     currentUser.gameNick = nick;
     currentUser.tgUser = tg;
@@ -1438,6 +1485,69 @@ async function saveProfile() {
     res.textContent = '✅ Информация обновлена';
     res.className = 'result-msg success';
     setTimeout(() => closeEditModal(), 800);
+}
+
+// ================================================================
+// СМЕНА ПАРОЛЯ
+// ================================================================
+
+function openChangePassword() {
+    if (!currentUser) return;
+    document.getElementById('passwordModal').classList.add('active');
+    document.getElementById('oldPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('newPassword2').value = '';
+    document.getElementById('passwordResult').textContent = '';
+    document.getElementById('passwordResult').className = 'result-msg';
+}
+
+function closePasswordModal() {
+    document.getElementById('passwordModal').classList.remove('active');
+}
+
+async function changePassword() {
+    if (!currentUser) return;
+    const oldPass = document.getElementById('oldPassword').value;
+    const newPass = document.getElementById('newPassword').value;
+    const newPass2 = document.getElementById('newPassword2').value;
+    const res = document.getElementById('passwordResult');
+    
+    if (!oldPass || !newPass || !newPass2) {
+        res.textContent = 'Заполните все поля';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    if (oldPass !== currentUser.password) {
+        res.textContent = 'Неверный текущий пароль';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    if (newPass.length < 4) {
+        res.textContent = 'Новый пароль минимум 4 символа';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    if (newPass !== newPass2) {
+        res.textContent = 'Новые пароли не совпадают';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    if (newPass === oldPass) {
+        res.textContent = 'Новый пароль должен отличаться от текущего';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    currentUser.password = newPass;
+    await saveDB();
+    res.textContent = '✅ Пароль успешно изменён!';
+    res.className = 'result-msg success';
+    showToast('✅ ПАРОЛЬ ИЗМЕНЁН', 'Ваш пароль успешно обновлён', 'info');
+    setTimeout(() => closePasswordModal(), 1000);
 }
 
 // ================================================================
@@ -1551,6 +1661,7 @@ async function adminAddViolation() {
     if (db.currentSession === pendingAddUser.id) {
         showToast('⚠️ НОВОЕ НАРУШЕНИЕ', 'Вам выписано дисциплинарное взыскание', 'danger');
         document.getElementById('violationNotifyModal').classList.add('active');
+        loadViolations(currentUser);
     }
     pendingAddUser = null;
     document.getElementById('adminAddUserInfo').style.display = 'none';
@@ -1593,7 +1704,7 @@ function selectForRemove(violationId) {
     pendingRemoveViolation = violation;
     const list = document.getElementById('adminRemoveList');
     list.innerHTML = `
-        <div style="border:1px solid #333; padding:16px; background:#050505;">
+        <div style="border:1px solid #222; padding:16px; background:#050505;">
             <p style="color:#fff;">Выбрано нарушение:</p>
             <p style="color:#aaa; font-size:13px;">${violation.type} — ${violation.description}</p>
             <p style="color:#444; font-size:12px;">${formatDate(violation.date)}</p>
@@ -1646,7 +1757,7 @@ function loadAdminMembers() {
     }
     let html = `<p style="color:#fff; margin-bottom:10px;">Всего: ${members.length}</p>`;
     members.forEach(u => {
-        html += `<div style="border-bottom:1px solid #111; padding:8px 0; color:#aaa; font-size:13px;">
+        html += `<div style="border-bottom:1px solid #1a1a1a; padding:8px 0; color:#aaa; font-size:13px;">
             <span style="color:#fff;">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : 'Активен'}
         </div>`;
     });
@@ -1757,7 +1868,6 @@ async function adminUnbanUser() {
     res.textContent = `✅ ${pendingUnbanUser.gameNick} разблокирован досрочно`;
     res.className = 'result-msg success';
     
-    // Уведомление пользователю
     if (db.currentSession === pendingUnbanUser.id) {
         showToast('✅ ДОСРОЧНЫЙ РАЗБАН', 'Вы разблокированы досрочно', 'info');
     }
@@ -1779,12 +1889,12 @@ async function adminSearchUser() {
     const user = getUserById(id);
     if (!user) { res.innerHTML = '<p style="color:#cc0000;">Пользователь не найден</p>'; return; }
     res.innerHTML = `
-        <div style="border-bottom:1px solid #111; padding:6px 0;"><strong>ID:</strong> ${user.id}</div>
-        <div style="border-bottom:1px solid #111; padding:6px 0;"><strong>Игровой ник:</strong> ${user.gameNick}</div>
-        <div style="border-bottom:1px solid #111; padding:6px 0;"><strong>Telegram:</strong> ${user.tgUser}</div>
-        <div style="border-bottom:1px solid #111; padding:6px 0;"><strong>Email:</strong> ${user.email || '-'}</div>
-        <div style="border-bottom:1px solid #111; padding:6px 0;"><strong>Статус:</strong> ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</div>
-        ${user.isBanned ? `<div style="border-bottom:1px solid #111; padding:6px 0;"><strong>Причина бана:</strong> ${user.banInfo?.reason || '-'}</div>` : ''}
+        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>ID:</strong> ${user.id}</div>
+        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Игровой ник:</strong> ${user.gameNick}</div>
+        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Telegram:</strong> ${user.tgUser}</div>
+        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Email:</strong> ${user.email || '-'}</div>
+        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Статус:</strong> ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</div>
+        ${user.isBanned ? `<div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Причина бана:</strong> ${user.banInfo?.reason || '-'}</div>` : ''}
         <div style="padding:6px 0;"><strong>Нарушений:</strong> ${(user.violations || []).length}</div>
     `;
 }
