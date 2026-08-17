@@ -1955,7 +1955,7 @@
 // ГЛОБАЛЬНЫЕ ПЕРЕМЕННЫЕ
 // ================================================================
 
-const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/6a80d5fbf5f4af5e291b0df5';
+const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/6a82dfaeda38895dfeee462c';
 const MASTER_KEY = '$2a$10$/lKNp2cCj9lOUJxhWQ0uI./vRHpINQt.MWizWPJOnRinj62u0JIgO';
 
 const PAGES_URL = 'https://api.jsonbin.io/v3/b/6a81fabfda38895dfeec240d';
@@ -2350,90 +2350,7 @@ async function loadDB() {
         if (!db.siteContent) {
             db.siteContent = {
                 uksp: 'Полный текст УКСП будет загружен...',
-                rules: `
-<div class="rules-doc">
-    <div class="header">
-        <div class="title">ПРАВИЛА ПРОВЕДЕНИЯ СТРОЯ</div>
-        <div class="subtitle">NIGHTMARE EMPIRE · BLACK RUSSIA</div>
-        <div class="meta">
-            Утверждено: <span>Robert_Salamanca</span> · 
-            Дата: <span>12.08.2026</span>
-        </div>
-    </div>
-
-    <div class="section">
-        <h3>Статья 1. Общие положения</h3>
-        <div class="rule"><span class="code">1.1.</span> <strong>Строй</strong> — официальное собрание членов семьи для обсуждения текущих вопросов, принятия решений и доведения приказов.</div>
-        <div class="rule"><span class="code">1.2.</span> Строй проводится по решению <strong>главы семьи</strong> или <strong>главного зама</strong>.</div>
-        <div class="rule"><span class="code">1.3.</span> Информация о времени и месте сбора доводится до всех членов семьи <strong>не позднее чем за два часа</strong> до начала.</div>
-    </div>
-
-    <div class="section">
-        <h3>Статья 2. Виды строев</h3>
-        <div class="rule"><span class="code">2.1.</span> <strong>Общий строй</strong> — для всех членов семьи.</div>
-        <div class="rule"><span class="code">2.2.</span> <strong>Строй зам-состава</strong> — только для замов, старших замов, ОЗГЗ и главного зама.</div>
-        <div class="rule"><span class="code">2.3.</span> <strong>Экстренный строй</strong> — созывается в случае срочной угрозы или необходимости немедленного решения.</div>
-    </div>
-
-    <div class="section">
-        <h3>Статья 3. Обязанности членов семьи на строю</h3>
-        <div class="rule"><span class="code">3.1.</span> Являться в указанное место <strong>строго к назначенному времени</strong>.</div>
-        <div class="rule"><span class="code">3.2.</span> Иметь при себе средства связи в режиме <strong>«без звука»</strong>.</div>
-        <div class="rule"><span class="code">3.3.</span> Слушать докладывающих, <strong>не перебивать</strong>.</div>
-        <div class="rule"><span class="code">3.4.</span> Задавать вопросы <strong>только после завершения</strong> основной части строя.</div>
-        <div class="rule"><span class="code">3.5.</span> <strong>Не разглашать</strong> информацию, полученную на строю, третьим лицам.</div>
-        <div class="rule danger"><span class="code">3.6.</span> <strong>ЗАПРЕЩАЕТСЯ</strong> разговаривать без разрешения проводящего.</div>
-        <div class="rule danger"><span class="code">3.7.</span> <strong>ЗАПРЕЩАЕТСЯ</strong> вставлять анимации без разрешения проводящего.</div>
-        <div class="rule danger"><span class="code">3.8.</span> <strong>ЗАПРЕЩАЕТСЯ</strong> делать что-либо без разрешения проводящего.</div>
-        <div class="rule danger"><span class="code">3.9.</span> <strong>ЗАПРЕЩАЕТСЯ</strong> перебивать старший состав и проводящего строя.</div>
-        <div class="rule"><span class="code">3.10.</span> Разговаривать со старшим составом <strong>ИСКЛЮЧИТЕЛЬНО НА ВЫ</strong>.</div>
-        <div class="rule"><span class="code">3.11.</span> Повышение тона при нарушении дисциплины в строю <strong>запрещено</strong>.</div>
-        <div class="rule"><span class="code">3.12.</span> Запрещается покидать строй без разрешения проводящего.</div>
-    </div>
-
-    <div class="section">
-        <h3>Статья 4. Ответственность за нарушение правил строя</h3>
-        <div class="rule"><span class="code">4.1.</span> За опоздание на строй без уважительной причины — <strong>выговор</strong>.</div>
-        <div class="rule"><span class="code">4.2.</span> За неявку на строй без уважительной причины — <strong>строгий выговор</strong>.</div>
-        <div class="rule"><span class="code">4.3.</span> За разглашение информации со строя — <strong>увольнение из семьи</strong>.</div>
-        <div class="rule"><span class="code">4.4.</span> За повторную неявку — <strong>понижение в ранге</strong>.</div>
-        <div class="rule"><span class="code">4.5.</span> За нарушение субординации на строю — <strong>дисциплинарное взыскание</strong>.</div>
-    </div>
-
-    <div class="section">
-        <h3>Статья 5. Порядок проведения строя</h3>
-        <div class="rule"><span class="code">5.1.</span> <strong>Сбор и проверка присутствующих</strong> — проводится младшими замами.</div>
-        <div class="rule"><span class="code">5.2.</span> <strong>Доклад о явке</strong> — старшие замы передают ОЗГЗ.</div>
-        <div class="rule"><span class="code">5.3.</span> <strong>Объявление повестки</strong> — главный зам или глава семьи.</div>
-        <div class="rule"><span class="code">5.4.</span> <strong>Обсуждение вопросов</strong> — выступают только назначенные лица.</div>
-        <div class="rule"><span class="code">5.5.</span> <strong>Принятие решений</strong> — фиксируются в протоколе строя.</div>
-        <div class="rule"><span class="code">5.6.</span> <strong>Подведение итогов</strong> — главный зам или глава семьи.</div>
-    </div>
-
-    <div class="section">
-        <h3>Статья 6. Права проводящего строй</h3>
-        <div class="rule"><span class="code">6.1.</span> Проводящий <strong>ИМЕЕТ ПРАВО</strong> на вынесение замечаний и подачи заявки на сайте для вынесения наказания.</div>
-        <div class="rule"><span class="code">6.2.</span> Проводящий <strong>ОБЯЗАН</strong> делать фрапс строя.</div>
-        <div class="rule"><span class="code">6.3.</span> Проводящий <strong>ОБЯЗАН</strong> донести достоверную информацию до каждого.</div>
-        <div class="rule"><span class="code">6.4.</span> Проводящий <strong>ОБЯЗАН</strong> обеспечивать комфортную и спокойную обстановку.</div>
-        <div class="rule"><span class="code">6.5.</span> Проводящий <strong>ОБЯЗАН</strong> докладывать о КАЖДОМ нарушении лидеру семьи или ОЗГЗ.</div>
-        <div class="rule"><span class="code">6.6.</span> Проводящий <strong>НЕ ЗАВЕРШАЕТ</strong> съёмку до полного окончания строя.</div>
-        <div class="rule"><span class="code">6.7.</span> Проводящий имеет право <strong>задавать вопросы</strong> после окончания строя.</div>
-        <div class="rule"><span class="code">6.8.</span> Проводящий <strong>ОБЯЗАН</strong> делать фото и видеофиксацию строя.</div>
-    </div>
-
-    <div class="section">
-        <h3>Статья 7. Заключительные положения</h3>
-        <div class="rule"><span class="code">7.1.</span> Правила вступают в силу с момента подписания.</div>
-        <div class="rule"><span class="code">7.2.</span> Все члены семьи обязаны ознакомиться с правилами под подпись.</div>
-        <div class="rule"><span class="code">7.3.</span> Контроль исполнения возлагается на главного зама <strong>Artemchik_Haunted</strong>.</div>
-    </div>
-
-    <div class="footer">
-        <span>Ответственные за исполнение:</span> Robert_Salamanca · Artemchik_Haunted · Anton_Chebureck
-    </div>
-</div>
-                `,
+                rules: 'Полный текст правил строя будет загружен...',
                 members: 'Состав семьи будет загружен...',
                 family_info: 'Информация о семье будет загружена...'
             };
