@@ -278,6 +278,58 @@
         }
         
         /* ============================================================
+           ЭКРАН ПОДТВЕРЖДЕНИЯ
+           ============================================================ */
+        #confirmScreen {
+            display: none;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: var(--bg-primary);
+            padding: 20px;
+            transition: var(--transition);
+        }
+        .confirm-box {
+            width: 100%;
+            max-width: 420px;
+            padding: 40px 30px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            text-align: center;
+            transition: var(--transition);
+            box-shadow: 0 0 30px var(--shadow-color);
+        }
+        .confirm-box .confirm-icon {
+            font-size: 60px;
+            color: var(--accent-color);
+            margin-bottom: 20px;
+        }
+        .confirm-box h2 {
+            font-weight: 300;
+            letter-spacing: 4px;
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 10px;
+        }
+        .confirm-box p {
+            color: var(--text-secondary);
+            font-size: 14px;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+        .confirm-box p strong {
+            color: var(--text-primary);
+            font-weight: 400;
+        }
+        .confirm-box .btn-group {
+            display: flex;
+            gap: 10px;
+        }
+        .confirm-box .btn-group .btn {
+            flex: 1;
+        }
+        
+        /* ============================================================
            ЭКРАН БАНА
            ============================================================ */
         #banScreen {
@@ -1166,6 +1218,12 @@
             .families-grid {
                 flex-direction: column;
             }
+            .confirm-box {
+                padding: 30px 20px;
+            }
+            .confirm-box .btn-group {
+                flex-direction: column;
+            }
         }
         
         @media (max-width: 480px) {
@@ -1199,6 +1257,22 @@
 
 <!-- ===== КОНТЕЙНЕР ДЛЯ УВЕДОМЛЕНИЙ ===== -->
 <div class="toast-container" id="toastContainer"></div>
+
+<!-- ===== ЭКРАН ПОДТВЕРЖДЕНИЯ ===== -->
+<div id="confirmScreen">
+    <div class="confirm-box">
+        <div class="confirm-icon">👤</div>
+        <h2>ЭТО ВЫ?</h2>
+        <p>
+            На этом устройстве ранее входили как<br>
+            <strong id="confirmNick">Загрузка...</strong>
+        </p>
+        <div class="btn-group">
+            <button class="btn" onclick="confirmLogin()">Да, это я</button>
+            <button class="btn btn-outline" onclick="confirmLogout()">Нет, это не я</button>
+        </div>
+    </div>
+</div>
 
 <!-- ===== ЭКРАН БАНА ===== -->
 <div id="banScreen">
@@ -1421,7 +1495,7 @@
             <h2 data-lang="admin.violationsId">НАРУШЕНИЯ ПО ID</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
                 <input type="text" id="adminVioSearchId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
-                <button class="btn btn-small" onclick="adminViewViolations()" style="width:auto;" data-lang="admin.search">Найти</button>
+                <button class="btn btn-small" onclick="adminViewViolations()" style="width:auto;" data-lang="admin.searchBtn">Найти</button>
             </div>
             <div id="adminVioResult"></div>
         </div>
@@ -1431,7 +1505,7 @@
             <h2 data-lang="admin.addViolation">ВЫДАТЬ НАРУШЕНИЕ</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
                 <input type="text" id="adminAddId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
-                <button class="btn btn-small" onclick="adminFindForAdd()" style="width:auto;" data-lang="admin.search">Найти</button>
+                <button class="btn btn-small" onclick="adminFindForAdd()" style="width:auto;" data-lang="admin.searchBtn">Найти</button>
             </div>
             <div id="adminAddUserInfo" style="display:none; border:1px solid var(--border-color); padding:14px; background:var(--bg-secondary); margin-bottom:12px;"></div>
             <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
@@ -1447,7 +1521,7 @@
             <h2 data-lang="admin.removeViolation">СНЯТЬ НАРУШЕНИЕ</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
                 <input type="text" id="adminRemoveId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
-                <button class="btn btn-small" onclick="adminFindForRemove()" style="width:auto;" data-lang="admin.search">Найти</button>
+                <button class="btn btn-small" onclick="adminFindForRemove()" style="width:auto;" data-lang="admin.searchBtn">Найти</button>
             </div>
             <div id="adminRemoveList"></div>
         </div>
@@ -1463,7 +1537,7 @@
             <h2 data-lang="admin.ban">БЛОКИРОВКА</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
                 <input type="text" id="adminBanId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
-                <button class="btn btn-small" onclick="adminFindForBan()" style="width:auto;" data-lang="admin.search">Найти</button>
+                <button class="btn btn-small" onclick="adminFindForBan()" style="width:auto;" data-lang="admin.searchBtn">Найти</button>
             </div>
             <div id="adminBanUserInfo" style="display:none; border:1px solid var(--border-color); padding:14px; background:var(--bg-secondary); margin-bottom:12px;"></div>
             <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
@@ -1479,7 +1553,7 @@
             <h2 data-lang="admin.unban">ДОСРОЧНЫЙ РАЗБАН</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
                 <input type="text" id="adminUnbanId" placeholder="ID заблокированного пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
-                <button class="btn btn-small" onclick="adminFindForUnban()" style="width:auto;" data-lang="admin.search">Найти</button>
+                <button class="btn btn-small" onclick="adminFindForUnban()" style="width:auto;" data-lang="admin.searchBtn">Найти</button>
             </div>
             <div id="adminUnbanUserInfo" style="display:none; border:1px solid var(--border-color); padding:14px; background:var(--bg-secondary); margin-bottom:12px;"></div>
             <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
@@ -1583,7 +1657,7 @@
             <h2 data-lang="admin.search">ПОИСК ПОЛЬЗОВАТЕЛЯ</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
                 <input type="text" id="adminSearchId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;" data-lang="admin.userId">
-                <button class="btn btn-small" onclick="adminSearchUser()" style="width:auto;" data-lang="admin.search">Найти</button>
+                <button class="btn btn-small" onclick="adminSearchUser()" style="width:auto;" data-lang="admin.searchBtn">Найти</button>
             </div>
             <div id="adminSearchResult" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);"></div>
         </div>
@@ -1770,6 +1844,7 @@ const PAGES_KEY = '$2a$10$/lKNp2cCj9lOUJxhWQ0uI./vRHpINQt.MWizWPJOnRinj62u0JIgO'
 let db = null;
 let pagesDb = null;
 let currentUser = null;
+let pendingUser = null;
 let currentLang = 'ru';
 let currentTheme = 'dark';
 
@@ -1921,6 +1996,12 @@ const translations = {
         'scheduled.title': 'ЗАПЛАНИРОВАННЫЕ СТРОИ',
         'scheduled.empty': 'Нет запланированных строев',
         'scheduled.details': '📋 ДЕТАЛИ СТРОЯ',
+        'scheduled.approved': 'ОДОБРЕН',
+        'scheduled.click': 'Нажмите для подробностей',
+        'scheduled.organizer': 'Организатор:',
+        'scheduled.status': 'Статус:',
+        'scheduled.delete': 'Удалить строй',
+        'scheduled.confirmDelete': 'Вы уверены, что хотите удалить этот строй?',
         'families.title': 'СЕМЬИ',
         'families.allies': '🤝 СОЮЗНИКИ',
         'families.enemies': '⚔️ НЕДРУЖЕСТВЕННЫЕ',
@@ -2069,6 +2150,12 @@ const translations = {
         'scheduled.title': 'SCHEDULED BUILDS',
         'scheduled.empty': 'No scheduled builds',
         'scheduled.details': '📋 BUILD DETAILS',
+        'scheduled.approved': 'APPROVED',
+        'scheduled.click': 'Click for details',
+        'scheduled.organizer': 'Organizer:',
+        'scheduled.status': 'Status:',
+        'scheduled.delete': 'Delete build',
+        'scheduled.confirmDelete': 'Are you sure you want to delete this build?',
         'families.title': 'FAMILIES',
         'families.allies': '🤝 ALLIES',
         'families.enemies': '⚔️ ENEMIES',
@@ -2186,11 +2273,14 @@ function applyLanguage(lang) {
             el.textContent = translations[lang][key];
         }
     });
-    // Обновляем плейсхолдеры отдельно
-    document.querySelectorAll('input[data-lang], textarea[data-lang]').forEach(el => {
+    document.querySelectorAll('input[data-lang], textarea[data-lang], select[data-lang]').forEach(el => {
         const key = el.dataset.lang;
         if (translations[lang] && translations[lang][key]) {
-            el.placeholder = translations[lang][key];
+            if (el.tagName === 'SELECT') {
+                // Для select не меняем placeholder
+            } else {
+                el.placeholder = translations[lang][key];
+            }
         }
     });
 }
@@ -2322,19 +2412,26 @@ async function init() {
         document.getElementById('themeToggle').textContent = savedTheme === 'dark' ? '🌓' : '☀️';
     }
     
+    // Проверяем сохранённую сессию
     const sessionId = localStorage.getItem('nightmare_session');
     if (sessionId) {
         const user = getUserById(sessionId);
         if (user) {
-            db.currentSession = sessionId;
-            await saveDB();
-            currentUser = user;
+            // Проверяем бан
             if (user.isBanned && user.banInfo) {
                 const unban = new Date(user.banInfo.unbanDate);
-                if (unban > new Date()) { showBanScreen(user); return; }
-                else { user.isBanned = false; user.banInfo = null; await saveDB(); }
+                if (unban > new Date()) { 
+                    showBanScreen(user); 
+                    return; 
+                } else { 
+                    user.isBanned = false; 
+                    user.banInfo = null; 
+                    await saveDB(); 
+                }
             }
-            enterMainPage(user);
+            // Показываем экран подтверждения
+            pendingUser = user;
+            showConfirmScreen(user);
             return;
         }
     }
@@ -2345,6 +2442,32 @@ function showAuthPage() {
     document.getElementById('authPage').style.display = 'flex';
     document.getElementById('mainPage').style.display = 'none';
     document.getElementById('banScreen').style.display = 'none';
+    document.getElementById('confirmScreen').style.display = 'none';
+}
+
+function showConfirmScreen(user) {
+    document.getElementById('authPage').style.display = 'none';
+    document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('banScreen').style.display = 'none';
+    document.getElementById('confirmScreen').style.display = 'flex';
+    document.getElementById('confirmNick').textContent = user.gameNick;
+}
+
+function confirmLogin() {
+    if (!pendingUser) return;
+    document.getElementById('confirmScreen').style.display = 'none';
+    db.currentSession = pendingUser.id;
+    saveDB();
+    currentUser = pendingUser;
+    pendingUser = null;
+    enterMainPage(currentUser);
+}
+
+function confirmLogout() {
+    localStorage.removeItem('nightmare_session');
+    pendingUser = null;
+    document.getElementById('confirmScreen').style.display = 'none';
+    showAuthPage();
 }
 
 function showRegister() {
@@ -2394,6 +2517,10 @@ async function register() {
     db.usedIds.push(id);
     db.currentSession = id;
     await saveDB();
+    
+    // Запоминаем устройство
+    localStorage.setItem('nightmare_session', id);
+    
     currentUser = user;
     enterMainPage(user);
 }
@@ -2405,25 +2532,46 @@ async function login() {
     const err = document.getElementById('loginError');
     err.style.display = 'none';
     
-    if (!input || !pass) { err.textContent = 'Заполните все поля'; err.style.display = 'block'; return; }
+    if (!input || !pass) { 
+        err.textContent = 'Заполните все поля'; 
+        err.style.display = 'block'; 
+        return; 
+    }
     
     let user = getUserByNick(input);
     if (!user) user = getUserByTg(input);
-    if (!user || user.password !== pass) {
-        err.textContent = 'Неверный логин или пароль';
-        err.style.display = 'block'; return;
+    
+    if (!user) {
+        err.textContent = 'Пользователь не найден';
+        err.style.display = 'block';
+        return;
+    }
+    
+    if (user.password !== pass) {
+        err.textContent = 'Неверный пароль';
+        err.style.display = 'block';
+        return;
     }
     
     if (user.isBanned && user.banInfo) {
         const unban = new Date(user.banInfo.unbanDate);
-        if (unban > new Date()) { showBanScreen(user); return; }
-        else { user.isBanned = false; user.banInfo = null; }
+        if (unban > new Date()) { 
+            showBanScreen(user); 
+            return; 
+        } else { 
+            user.isBanned = false; 
+            user.banInfo = null; 
+            await saveDB(); 
+        }
     }
     
     user.lastLogin = new Date().toISOString();
-    db.currentSession = user.id;
     await saveDB();
-    if (remember) localStorage.setItem('nightmare_session', user.id);
+    
+    if (remember) {
+        localStorage.setItem('nightmare_session', user.id);
+    }
+    
     currentUser = user;
     enterMainPage(user);
 }
@@ -2435,6 +2583,7 @@ function logout() {
     currentUser = null;
     document.getElementById('mainPage').style.display = 'none';
     document.getElementById('banScreen').style.display = 'none';
+    document.getElementById('confirmScreen').style.display = 'none';
     document.getElementById('authPage').style.display = 'flex';
 }
 
@@ -2445,6 +2594,7 @@ function logout() {
 function showBanScreen(user) {
     document.getElementById('authPage').style.display = 'none';
     document.getElementById('mainPage').style.display = 'none';
+    document.getElementById('confirmScreen').style.display = 'none';
     document.getElementById('banScreen').style.display = 'flex';
     document.getElementById('banReason').textContent = user.banInfo.reason || 'Не указана';
     document.getElementById('banBannedBy').textContent = getAdminNick(user.banInfo.bannedBy);
@@ -2459,6 +2609,7 @@ function showBanScreen(user) {
 function enterMainPage(user) {
     document.getElementById('authPage').style.display = 'none';
     document.getElementById('banScreen').style.display = 'none';
+    document.getElementById('confirmScreen').style.display = 'none';
     document.getElementById('mainPage').style.display = 'block';
     
     document.getElementById('displayNick').textContent = user.gameNick;
@@ -4057,7 +4208,7 @@ async function addEnemy() {
     loadFamiliesAdmin();
     loadFamiliesDisplay();
     addHistory(currentUser.id, 'Добавление недружественной семьи', `Добавлена семья: ${name}`);
-    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные', 'info');
+    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
 }
 
 async function removeEnemy(index) {
