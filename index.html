@@ -247,6 +247,13 @@
         .btn-green:hover {
             background: #00dd55;
         }
+        .btn-gold {
+            background: #d4a843;
+            color: #000000;
+        }
+        .btn-gold:hover {
+            background: #c49a3a;
+        }
         
         .auth-switch {
             text-align: center;
@@ -575,6 +582,53 @@
         .page .info-block strong {
             color: var(--text-primary);
             font-weight: 400;
+        }
+        
+        /* ============================================================
+           ПРЕМИИ
+           ============================================================ */
+        .balance-box {
+            border: 2px solid var(--accent-color);
+            padding: 20px;
+            background: var(--bg-card);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .balance-box .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--accent-color);
+            letter-spacing: 2px;
+        }
+        .balance-box .balance-label {
+            color: var(--text-muted);
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+        .user-select-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            margin: 4px 0;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .user-select-item:hover {
+            border-color: var(--accent-color);
+        }
+        .user-select-item.selected {
+            border-color: var(--accent-color);
+            background: rgba(212, 168, 67, 0.1);
+        }
+        .user-select-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-color);
+            cursor: pointer;
         }
         
         /* ============================================================
@@ -1243,6 +1297,9 @@
                 font-size: 12px;
                 padding-left: 10px;
             }
+            .balance-box .balance-amount {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
@@ -1356,6 +1413,7 @@
         <button data-page="scheduled" onclick="showPage('scheduled')" data-lang="nav.scheduled">Запланированные строи</button>
         <button data-page="families" onclick="showPage('families')" data-lang="nav.families">Семьи</button>
         <button data-page="dynamic" onclick="showPage('dynamic')" data-lang="nav.dynamic">Разделы</button>
+        <button data-page="premium" onclick="showPage('premium')" data-lang="nav.premium">💰 Мои премии</button>
         
         <div class="admin-section" id="adminSection" style="display:none;">
             <div class="label" data-lang="admin.control">УПРАВЛЕНИЕ</div>
@@ -1373,6 +1431,8 @@
             <button data-page="adminHistory" onclick="showPage('adminHistory')" data-lang="admin.history">История</button>
             <button data-page="adminFamilies" onclick="showPage('adminFamilies')" data-lang="admin.families">Управление семьями</button>
             <button data-page="adminSearch" onclick="showPage('adminSearch')" data-lang="admin.search">Поиск</button>
+            <button data-page="adminPremium" onclick="showPage('adminPremium')" data-lang="admin.premium">💰 Выдать премию</button>
+            <button data-page="adminWithdraw" onclick="showPage('adminWithdraw')" data-lang="admin.withdraw">📤 Заявки на вывод</button>
         </div>
     </div>
 
@@ -1487,6 +1547,23 @@
             <h2 data-lang="dynamic.title">РАЗДЕЛЫ</h2>
             <div id="dynamicPagesList">
                 <p style="color:var(--text-muted);" data-lang="dynamic.empty">Нет доступных разделов</p>
+            </div>
+        </div>
+
+        <!-- ===== МОИ ПРЕМИИ ===== -->
+        <div id="page-premium" class="page">
+            <h2 data-lang="premium.title">💰 МОИ ПРЕМИИ</h2>
+            <div class="balance-box">
+                <div class="balance-label" data-lang="premium.balance">ТЕКУЩИЙ БАЛАНС</div>
+                <div class="balance-amount" id="userBalance">0</div>
+                <div style="color:var(--text-muted); font-size:12px; margin-top:4px;" data-lang="premium.currency">BYN</div>
+            </div>
+            <button class="btn btn-gold btn-small" onclick="openWithdraw()" style="width:auto;" data-lang="premium.withdraw">💳 Вывести средства</button>
+            <div style="margin-top:20px;">
+                <h3 style="font-weight:300; letter-spacing:2px; font-size:1rem; color:var(--text-primary); border-bottom:1px solid var(--border-color); padding-bottom:8px; margin-bottom:12px;" data-lang="premium.history">📜 История начислений</h3>
+                <div id="premiumHistory">
+                    <p style="color:var(--text-muted);" data-lang="premium.noHistory">Нет истории</p>
+                </div>
             </div>
         </div>
 
@@ -1662,6 +1739,32 @@
             <div id="adminSearchResult" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);"></div>
         </div>
 
+        <!-- ===== АДМИН: ВЫДАТЬ ПРЕМИЮ ===== -->
+        <div id="page-adminPremium" class="page">
+            <h2 data-lang="admin.premium">💰 ВЫДАТЬ ПРЕМИЮ</h2>
+            <div style="border:1px solid var(--border-color); padding:20px; background:var(--bg-card);">
+                <p style="color:var(--text-secondary); margin-bottom:12px;" data-lang="admin.selectUsers">Выберите пользователей для начисления премии:</p>
+                <div id="userSelectList" style="max-height:300px; overflow-y:auto; margin-bottom:16px;">
+                    <p style="color:var(--text-muted);">Загрузка...</p>
+                </div>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <input type="number" id="premiumAmount" placeholder="Сумма премии" style="flex:1; min-width:150px;" data-lang="admin.premiumAmount">
+                    <button class="btn btn-gold" onclick="issuePremium()" style="width:auto; padding:10px 30px;" data-lang="admin.issuePremium">Выдать премию</button>
+                </div>
+                <div id="premiumResult" class="result-msg" style="margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ===== АДМИН: ЗАЯВКИ НА ВЫВОД ===== -->
+        <div id="page-adminWithdraw" class="page">
+            <h2 data-lang="admin.withdraw">📤 ЗАЯВКИ НА ВЫВОД</h2>
+            <div style="border:1px solid var(--border-color); padding:20px; background:var(--bg-card);">
+                <div id="withdrawRequestsList">
+                    <p style="color:var(--text-muted);" data-lang="admin.noWithdraw">Нет заявок на вывод</p>
+                </div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -1727,6 +1830,23 @@
         <input type="text" id="raPlace" placeholder="Место нарушения" data-lang="requests.place">
         <button class="btn" onclick="submitRequestAdd()" data-lang="requests.send">Отправить заявку</button>
         <div id="raResult" class="result-msg" style="margin-top:10px;"></div>
+    </div>
+</div>
+
+<!-- Вывод средств -->
+<div class="modal-overlay" id="withdrawModal">
+    <div class="modal-box">
+        <div class="modal-header">
+            <h3 data-lang="premium.withdraw">💳 Вывод средств</h3>
+            <button class="close-btn" onclick="closeWithdrawModal()">✕</button>
+        </div>
+        <p style="color:var(--text-secondary); font-size:14px; margin-bottom:12px;" data-lang="premium.withdrawInfo">Введите сумму для вывода. Если сумма превышает баланс, спишутся все деньги.</p>
+        <div style="color:var(--text-muted); font-size:13px; margin-bottom:10px;">
+            <span data-lang="premium.balanceLabel">Доступно:</span> <span id="withdrawBalance" style="color:var(--accent-color);">0</span> BYN
+        </div>
+        <input type="number" id="withdrawAmount" placeholder="Сумма к выводу" min="1" step="1">
+        <button class="btn btn-gold" onclick="submitWithdraw()" data-lang="premium.submitWithdraw">Продолжить</button>
+        <div id="withdrawResult" class="result-msg" style="margin-top:10px;"></div>
     </div>
 </div>
 
@@ -1853,6 +1973,7 @@ let pendingRemoveUser = null;
 let pendingRemoveViolation = null;
 let pendingBanUser = null;
 let pendingUnbanUser = null;
+let selectedUsers = [];
 
 let addPageType = null;
 let addPageSubtype = null;
@@ -1896,6 +2017,7 @@ const translations = {
         'nav.scheduled': 'Запланированные строи',
         'nav.families': 'Семьи',
         'nav.dynamic': 'Разделы',
+        'nav.premium': '💰 Мои премии',
         'admin.control': 'УПРАВЛЕНИЕ',
         'admin.violationsId': 'Нарушения по ID',
         'admin.addViolation': 'Выдать нарушение',
@@ -1955,6 +2077,12 @@ const translations = {
         'admin.addText': '➕ Поле ввода',
         'admin.addSelect': '➕ Выбор',
         'admin.publish': '📢 Опубликовать раздел',
+        'admin.premium': '💰 Выдать премию',
+        'admin.withdraw': '📤 Заявки на вывод',
+        'admin.selectUsers': 'Выберите пользователей для начисления премии:',
+        'admin.premiumAmount': 'Сумма премии',
+        'admin.issuePremium': 'Выдать премию',
+        'admin.noWithdraw': 'Нет заявок на вывод',
         'profile.title': 'ПРОФИЛЬ',
         'profile.id': 'ID:',
         'profile.nick': 'Игровой ник:',
@@ -2009,6 +2137,15 @@ const translations = {
         'families.noEnemies': 'Нет недружественных семей',
         'dynamic.title': 'РАЗДЕЛЫ',
         'dynamic.empty': 'Нет доступных разделов',
+        'premium.title': '💰 МОИ ПРЕМИИ',
+        'premium.balance': 'ТЕКУЩИЙ БАЛАНС',
+        'premium.currency': 'BYN',
+        'premium.withdraw': '💳 Вывести средства',
+        'premium.history': '📜 История начислений',
+        'premium.noHistory': 'Нет истории',
+        'premium.withdrawInfo': 'Введите сумму для вывода. Если сумма превышает баланс, спишутся все деньги.',
+        'premium.balanceLabel': 'Доступно:',
+        'premium.submitWithdraw': 'Продолжить',
         'notify.violation': '⚠️ НОВОЕ НАРУШЕНИЕ',
         'notify.violationText': 'Вам выписано дисциплинарное взыскание. Ознакомьтесь с ним в разделе «Нарушения».',
         'notify.resolved': '✅ НАРУШЕНИЕ СНЯТО',
@@ -2050,6 +2187,7 @@ const translations = {
         'nav.scheduled': 'Scheduled builds',
         'nav.families': 'Families',
         'nav.dynamic': 'Sections',
+        'nav.premium': '💰 My bonuses',
         'admin.control': 'CONTROL',
         'admin.violationsId': 'Violations by ID',
         'admin.addViolation': 'Issue violation',
@@ -2109,6 +2247,12 @@ const translations = {
         'admin.addText': '➕ Text field',
         'admin.addSelect': '➕ Select field',
         'admin.publish': '📢 Publish section',
+        'admin.premium': '💰 Issue bonus',
+        'admin.withdraw': '📤 Withdrawal requests',
+        'admin.selectUsers': 'Select users to award bonus:',
+        'admin.premiumAmount': 'Bonus amount',
+        'admin.issuePremium': 'Issue bonus',
+        'admin.noWithdraw': 'No withdrawal requests',
         'profile.title': 'PROFILE',
         'profile.id': 'ID:',
         'profile.nick': 'Game nickname:',
@@ -2163,6 +2307,15 @@ const translations = {
         'families.noEnemies': 'No enemies',
         'dynamic.title': 'SECTIONS',
         'dynamic.empty': 'No sections available',
+        'premium.title': '💰 MY BONUSES',
+        'premium.balance': 'CURRENT BALANCE',
+        'premium.currency': 'BYN',
+        'premium.withdraw': '💳 Withdraw funds',
+        'premium.history': '📜 Bonus history',
+        'premium.noHistory': 'No history',
+        'premium.withdrawInfo': 'Enter the amount to withdraw. If the amount exceeds the balance, all money will be written off.',
+        'premium.balanceLabel': 'Available:',
+        'premium.submitWithdraw': 'Continue',
         'notify.violation': '⚠️ NEW VIOLATION',
         'notify.violationText': 'You have been issued a disciplinary sanction. Check it in the "Violations" section.',
         'notify.resolved': '✅ VIOLATION REMOVED',
@@ -2192,6 +2345,8 @@ async function loadDB() {
         if (!db.history) db.history = [];
         if (!db.allies) db.allies = [];
         if (!db.enemies) db.enemies = [];
+        if (!db.premiumHistory) db.premiumHistory = [];
+        if (!db.withdrawRequests) db.withdrawRequests = [];
         if (!db.siteContent) {
             db.siteContent = {
                 uksp: 'Полный текст УКСП будет загружен...',
@@ -2200,12 +2355,17 @@ async function loadDB() {
                 family_info: 'Информация о семье будет загружена...'
             };
         }
+        // Добавляем баланс каждому пользователю, если его нет
+        db.users.forEach(u => {
+            if (u.balance === undefined) u.balance = 0;
+            if (!u.premiumHistory) u.premiumHistory = [];
+        });
         return db;
     } catch (e) {
         db = { 
             users: [], usedIds: ['00000', '11111'], currentSession: null, violationCounter: 0,
             requests: [], buildRequests: [], scheduledBuilds: [], notifications: [], history: [],
-            allies: [], enemies: [],
+            allies: [], enemies: [], premiumHistory: [], withdrawRequests: [],
             siteContent: {
                 uksp: 'Полный текст УКСП...',
                 rules: 'Полный текст правил строя...',
@@ -2277,7 +2437,6 @@ function applyLanguage(lang) {
         const key = el.dataset.lang;
         if (translations[lang] && translations[lang][key]) {
             if (el.tagName === 'SELECT') {
-                // Для select не меняем placeholder
             } else {
                 el.placeholder = translations[lang][key];
             }
@@ -2391,13 +2550,11 @@ async function init() {
     await loadDB();
     await loadPagesDB();
     
-    // Очищаем созданные админами разделы
     pagesDb.publicPages = [];
     pagesDb.adminPages = [];
     pagesDb.pageCounter = 0;
     await savePagesDB();
     
-    // Восстанавливаем язык и тему
     const savedLang = localStorage.getItem('nightmare_lang');
     if (savedLang) {
         currentLang = savedLang;
@@ -2412,12 +2569,10 @@ async function init() {
         document.getElementById('themeToggle').textContent = savedTheme === 'dark' ? '🌓' : '☀️';
     }
     
-    // Проверяем сохранённую сессию
     const sessionId = localStorage.getItem('nightmare_session');
     if (sessionId) {
         const user = getUserById(sessionId);
         if (user) {
-            // Проверяем бан
             if (user.isBanned && user.banInfo) {
                 const unban = new Date(user.banInfo.unbanDate);
                 if (unban > new Date()) { 
@@ -2429,7 +2584,6 @@ async function init() {
                     await saveDB(); 
                 }
             }
-            // Показываем экран подтверждения
             pendingUser = user;
             showConfirmScreen(user);
             return;
@@ -2511,14 +2665,15 @@ async function register() {
         id, gameNick: nick, tgUser: tg, email: email || '', password: pass,
         isAdmin: false, isBanned: false, banInfo: null,
         registrationDate: new Date().toISOString(), lastLogin: new Date().toISOString(),
-        violations: []
+        violations: [],
+        balance: 0,
+        premiumHistory: []
     };
     db.users.push(user);
     db.usedIds.push(id);
     db.currentSession = id;
     await saveDB();
     
-    // Запоминаем устройство
     localStorage.setItem('nightmare_session', id);
     
     currentUser = user;
@@ -2634,12 +2789,15 @@ function enterMainPage(user) {
     loadSiteContent();
     loadDynamicPages();
     loadAdminPagesManagement();
+    loadPremium(user);
     if (isAdmin(user)) {
         loadAdminMembers();
         loadAdminRequests();
         loadAdminBuildRequests();
         loadHistory();
         loadFamiliesAdmin();
+        loadUserSelectList();
+        loadWithdrawRequests();
     }
     showPage('profile');
 }
@@ -2834,7 +2992,260 @@ async function submitDynamicRequest(pageId) {
 }
 
 // ================================================================
-// ПРОФИЛЬ
+// ПРЕМИИ
+// ================================================================
+
+function loadPremium(user) {
+    if (!user) return;
+    document.getElementById('userBalance').textContent = user.balance || 0;
+    
+    const container = document.getElementById('premiumHistory');
+    const history = user.premiumHistory || [];
+    if (history.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['premium.noHistory'] || 'Нет истории') + '</p>';
+        return;
+    }
+    let html = '';
+    history.slice().reverse().forEach(h => {
+        const sign = h.amount > 0 ? '+' : '';
+        const color = h.amount > 0 ? 'var(--success-color)' : 'var(--danger-color)';
+        html += `
+            <div style="border-bottom:1px solid var(--border-color); padding:8px 0; display:flex; justify-content:space-between; flex-wrap:wrap;">
+                <span style="color:var(--text-secondary);">${h.text}</span>
+                <span style="color:${color};">${sign}${h.amount} BYN</span>
+                <span style="color:var(--text-muted); font-size:11px;">${formatDate(h.date)}</span>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+function openWithdraw() {
+    if (!currentUser) return;
+    document.getElementById('withdrawBalance').textContent = currentUser.balance || 0;
+    document.getElementById('withdrawAmount').value = '';
+    document.getElementById('withdrawResult').textContent = '';
+    document.getElementById('withdrawResult').className = 'result-msg';
+    document.getElementById('withdrawModal').classList.add('active');
+}
+
+function closeWithdrawModal() {
+    document.getElementById('withdrawModal').classList.remove('active');
+}
+
+async function submitWithdraw() {
+    if (!currentUser) return;
+    const amount = parseInt(document.getElementById('withdrawAmount').value);
+    const res = document.getElementById('withdrawResult');
+    
+    if (!amount || amount < 1) {
+        res.textContent = 'Введите корректную сумму';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    const balance = currentUser.balance || 0;
+    let withdrawAmount = amount;
+    if (amount > balance) {
+        withdrawAmount = balance;
+    }
+    
+    if (withdrawAmount === 0) {
+        res.textContent = 'На балансе нет средств';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    // Создаём заявку на вывод
+    if (!db.withdrawRequests) db.withdrawRequests = [];
+    const request = {
+        id: 'w' + Date.now(),
+        userId: currentUser.id,
+        userNick: currentUser.gameNick,
+        amount: withdrawAmount,
+        requestedAmount: amount,
+        status: 'pending',
+        date: new Date().toISOString(),
+        response: null
+    };
+    db.withdrawRequests.push(request);
+    await saveDB();
+    
+    res.textContent = '✅ Заявка на вывод отправлена! Ожидайте одобрения администрации.';
+    res.className = 'result-msg success';
+    addNotification(currentUser.id, '📤 ЗАЯВКА НА ВЫВОД', `Заявка на вывод ${withdrawAmount} BYN отправлена`, 'info');
+    showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Заявка на вывод отправлена', 'info');
+    
+    // Уведомляем админов
+    db.users.forEach(u => {
+        if (isAdmin(u)) {
+            addNotification(u.id, '📤 НОВАЯ ЗАЯВКА НА ВЫВОД', `${currentUser.gameNick} запросил вывод ${withdrawAmount} BYN`, 'info');
+        }
+    });
+    
+    setTimeout(() => closeWithdrawModal(), 1500);
+    loadPremium(currentUser);
+    if (isAdmin(currentUser)) loadWithdrawRequests();
+}
+
+// ================================================================
+// АДМИН: ВЫДАТЬ ПРЕМИЮ
+// ================================================================
+
+function loadUserSelectList() {
+    const container = document.getElementById('userSelectList');
+    const members = db.users.filter(u => !u.isAdmin);
+    if (members.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);">Нет пользователей</p>';
+        return;
+    }
+    let html = '';
+    members.forEach(u => {
+        html += `
+            <div class="user-select-item" onclick="toggleUserSelect('${u.id}')" id="select_${u.id}">
+                <input type="checkbox" id="cb_${u.id}" onchange="toggleUserSelect('${u.id}')">
+                <span style="color:var(--text-primary);">${u.gameNick}</span>
+                <span style="color:var(--text-muted); font-size:12px;">ID: ${u.id} · Баланс: ${u.balance || 0} BYN</span>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+    selectedUsers = [];
+}
+
+function toggleUserSelect(userId) {
+    const cb = document.getElementById('cb_' + userId);
+    const item = document.getElementById('select_' + userId);
+    if (cb.checked) {
+        if (!selectedUsers.includes(userId)) selectedUsers.push(userId);
+        item.classList.add('selected');
+    } else {
+        selectedUsers = selectedUsers.filter(id => id !== userId);
+        item.classList.remove('selected');
+    }
+}
+
+async function issuePremium() {
+    const amount = parseInt(document.getElementById('premiumAmount').value);
+    const res = document.getElementById('premiumResult');
+    
+    if (selectedUsers.length === 0) {
+        res.textContent = 'Выберите хотя бы одного пользователя';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    if (!amount || amount < 1) {
+        res.textContent = 'Введите корректную сумму';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    let issuedCount = 0;
+    selectedUsers.forEach(userId => {
+        const user = getUserById(userId);
+        if (user) {
+            user.balance = (user.balance || 0) + amount;
+            if (!user.premiumHistory) user.premiumHistory = [];
+            user.premiumHistory.push({
+                amount: amount,
+                text: `Премия от ${currentUser.gameNick}`,
+                date: new Date().toISOString()
+            });
+            addNotification(userId, '💰 ПОЛУЧЕНА ПРЕМИЯ', `Вам начислено ${amount} BYN от ${currentUser.gameNick}`, 'info');
+            issuedCount++;
+        }
+    });
+    
+    await saveDB();
+    res.textContent = `✅ Премия выдана ${issuedCount} пользователям по ${amount} BYN`;
+    res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Выдача премии', `Выдано ${amount} BYN ${issuedCount} пользователям`);
+    showToast('💰 ПРЕМИЯ ВЫДАНА', `Выдано ${amount} BYN ${issuedCount} пользователям`, 'info');
+    
+    document.getElementById('premiumAmount').value = '';
+    selectedUsers.forEach(id => {
+        const cb = document.getElementById('cb_' + id);
+        if (cb) cb.checked = false;
+        const item = document.getElementById('select_' + id);
+        if (item) item.classList.remove('selected');
+    });
+    selectedUsers = [];
+    loadUserSelectList();
+    if (currentUser) loadPremium(currentUser);
+}
+
+// ================================================================
+// АДМИН: ЗАЯВКИ НА ВЫВОД
+// ================================================================
+
+function loadWithdrawRequests() {
+    const container = document.getElementById('withdrawRequestsList');
+    if (!db.withdrawRequests) db.withdrawRequests = [];
+    const pending = db.withdrawRequests.filter(r => r.status === 'pending');
+    if (pending.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noWithdraw'] || 'Нет заявок на вывод') + '</p>';
+        return;
+    }
+    let html = '';
+    pending.forEach(r => {
+        html += `
+            <div class="request-item">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                    <span style="color:var(--text-primary);">${r.userNick}</span>
+                    <span style="color:var(--accent-color);">${r.amount} BYN</span>
+                </div>
+                <div class="req-text" style="color:var(--text-muted);">Запрошено: ${r.requestedAmount} BYN</div>
+                <div class="req-meta">${formatDate(r.date)}</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                    <button class="btn btn-small btn-green" onclick="respondWithdraw('${r.id}', 'approved')" style="width:auto;">Одобрить</button>
+                    <button class="btn btn-small btn-danger" onclick="respondWithdraw('${r.id}', 'rejected')" style="width:auto;">Отклонить</button>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+async function respondWithdraw(requestId, status) {
+    const request = db.withdrawRequests.find(r => r.id === requestId);
+    if (!request) return;
+    
+    const comment = prompt(`Введите комментарий для ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
+    if (comment === null) return;
+    
+    request.status = status;
+    request.response = comment;
+    
+    const user = getUserById(request.userId);
+    if (status === 'approved' && user) {
+        // Списываем деньги
+        const balance = user.balance || 0;
+        const withdrawAmount = Math.min(request.amount, balance);
+        user.balance = balance - withdrawAmount;
+        if (!user.premiumHistory) user.premiumHistory = [];
+        user.premiumHistory.push({
+            amount: -withdrawAmount,
+            text: `Вывод средств (${status === 'approved' ? 'одобрен' : 'отклонён'})`,
+            date: new Date().toISOString()
+        });
+        addNotification(user.id, '✅ ВЫВОД ОДОБРЕН', `Вывод ${withdrawAmount} BYN одобрен. Комментарий: ${comment}`, 'info');
+    } else if (status === 'rejected' && user) {
+        addNotification(user.id, '❌ ВЫВОД ОТКЛОНЁН', `Вывод ${request.amount} BYN отклонён. Комментарий: ${comment}`, 'danger');
+    }
+    
+    await saveDB();
+    
+    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
+    addHistory(currentUser.id, `Заявка на вывод ${statusText}`, `Заявка ${requestId} ${statusText}: ${comment}`);
+    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка на вывод ${statusText}`, status === 'approved' ? 'info' : 'danger');
+    
+    loadWithdrawRequests();
+    if (user) loadPremium(user);
+}
+
+// ================================================================
+// ОСТАЛЬНЫЕ ФУНКЦИИ (сокращены для объёма)
 // ================================================================
 
 function loadProfile(user) {
@@ -2905,10 +3316,6 @@ async function saveProfile() {
     setTimeout(() => closeEditModal(), 800);
 }
 
-// ================================================================
-// СМЕНА ПАРОЛЯ
-// ================================================================
-
 function openChangePassword() {
     if (!currentUser) return;
     document.getElementById('passwordModal').classList.add('active');
@@ -2967,1280 +3374,6 @@ async function changePassword() {
     addHistory(currentUser.id, 'Смена пароля', 'Пароль успешно изменён');
     showToast('✅ ПАРОЛЬ ИЗМЕНЁН', 'Ваш пароль успешно обновлён', 'info');
     setTimeout(() => closePasswordModal(), 1000);
-}
-
-// ================================================================
-// НАРУШЕНИЯ (пользовательские)
-// ================================================================
-
-function loadViolations(user) {
-    const container = document.getElementById('violationsList');
-    const violations = user.violations || [];
-    if (violations.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['violations.empty'] || 'Нет нарушений') + '</p>';
-        return;
-    }
-    const sorted = [...violations].sort((a, b) => {
-        if (a.resolved !== b.resolved) return a.resolved ? 1 : -1;
-        return new Date(b.date) - new Date(a.date);
-    });
-    let html = '';
-    sorted.forEach(v => {
-        html += `
-            <div class="violation-item ${v.resolved ? 'resolved' : ''}">
-                <div class="v-date">${formatDate(v.date)}</div>
-                <div class="v-type">${v.resolved ? '✅ СНЯТО' : '⚠️'} ${v.type || 'Нарушение'}</div>
-                <div class="v-desc">${v.description || 'Нет описания'}</div>
-                <div class="v-meta">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
-                ${v.resolved ? `<div class="v-resolved">Снято (${formatDate(v.resolvedDate)}) — ${v.resolutionReason || 'Причина не указана'}</div>` : ''}
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-// ================================================================
-// ЗАЯВКИ
-// ================================================================
-
-function openRequestRemove() {
-    document.getElementById('requestRemoveModal').classList.add('active');
-    document.getElementById('rrTarget').value = '';
-    document.getElementById('rrReason').value = '';
-    document.getElementById('rrIssuedBy').value = '';
-    document.getElementById('rrIssuedDate').value = '';
-    document.getElementById('rrRemoveReason').value = '';
-    document.getElementById('rrResult').textContent = '';
-    document.getElementById('rrResult').className = 'result-msg';
-}
-
-function openRequestAdd() {
-    document.getElementById('requestAddModal').classList.add('active');
-    document.getElementById('raTarget').value = '';
-    document.getElementById('raReason').value = '';
-    document.getElementById('raDate').value = '';
-    document.getElementById('raPlace').value = '';
-    document.getElementById('raResult').textContent = '';
-    document.getElementById('raResult').className = 'result-msg';
-}
-
-function closeRequestModal(id) {
-    document.getElementById(id).classList.remove('active');
-}
-
-async function submitRequestRemove() {
-    const target = document.getElementById('rrTarget').value.trim();
-    const reason = document.getElementById('rrReason').value.trim();
-    const issuedBy = document.getElementById('rrIssuedBy').value.trim();
-    const issuedDate = document.getElementById('rrIssuedDate').value;
-    const removeReason = document.getElementById('rrRemoveReason').value.trim();
-    const res = document.getElementById('rrResult');
-    
-    if (!reason || !issuedBy || !issuedDate || !removeReason) {
-        res.textContent = 'Заполните все поля';
-        res.className = 'result-msg error';
-        return;
-    }
-    
-    if (!db.requests) db.requests = [];
-    const request = {
-        id: 'r' + Date.now(),
-        type: 'remove',
-        userId: currentUser.id,
-        userNick: currentUser.gameNick,
-        target: target || currentUser.id,
-        targetNick: target ? (findUserByInput(target)?.gameNick || target) : currentUser.gameNick,
-        reason: reason,
-        issuedBy: issuedBy,
-        issuedDate: issuedDate,
-        removeReason: removeReason,
-        status: 'pending',
-        date: new Date().toISOString(),
-        response: null
-    };
-    db.requests.push(request);
-    await saveDB();
-    res.textContent = '✅ Заявка отправлена! Ожидайте ответа администрации.';
-    res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Заявка на снятие нарушения', `Заявка на снятие нарушения для ${request.targetNick}`);
-    showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Ваша заявка на снятие нарушения отправлена', 'info');
-    setTimeout(() => closeRequestModal('requestRemoveModal'), 1500);
-    loadUserRequests();
-}
-
-async function submitRequestAdd() {
-    const target = document.getElementById('raTarget').value.trim();
-    const reason = document.getElementById('raReason').value.trim();
-    const date = document.getElementById('raDate').value;
-    const place = document.getElementById('raPlace').value.trim();
-    const res = document.getElementById('raResult');
-    
-    if (!target || !reason || !date || !place) {
-        res.textContent = 'Заполните все поля';
-        res.className = 'result-msg error';
-        return;
-    }
-    
-    const targetUser = findUserByInput(target);
-    if (!targetUser) {
-        res.textContent = 'Пользователь не найден';
-        res.className = 'result-msg error';
-        return;
-    }
-    
-    if (!db.requests) db.requests = [];
-    const request = {
-        id: 'r' + Date.now(),
-        type: 'add',
-        userId: currentUser.id,
-        userNick: currentUser.gameNick,
-        targetId: targetUser.id,
-        targetNick: targetUser.gameNick,
-        reason: reason,
-        date: date,
-        place: place,
-        status: 'pending',
-        requestDate: new Date().toISOString(),
-        response: null
-    };
-    db.requests.push(request);
-    await saveDB();
-    res.textContent = '✅ Заявка отправлена! Есть 5 минут на отправку фрапса строя ОЗГЗ.';
-    res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Заявка на выдачу нарушения', `Заявка на выдачу нарушения для ${targetUser.gameNick}`);
-    showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Не забудьте отправить фрапс строя ОЗГЗ!', 'info');
-    setTimeout(() => closeRequestModal('requestAddModal'), 2000);
-    loadUserRequests();
-}
-
-function loadUserRequests() {
-    if (!currentUser) return;
-    const container = document.getElementById('userRequestsList');
-    if (!db.requests) db.requests = [];
-    const userRequests = db.requests.filter(r => r.userId === currentUser.id);
-    if (userRequests.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['requests.empty'] || 'Ваши заявки будут отображаться здесь') + '</p>';
-        return;
-    }
-    let html = '';
-    userRequests.sort((a, b) => new Date(b.date || b.requestDate) - new Date(a.date || a.requestDate));
-    userRequests.forEach(r => {
-        const statusText = r.status === 'pending' ? '⏳ Ожидает' : r.status === 'approved' ? '✅ Одобрена' : '❌ Отклонена';
-        const statusColor = r.status === 'pending' ? '#ffaa00' : r.status === 'approved' ? 'var(--success-color)' : 'var(--danger-color)';
-        const typeText = r.type === 'remove' ? 'Снятие нарушения' : 'Выдача нарушения';
-        html += `
-            <div class="request-item">
-                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-                    <span style="color:var(--text-primary);">${typeText}</span>
-                    <span style="color:${statusColor};">${statusText}</span>
-                </div>
-                <div class="req-text">${r.type === 'remove' ? r.reason : r.reason}</div>
-                <div class="req-meta">${formatDate(r.date || r.requestDate)}</div>
-                ${r.response ? `<div class="req-text" style="color:var(--text-muted);">Ответ: ${r.response}</div>` : ''}
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-// ================================================================
-// ЗАЯВКА НА СТРОЙ
-// ================================================================
-
-async function submitBuildRequest() {
-    const start = document.getElementById('buildStart').value;
-    const end = document.getElementById('buildEnd').value;
-    const topic = document.getElementById('buildTopic').value.trim();
-    const required = document.getElementById('buildRequired').value.trim();
-    const forbidden = document.getElementById('buildForbidden').value.trim();
-    const res = document.getElementById('buildResult');
-    
-    if (!start || !end || !topic || !required || !forbidden) {
-        res.textContent = 'Заполните все поля';
-        res.className = 'result-msg error';
-        return;
-    }
-    
-    if (new Date(end) <= new Date(start)) {
-        res.textContent = 'Время окончания должно быть позже времени начала';
-        res.className = 'result-msg error';
-        return;
-    }
-    
-    if (!db.buildRequests) db.buildRequests = [];
-    const request = {
-        id: 'b' + Date.now(),
-        userId: currentUser.id,
-        userNick: currentUser.gameNick,
-        start: start,
-        end: end,
-        topic: topic,
-        required: required.split(',').map(s => s.trim()),
-        forbidden: forbidden.split(',').map(s => s.trim()),
-        status: 'pending',
-        date: new Date().toISOString(),
-        response: null
-    };
-    db.buildRequests.push(request);
-    await saveDB();
-    res.textContent = '✅ Заявка отправлена! Не забудьте прочитать правила строя.';
-    res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Заявка на строй', `Заявка на строй: ${topic}`);
-    showToast('✅ ЗАЯВКА НА СТРОЙ', 'Заявка отправлена администрации', 'info');
-    document.getElementById('buildStart').value = '';
-    document.getElementById('buildEnd').value = '';
-    document.getElementById('buildTopic').value = '';
-    document.getElementById('buildRequired').value = '';
-    document.getElementById('buildForbidden').value = '';
-}
-
-// ================================================================
-// ЗАПЛАНИРОВАННЫЕ СТРОИ
-// ================================================================
-
-function loadScheduledBuilds() {
-    const container = document.getElementById('scheduledBuildsList');
-    if (!db.scheduledBuilds) db.scheduledBuilds = [];
-    
-    const now = new Date();
-    db.scheduledBuilds = db.scheduledBuilds.filter(b => new Date(b.end) > now);
-    
-    if (db.scheduledBuilds.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['scheduled.empty'] || 'Нет запланированных строев') + '</p>';
-        return;
-    }
-    
-    const sorted = [...db.scheduledBuilds].sort((a, b) => new Date(a.start) - new Date(b.start));
-    
-    let html = '';
-    sorted.forEach(b => {
-        html += `
-            <div class="build-item" onclick="openBuildDetail('${b.id}')">
-                <div class="build-topic">${b.topic}</div>
-                <div class="build-meta">
-                    <strong>${translations[currentLang]?.['build.start'] || 'Начало:'}</strong> ${formatDateShort(b.start)}
-                </div>
-                <div class="build-status">✅ ${translations[currentLang]?.['scheduled.approved'] || 'ОДОБРЕН'}</div>
-                <div style="color:var(--text-muted); font-size:11px; margin-top:4px;">${translations[currentLang]?.['scheduled.click'] || 'Нажмите для подробностей'}</div>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-function openBuildDetail(buildId) {
-    const build = db.scheduledBuilds.find(b => b.id === buildId);
-    if (!build) return;
-    
-    const container = document.getElementById('buildDetailContent');
-    let html = `
-        <div style="border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:12px;">
-            <h3 style="color:var(--text-primary); font-weight:300; letter-spacing:2px;">${build.topic}</h3>
-        </div>
-        <div style="color:var(--text-secondary); font-size:14px; line-height:1.8;">
-            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['build.start'] || 'Начало:'}</strong> ${formatDate(build.start)}</p>
-            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['build.end'] || 'Окончание:'}</strong> ${formatDate(build.end)}</p>
-            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['scheduled.organizer'] || 'Организатор:'}</strong> ${build.organizerNick || build.userNick || 'Неизвестен'}</p>
-            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['build.required'] || 'Обязаны явиться:'}</strong> ${build.required.join(', ')}</p>
-            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['build.forbidden'] || 'Нельзя появляться:'}</strong> ${build.forbidden.join(', ')}</p>
-            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['scheduled.status'] || 'Статус:'}</strong> <span style="color:var(--success-color);">✅ ${translations[currentLang]?.['scheduled.approved'] || 'Одобрен'}</span></p>
-        </div>
-    `;
-    
-    if (isAdmin(currentUser)) {
-        html += `
-            <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border-color);">
-                <button class="btn btn-danger" onclick="deleteBuild('${build.id}')" style="width:auto; padding:8px 24px;">🗑️ ${translations[currentLang]?.['scheduled.delete'] || 'Удалить строй'}</button>
-            </div>
-        `;
-    }
-    
-    container.innerHTML = html;
-    document.getElementById('buildDetailModal').classList.add('active');
-}
-
-function closeBuildDetail() {
-    document.getElementById('buildDetailModal').classList.remove('active');
-}
-
-async function deleteBuild(buildId) {
-    if (!confirm(translations[currentLang]?.['scheduled.confirmDelete'] || 'Вы уверены, что хотите удалить этот строй?')) return;
-    
-    db.scheduledBuilds = db.scheduledBuilds.filter(b => b.id !== buildId);
-    await saveDB();
-    closeBuildDetail();
-    loadScheduledBuilds();
-    addHistory(currentUser.id, 'Удаление строя', `Удалён строй из запланированных`);
-    showToast('🗑️ СТРОЙ УДАЛЁН', 'Строй удалён из запланированных', 'info');
-}
-
-// ================================================================
-// СЕМЬИ (общий раздел для всех)
-// ================================================================
-
-function loadFamiliesDisplay() {
-    if (!db.allies) db.allies = [];
-    if (!db.enemies) db.enemies = [];
-    
-    const alliesContainer = document.getElementById('alliesDisplay');
-    if (db.allies.length === 0) {
-        alliesContainer.innerHTML = '<p class="empty">' + (translations[currentLang]?.['families.noAllies'] || 'Нет союзников') + '</p>';
-    } else {
-        let html = '';
-        db.allies.forEach(a => {
-            html += `<div class="family-item">🤝 ${a}</div>`;
-        });
-        alliesContainer.innerHTML = html;
-    }
-    
-    const enemiesContainer = document.getElementById('enemiesDisplay');
-    if (db.enemies.length === 0) {
-        enemiesContainer.innerHTML = '<p class="empty">' + (translations[currentLang]?.['families.noEnemies'] || 'Нет недружественных семей') + '</p>';
-    } else {
-        let html = '';
-        db.enemies.forEach(e => {
-            html += `<div class="family-item">⚔️ ${e}</div>`;
-        });
-        enemiesContainer.innerHTML = html;
-    }
-}
-
-// ================================================================
-// УВЕДОМЛЕНИЯ
-// ================================================================
-
-function openNotifications() {
-    if (!db.notifications) db.notifications = [];
-    const userNotifs = db.notifications.filter(n => n.userId === currentUser.id);
-    userNotifs.forEach(n => n.read = true);
-    saveDB();
-    updateNotificationBadge();
-    
-    const container = document.getElementById('notificationsList');
-    if (userNotifs.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['notify.empty'] || 'Нет уведомлений') + '</p>';
-    } else {
-        let html = '';
-        userNotifs.sort((a, b) => new Date(b.date) - new Date(a.date));
-        userNotifs.forEach(n => {
-            const color = n.type === 'danger' ? 'var(--danger-color)' : 'var(--success-color)';
-            html += `
-                <div style="border-bottom:1px solid var(--border-color); padding:10px 0;">
-                    <div style="color:${color};">${n.title}</div>
-                    <div style="color:var(--text-secondary); font-size:13px;">${n.text}</div>
-                    <div style="color:var(--text-muted); font-size:11px;">${formatDate(n.date)}</div>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-    document.getElementById('notificationsModal').classList.add('active');
-}
-
-function closeNotifications() {
-    document.getElementById('notificationsModal').classList.remove('active');
-}
-
-// ================================================================
-// АДМИН: НАРУШЕНИЯ ПО ID
-// ================================================================
-
-async function adminViewViolations() {
-    const id = document.getElementById('adminVioSearchId').value.trim();
-    const res = document.getElementById('adminVioResult');
-    if (!id) { res.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { res.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    const violations = user.violations || [];
-    if (violations.length === 0) {
-        res.innerHTML = `<p style="color:var(--text-muted);">У ${user.gameNick} (${user.id}) нет нарушений</p>`;
-        return;
-    }
-    const sorted = [...violations].sort((a, b) => new Date(b.date) - new Date(a.date));
-    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">${user.gameNick} (${user.id}) — ${violations.length} нарушений</p>`;
-    sorted.forEach(v => {
-        html += `
-            <div class="violation-item ${v.resolved ? 'resolved' : ''}">
-                <div class="v-date">${formatDate(v.date)}</div>
-                <div class="v-type">${v.resolved ? '✅ СНЯТО' : '⚠️'} ${v.type || 'Нарушение'}</div>
-                <div class="v-desc">${v.description || 'Нет описания'}</div>
-                <div class="v-meta">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
-                ${v.resolved ? `<div class="v-resolved">Снято (${formatDate(v.resolvedDate)}) — ${v.resolutionReason || 'Причина не указана'}</div>` : ''}
-            </div>
-        `;
-    });
-    res.innerHTML = html;
-}
-
-// ================================================================
-// АДМИН: ВЫДАТЬ НАРУШЕНИЕ
-// ================================================================
-
-async function adminFindForAdd() {
-    const id = document.getElementById('adminAddId').value.trim();
-    const info = document.getElementById('adminAddUserInfo');
-    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    pendingAddUser = user;
-    info.style.display = 'block';
-    info.innerHTML = `<p style="color:var(--text-primary);">Найден: <strong>${user.gameNick}</strong> (${user.id})</p>`;
-}
-
-async function adminAddViolation() {
-    if (!pendingAddUser) {
-        document.getElementById('adminAddResult').textContent = 'Сначала найдите пользователя';
-        document.getElementById('adminAddResult').className = 'result-msg error';
-        return;
-    }
-    const type = document.getElementById('adminAddType').value.trim();
-    const desc = document.getElementById('adminAddDesc').value.trim();
-    const res = document.getElementById('adminAddResult');
-    if (!type || !desc) {
-        res.textContent = 'Заполните все поля';
-        res.className = 'result-msg error';
-        return;
-    }
-    const violation = {
-        violationId: 'v' + (++db.violationCounter),
-        type, description: desc,
-        date: new Date().toISOString(),
-        issuedBy: currentUser.id,
-        issuedByNick: currentUser.gameNick,
-        resolved: false,
-        resolvedDate: null,
-        resolutionReason: null,
-        _notified: false,
-        _notifiedResolved: false
-    };
-    pendingAddUser.violations.push(violation);
-    await saveDB();
-    res.textContent = `✅ Нарушение выдано ${pendingAddUser.gameNick}`;
-    res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Выдача нарушения', `Выдано нарушение ${pendingAddUser.gameNick}: ${type}`);
-    addNotification(pendingAddUser.id, '⚠️ НОВОЕ НАРУШЕНИЕ', `Вам выписано нарушение: ${type}`, 'danger');
-    document.getElementById('adminAddType').value = '';
-    document.getElementById('adminAddDesc').value = '';
-    if (db.currentSession === pendingAddUser.id) {
-        showToast('⚠️ НОВОЕ НАРУШЕНИЕ', 'Вам выписано дисциплинарное взыскание', 'danger');
-        document.getElementById('violationNotifyModal').classList.add('active');
-        loadViolations(currentUser);
-    }
-    pendingAddUser = null;
-    document.getElementById('adminAddUserInfo').style.display = 'none';
-}
-
-// ================================================================
-// АДМИН: СНЯТЬ НАРУШЕНИЕ
-// ================================================================
-
-async function adminFindForRemove() {
-    const id = document.getElementById('adminRemoveId').value.trim();
-    const list = document.getElementById('adminRemoveList');
-    if (!id) { list.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { list.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    const violations = user.violations.filter(v => !v.resolved);
-    if (violations.length === 0) {
-        list.innerHTML = `<p style="color:var(--text-muted);">У ${user.gameNick} нет активных нарушений</p>`;
-        return;
-    }
-    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">${user.gameNick} (${user.id}) — активные нарушения:</p>`;
-    violations.forEach(v => {
-        html += `
-            <div class="violation-item" style="cursor:pointer; border-left-color:var(--text-primary);" onclick="selectForRemove('${v.violationId}')">
-                <div class="v-date">${formatDate(v.date)}</div>
-                <div class="v-type">⚠️ ${v.type || 'Нарушение'}</div>
-                <div class="v-desc">${v.description || 'Нет описания'}</div>
-                <div class="v-meta">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
-            </div>
-        `;
-    });
-    list.innerHTML = html;
-    pendingRemoveUser = user;
-}
-
-function selectForRemove(violationId) {
-    if (!pendingRemoveUser) return;
-    const violation = pendingRemoveUser.violations.find(v => v.violationId === violationId);
-    if (!violation) return;
-    pendingRemoveViolation = violation;
-    const list = document.getElementById('adminRemoveList');
-    list.innerHTML = `
-        <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-secondary);">
-            <p style="color:var(--text-primary);">Выбрано нарушение:</p>
-            <p style="color:var(--text-secondary); font-size:13px;">${violation.type} — ${violation.description}</p>
-            <p style="color:var(--text-muted); font-size:12px;">${formatDate(violation.date)}</p>
-            <input type="text" id="removeReason" placeholder="Причина снятия" style="margin:10px 0;">
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn btn-small" onclick="confirmRemove()" style="width:auto;">Снять</button>
-                <button class="btn btn-small btn-outline" onclick="cancelRemove()" style="width:auto;">Отмена</button>
-            </div>
-            <div id="removeResult" class="result-msg"></div>
-        </div>
-    `;
-}
-
-async function confirmRemove() {
-    if (!pendingRemoveUser || !pendingRemoveViolation) return;
-    const reason = document.getElementById('removeReason').value.trim();
-    const res = document.getElementById('removeResult');
-    if (!reason) { res.textContent = 'Введите причину'; res.className = 'result-msg error'; return; }
-    pendingRemoveViolation.resolved = true;
-    pendingRemoveViolation.resolvedDate = new Date().toISOString();
-    pendingRemoveViolation.resolutionReason = reason;
-    pendingRemoveViolation._notifiedResolved = false;
-    await saveDB();
-    document.getElementById('adminRemoveList').innerHTML = `<p style="color:var(--text-primary);">✅ Нарушение снято у ${pendingRemoveUser.gameNick}</p>`;
-    addHistory(currentUser.id, 'Снятие нарушения', `Снято нарушение у ${pendingRemoveUser.gameNick}: ${reason}`);
-    addNotification(pendingRemoveUser.id, '✅ НАРУШЕНИЕ СНЯТО', `С вас снято нарушение. Причина: ${reason}`, 'info');
-    if (db.currentSession === pendingRemoveUser.id) {
-        showToast('✅ НАРУШЕНИЕ СНЯТО', 'С вас снято дисциплинарное взыскание', 'info');
-        document.getElementById('violationResolvedModal').classList.add('active');
-        loadViolations(currentUser);
-    }
-    pendingRemoveUser = null;
-    pendingRemoveViolation = null;
-}
-
-function cancelRemove() {
-    pendingRemoveUser = null;
-    pendingRemoveViolation = null;
-    document.getElementById('adminRemoveList').innerHTML = '<p style="color:var(--text-muted);">Введите ID для поиска</p>';
-}
-
-// ================================================================
-// АДМИН: СПИСОК ЧЛЕНОВ
-// ================================================================
-
-function loadAdminMembers() {
-    const list = document.getElementById('adminMembersList');
-    const members = db.users.filter(u => !u.isAdmin);
-    if (members.length === 0) {
-        list.innerHTML = '<p style="color:var(--text-muted);">Нет зарегистрированных членов</p>';
-        return;
-    }
-    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">Всего: ${members.length}</p>`;
-    members.forEach(u => {
-        html += `<div style="border-bottom:1px solid var(--border-color); padding:8px 0; color:var(--text-secondary); font-size:13px;">
-            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : 'Активен'}
-        </div>`;
-    });
-    list.innerHTML = html;
-}
-
-// ================================================================
-// АДМИН: БЛОКИРОВКА
-// ================================================================
-
-async function adminFindForBan() {
-    const id = document.getElementById('adminBanId').value.trim();
-    const info = document.getElementById('adminBanUserInfo');
-    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    if (isAdmin(user)) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Нельзя заблокировать администратора</p>'; return; }
-    pendingBanUser = user;
-    info.style.display = 'block';
-    info.innerHTML = `<p style="color:var(--text-primary);">Найден: <strong>${user.gameNick}</strong> (${user.id}) — ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</p>`;
-}
-
-async function adminBanUser() {
-    if (!pendingBanUser) {
-        document.getElementById('adminBanResult').textContent = 'Сначала найдите пользователя';
-        document.getElementById('adminBanResult').className = 'result-msg error';
-        return;
-    }
-    const reason = document.getElementById('adminBanReason').value.trim();
-    const unbanDate = document.getElementById('adminBanUnbanDate').value;
-    const res = document.getElementById('adminBanResult');
-    if (!reason || !unbanDate) {
-        res.textContent = 'Заполните все поля';
-        res.className = 'result-msg error';
-        return;
-    }
-    const unban = new Date(unbanDate);
-    if (unban <= new Date()) {
-        res.textContent = 'Дата разблокировки должна быть в будущем';
-        res.className = 'result-msg error';
-        return;
-    }
-    pendingBanUser.isBanned = true;
-    pendingBanUser.banInfo = {
-        bannedBy: currentUser.id,
-        reason,
-        banDate: new Date().toISOString(),
-        unbanDate: unban.toISOString()
-    };
-    await saveDB();
-    res.textContent = `✅ ${pendingBanUser.gameNick} заблокирован до ${formatDate(unbanDate)}`;
-    res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Блокировка', `Заблокирован ${pendingBanUser.gameNick}: ${reason}`);
-    addNotification(pendingBanUser.id, '🔴 ВЫ ЗАБЛОКИРОВАНЫ', `Причина: ${reason}. Разблокировка: ${formatDate(unbanDate)}`, 'danger');
-    document.getElementById('adminBanReason').value = '';
-    document.getElementById('adminBanUnbanDate').value = '';
-    pendingBanUser = null;
-    document.getElementById('adminBanUserInfo').style.display = 'none';
-    loadAdminMembers();
-}
-
-// ================================================================
-// АДМИН: ДОСРОЧНЫЙ РАЗБАН
-// ================================================================
-
-async function adminFindForUnban() {
-    const id = document.getElementById('adminUnbanId').value.trim();
-    const info = document.getElementById('adminUnbanUserInfo');
-    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    if (!user.isBanned) {
-        info.style.display = 'block';
-        info.innerHTML = `<p style="color:var(--success-color);">${user.gameNick} (${user.id}) — не заблокирован</p>`;
-        pendingUnbanUser = null;
-        return;
-    }
-    pendingUnbanUser = user;
-    info.style.display = 'block';
-    info.innerHTML = `
-        <p style="color:var(--text-primary);">🔴 Заблокирован: <strong>${user.gameNick}</strong> (${user.id})</p>
-        <p style="color:var(--text-secondary); font-size:13px;">Причина: ${user.banInfo.reason}</p>
-        <p style="color:var(--text-secondary); font-size:13px;">Забанил: ${getAdminNick(user.banInfo.bannedBy)}</p>
-        <p style="color:var(--text-secondary); font-size:13px;">Разблокировка: ${formatDate(user.banInfo.unbanDate)}</p>
-    `;
-}
-
-async function adminUnbanUser() {
-    if (!pendingUnbanUser) {
-        document.getElementById('adminUnbanResult').textContent = 'Сначала найдите заблокированного пользователя';
-        document.getElementById('adminUnbanResult').className = 'result-msg error';
-        return;
-    }
-    const reason = document.getElementById('adminUnbanReason').value.trim();
-    const res = document.getElementById('adminUnbanResult');
-    
-    pendingUnbanUser.isBanned = false;
-    const oldBanInfo = pendingUnbanUser.banInfo;
-    pendingUnbanUser.banInfo = {
-        ...oldBanInfo,
-        unbannedEarly: true,
-        unbannedBy: currentUser.id,
-        unbannedByNick: currentUser.gameNick,
-        unbanReason: reason || 'Досрочный разбан',
-        unbanDate: new Date().toISOString()
-    };
-    
-    await saveDB();
-    
-    res.textContent = `✅ ${pendingUnbanUser.gameNick} разблокирован досрочно`;
-    res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Досрочный разбан', `Разблокирован ${pendingUnbanUser.gameNick}: ${reason || 'Досрочный разбан'}`);
-    addNotification(pendingUnbanUser.id, '✅ ВЫ РАЗБЛОКИРОВАНЫ', 'Вы разблокированы досрочно', 'info');
-    
-    if (db.currentSession === pendingUnbanUser.id) {
-        showToast('✅ ДОСРОЧНЫЙ РАЗБАН', 'Вы разблокированы досрочно', 'info');
-    }
-    
-    document.getElementById('adminUnbanReason').value = '';
-    pendingUnbanUser = null;
-    document.getElementById('adminUnbanUserInfo').style.display = 'none';
-    loadAdminMembers();
-}
-
-// ================================================================
-// АДМИН: ЗАЯВКИ (ОТВЕТЫ)
-// ================================================================
-
-function loadAdminRequests() {
-    const container = document.getElementById('adminRequestsList');
-    if (!db.requests) db.requests = [];
-    const pending = db.requests.filter(r => r.status === 'pending');
-    if (pending.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noRequests'] || 'Нет активных заявок') + '</p>';
-        return;
-    }
-    let html = '';
-    pending.forEach(r => {
-        const typeText = r.type === 'remove' ? 'Снятие нарушения' : 'Выдача нарушения';
-        html += `
-            <div class="request-item">
-                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-                    <span style="color:var(--text-primary);">${typeText}</span>
-                    <span style="color:#ffaa00;">⏳ Ожидает</span>
-                </div>
-                <div class="req-text">От: ${r.userNick} → ${r.targetNick || r.target}</div>
-                <div class="req-text" style="color:var(--text-secondary);">${r.type === 'remove' ? r.reason : r.reason}</div>
-                <div class="req-meta">${formatDate(r.date || r.requestDate)}</div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-                    <button class="btn btn-small btn-green" onclick="respondRequest('${r.id}', 'approved')" style="width:auto;">Принять</button>
-                    <button class="btn btn-small btn-danger" onclick="respondRequest('${r.id}', 'rejected')" style="width:auto;">Отклонить</button>
-                </div>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-async function respondRequest(requestId, status) {
-    const request = db.requests.find(r => r.id === requestId);
-    if (!request) return;
-    
-    const reason = prompt(`Введите причину ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
-    if (reason === null) return;
-    
-    request.status = status;
-    request.response = reason;
-    await saveDB();
-    
-    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
-    addNotification(request.userId, `📩 ЗАЯВКА ${statusText.toUpperCase()}`, `Ваша заявка ${statusText}. Причина: ${reason}`, status === 'approved' ? 'info' : 'danger');
-    addHistory(currentUser.id, `Заявка ${statusText}`, `Заявка ${requestId} ${statusText}: ${reason}`);
-    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка ${statusText}`, status === 'approved' ? 'info' : 'danger');
-    
-    loadAdminRequests();
-    loadUserRequests();
-}
-
-// ================================================================
-// АДМИН: ЗАЯВКИ НА СТРОЙ
-// ================================================================
-
-function loadAdminBuildRequests() {
-    const container = document.getElementById('adminBuildList');
-    if (!db.buildRequests) db.buildRequests = [];
-    const pending = db.buildRequests.filter(r => r.status === 'pending');
-    if (pending.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noBuildRequests'] || 'Нет заявок на строй') + '</p>';
-        return;
-    }
-    let html = '';
-    pending.forEach(r => {
-        html += `
-            <div class="request-item">
-                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-                    <span style="color:var(--text-primary);">${r.topic}</span>
-                    <span style="color:#ffaa00;">⏳ Ожидает</span>
-                </div>
-                <div class="req-text">От: ${r.userNick}</div>
-                <div class="req-text" style="color:var(--text-secondary);">Начало: ${formatDateShort(r.start)} · Окончание: ${formatDateShort(r.end)}</div>
-                <div class="req-text" style="color:var(--text-muted);">Обязаны: ${r.required.join(', ')}</div>
-                <div class="req-text" style="color:var(--text-muted);">Запрещено: ${r.forbidden.join(', ')}</div>
-                <div class="req-meta">${formatDate(r.date)}</div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-                    <button class="btn btn-small btn-green" onclick="respondBuildRequest('${r.id}', 'approved')" style="width:auto;">Одобрить</button>
-                    <button class="btn btn-small btn-danger" onclick="respondBuildRequest('${r.id}', 'rejected')" style="width:auto;">Отклонить</button>
-                </div>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-async function respondBuildRequest(requestId, status) {
-    const request = db.buildRequests.find(r => r.id === requestId);
-    if (!request) return;
-    
-    const comment = prompt(`Введите комментарий для ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
-    if (comment === null) return;
-    
-    request.status = status;
-    request.response = comment;
-    
-    if (status === 'approved') {
-        if (!db.scheduledBuilds) db.scheduledBuilds = [];
-        db.scheduledBuilds.push({
-            id: 's' + Date.now(),
-            topic: request.topic,
-            start: request.start,
-            end: request.end,
-            required: request.required,
-            forbidden: request.forbidden,
-            userNick: request.userNick,
-            organizerNick: request.userNick,
-            date: new Date().toISOString()
-        });
-        db.users.forEach(u => {
-            if (!u.isAdmin) {
-                addNotification(u.id, '📢 НОВЫЙ СТРОЙ', `Запланирован строй: ${request.topic}`, 'info');
-            }
-        });
-        showToast('📢 НОВЫЙ СТРОЙ', `Строй "${request.topic}" запланирован!`, 'info');
-    }
-    
-    await saveDB();
-    
-    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
-    addNotification(request.userId, `📩 ЗАЯВКА НА СТРОЙ ${statusText.toUpperCase()}`, `Ваша заявка на строй ${statusText}. Комментарий: ${comment}`, status === 'approved' ? 'info' : 'danger');
-    addHistory(currentUser.id, `Заявка на строй ${statusText}`, `Заявка ${requestId} ${statusText}: ${comment}`);
-    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка на строй ${statusText}`, status === 'approved' ? 'info' : 'danger');
-    
-    loadAdminBuildRequests();
-    loadScheduledBuilds();
-}
-
-// ================================================================
-// АДМИН: ИЗМЕНИТЬ ИНФОРМАЦИЮ
-// ================================================================
-
-async function loadEditContent() {
-    const section = document.getElementById('editSection').value;
-    const preview = document.getElementById('editContentPreview');
-    const textarea = document.getElementById('editContent');
-    
-    if (db.siteContent && db.siteContent[section]) {
-        preview.textContent = db.siteContent[section];
-        textarea.value = db.siteContent[section];
-    } else {
-        preview.textContent = 'Нет содержимого';
-        textarea.value = '';
-    }
-}
-
-async function saveEditContent() {
-    const section = document.getElementById('editSection').value;
-    const content = document.getElementById('editContent').value;
-    const res = document.getElementById('editResult');
-    
-    if (!db.siteContent) db.siteContent = {};
-    db.siteContent[section] = content;
-    await saveDB();
-    res.textContent = '✅ Информация обновлена';
-    res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Изменение информации сайта', `Обновлён раздел: ${section}`);
-    showToast('✅ ИНФОРМАЦИЯ ОБНОВЛЕНА', `Раздел ${section} обновлён`, 'info');
-    loadSiteContent();
-    loadEditContent();
-}
-
-// ================================================================
-// АДМИН: ДОБАВИТЬ РАЗДЕЛ
-// ================================================================
-
-function openAddPageModal() {
-    document.getElementById('addPageModal').classList.add('active');
-    document.getElementById('addPageStep1').style.display = 'block';
-    document.getElementById('addPageStep2').style.display = 'none';
-    document.getElementById('addPageStep3').style.display = 'none';
-    document.getElementById('addPageTypeResult').textContent = '';
-    document.getElementById('addPageTypeResult').className = 'result-msg';
-    document.getElementById('addPageSubtypeResult').textContent = '';
-    document.getElementById('addPageSubtypeResult').className = 'result-msg';
-    document.getElementById('addPageResult').textContent = '';
-    document.getElementById('addPageResult').className = 'result-msg';
-    document.getElementById('addPageName').value = '';
-    document.getElementById('addPageContent').value = '';
-    document.getElementById('requestFieldsBuilder').innerHTML = '';
-    addPageFields = [];
-    addPageType = null;
-    addPageSubtype = null;
-}
-
-function closeAddPageModal() {
-    document.getElementById('addPageModal').classList.remove('active');
-}
-
-function addPageSelectType(type) {
-    addPageType = type;
-    if (type === 'public') {
-        document.getElementById('addPageStep2').style.display = 'block';
-        document.getElementById('addPageStep1').style.display = 'none';
-        document.getElementById('addPageTypeResult').textContent = '✅ Выбран: Публичный раздел';
-        document.getElementById('addPageTypeResult').className = 'result-msg success';
-    } else {
-        addPageSubtype = 'info';
-        document.getElementById('addPageStep1').style.display = 'none';
-        document.getElementById('addPageStep2').style.display = 'none';
-        document.getElementById('addPageStep3').style.display = 'block';
-        document.getElementById('addPageInfoFields').style.display = 'block';
-        document.getElementById('addPageRequestFields').style.display = 'none';
-        document.getElementById('addPageTypeResult').textContent = '✅ Выбран: Админский раздел';
-        document.getElementById('addPageTypeResult').className = 'result-msg success';
-    }
-}
-
-function addPageSelectSubtype(subtype) {
-    addPageSubtype = subtype;
-    document.getElementById('addPageStep2').style.display = 'none';
-    document.getElementById('addPageStep3').style.display = 'block';
-    document.getElementById('addPageSubtypeResult').textContent = `✅ Выбран: ${subtype === 'info' ? 'Информационный' : 'С заявками'}`;
-    document.getElementById('addPageSubtypeResult').className = 'result-msg success';
-    
-    if (subtype === 'info') {
-        document.getElementById('addPageInfoFields').style.display = 'block';
-        document.getElementById('addPageRequestFields').style.display = 'none';
-    } else {
-        document.getElementById('addPageInfoFields').style.display = 'none';
-        document.getElementById('addPageRequestFields').style.display = 'block';
-        document.getElementById('requestFieldsBuilder').innerHTML = '';
-        addPageFields = [];
-    }
-}
-
-function addRequestField(type) {
-    const builder = document.getElementById('requestFieldsBuilder');
-    const fieldId = 'field_' + Date.now();
-    
-    if (type === 'text') {
-        builder.innerHTML += `
-            <div class="field-builder" id="${fieldId}">
-                <div class="field-header">
-                    <span class="field-label">📝 Поле ввода</span>
-                    <span class="field-type">текст</span>
-                </div>
-                <input type="text" id="${fieldId}_label" placeholder="Название поля" style="margin-top:6px;">
-                <label style="color:var(--text-muted); font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
-                    <input type="checkbox" id="${fieldId}_required"> Обязательное
-                </label>
-                <button class="btn btn-small btn-danger" onclick="removeField('${fieldId}')" style="width:auto; margin-top:6px; padding:4px 12px; font-size:10px;">✕ Удалить</button>
-            </div>
-        `;
-        addPageFields.push({ id: fieldId, type: 'text' });
-    } else if (type === 'select') {
-        builder.innerHTML += `
-            <div class="field-builder" id="${fieldId}">
-                <div class="field-header">
-                    <span class="field-label">📋 Выбор</span>
-                    <span class="field-type">выбор</span>
-                </div>
-                <input type="text" id="${fieldId}_label" placeholder="Название поля" style="margin-top:6px;">
-                <input type="text" id="${fieldId}_options" placeholder="Варианты через запятую" style="margin-top:4px;">
-                <label style="color:var(--text-muted); font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
-                    <input type="checkbox" id="${fieldId}_required"> Обязательное
-                </label>
-                <button class="btn btn-small btn-danger" onclick="removeField('${fieldId}')" style="width:auto; margin-top:6px; padding:4px 12px; font-size:10px;">✕ Удалить</button>
-            </div>
-        `;
-        addPageFields.push({ id: fieldId, type: 'select' });
-    }
-}
-
-function removeField(fieldId) {
-    const el = document.getElementById(fieldId);
-    if (el) el.remove();
-    addPageFields = addPageFields.filter(f => f.id !== fieldId);
-}
-
-async function publishNewPage() {
-    const name = document.getElementById('addPageName').value.trim();
-    const result = document.getElementById('addPageResult');
-    
-    if (!name) {
-        result.textContent = 'Введите название раздела';
-        result.className = 'result-msg error';
-        return;
-    }
-    
-    if (!addPageType || !addPageSubtype) {
-        result.textContent = 'Выберите тип раздела';
-        result.className = 'result-msg error';
-        return;
-    }
-    
-    if (addPageSubtype === 'info') {
-        const content = document.getElementById('addPageContent').value.trim();
-        if (!content) {
-            result.textContent = 'Введите содержимое раздела';
-            result.className = 'result-msg error';
-            return;
-        }
-        
-        const newPage = {
-            id: 'p' + (++pagesDb.pageCounter),
-            name: name,
-            type: 'info',
-            content: content,
-            createdBy: currentUser.gameNick,
-            createdAt: new Date().toISOString(),
-            isPublic: addPageType === 'public'
-        };
-        
-        if (addPageType === 'public') {
-            pagesDb.publicPages.push(newPage);
-        } else {
-            pagesDb.adminPages.push(newPage);
-        }
-        
-        await savePagesDB();
-        result.textContent = '✅ Раздел опубликован!';
-        result.className = 'result-msg success';
-        showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
-        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
-        loadDynamicPages();
-        loadAdminPagesManagement();
-        setTimeout(() => closeAddPageModal(), 1500);
-        
-    } else if (addPageSubtype === 'request') {
-        const fields = [];
-        let allValid = true;
-        let errorMsg = '';
-        
-        addPageFields.forEach(f => {
-            const labelEl = document.getElementById(f.id + '_label');
-            const label = labelEl ? labelEl.value.trim() : '';
-            if (!label) {
-                allValid = false;
-                errorMsg = 'Заполните названия всех полей';
-                return;
-            }
-            
-            const required = document.getElementById(f.id + '_required') ? document.getElementById(f.id + '_required').checked : false;
-            
-            if (f.type === 'text') {
-                fields.push({ type: 'text', label: label, required: required });
-            } else if (f.type === 'select') {
-                const optionsEl = document.getElementById(f.id + '_options');
-                const options = optionsEl ? optionsEl.value.split(',').map(s => s.trim()).filter(s => s) : [];
-                if (options.length === 0) {
-                    allValid = false;
-                    errorMsg = 'Укажите варианты для выбора';
-                    return;
-                }
-                fields.push({ type: 'select', label: label, options: options, required: required });
-            }
-        });
-        
-        if (!allValid) {
-            result.textContent = errorMsg || 'Заполните все поля корректно';
-            result.className = 'result-msg error';
-            return;
-        }
-        
-        if (fields.length === 0) {
-            result.textContent = 'Добавьте хотя бы одно поле';
-            result.className = 'result-msg error';
-            return;
-        }
-        
-        const newPage = {
-            id: 'p' + (++pagesDb.pageCounter),
-            name: name,
-            type: 'request',
-            content: '',
-            fields: fields,
-            requests: [],
-            createdBy: currentUser.gameNick,
-            createdAt: new Date().toISOString(),
-            isPublic: addPageType === 'public'
-        };
-        
-        if (addPageType === 'public') {
-            pagesDb.publicPages.push(newPage);
-            
-            const adminPage = {
-                id: 'p' + (++pagesDb.pageCounter),
-                name: name + ' (заявки)',
-                type: 'request',
-                content: '',
-                fields: fields,
-                requests: [],
-                createdBy: currentUser.gameNick,
-                createdAt: new Date().toISOString(),
-                isPublic: false,
-                parentId: newPage.id
-            };
-            pagesDb.adminPages.push(adminPage);
-            
-        } else {
-            pagesDb.adminPages.push(newPage);
-        }
-        
-        await savePagesDB();
-        result.textContent = '✅ Раздел опубликован!';
-        result.className = 'result-msg success';
-        showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
-        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
-        loadDynamicPages();
-        loadAdminPagesManagement();
-        setTimeout(() => closeAddPageModal(), 1500);
-    }
-}
-
-// ================================================================
-// АДМИН: УПРАВЛЕНИЕ РАЗДЕЛАМИ (УДАЛЕНИЕ)
-// ================================================================
-
-function loadAdminPagesManagement() {
-    const container = document.getElementById('adminPagesList');
-    if (!pagesDb) return;
-    
-    let allPages = [];
-    
-    if (pagesDb.publicPages) {
-        allPages = allPages.concat(pagesDb.publicPages.map(p => ({ ...p, typeLabel: 'Публичный' })));
-    }
-    if (pagesDb.adminPages) {
-        allPages = allPages.concat(pagesDb.adminPages.map(p => ({ ...p, typeLabel: 'Админский' })));
-    }
-    
-    if (allPages.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noPages'] || 'Нет созданных разделов') + '</p>';
-        return;
-    }
-    
-    let html = '';
-    allPages.forEach(p => {
-        const typeIcon = p.type === 'info' ? '📄' : '📝';
-        html += `
-            <div style="border:1px solid var(--border-color); padding:12px 16px; margin:6px 0; background:var(--bg-secondary); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
-                <div>
-                    <span style="color:var(--text-primary);">${typeIcon} ${p.name}</span>
-                    <span style="color:var(--text-muted); font-size:11px; margin-left:10px;">${p.typeLabel}</span>
-                    <span style="color:var(--text-muted); font-size:11px; margin-left:10px;">${formatDate(p.createdAt)}</span>
-                </div>
-                <button class="btn btn-small btn-danger" onclick="deletePage('${p.id}')" style="width:auto; padding:4px 16px;">🗑️ Удалить</button>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-async function deletePage(pageId) {
-    if (!confirm('Вы уверены, что хотите удалить этот раздел?')) return;
-    
-    if (pagesDb.publicPages) {
-        pagesDb.publicPages = pagesDb.publicPages.filter(p => p.id !== pageId);
-    }
-    
-    if (pagesDb.adminPages) {
-        pagesDb.adminPages = pagesDb.adminPages.filter(p => p.id !== pageId);
-        pagesDb.adminPages = pagesDb.adminPages.filter(p => p.parentId !== pageId);
-    }
-    
-    await savePagesDB();
-    loadAdminPagesManagement();
-    loadDynamicPages();
-    addHistory(currentUser.id, 'Удаление раздела', `Удалён раздел ${pageId}`);
-    showToast('🗑️ РАЗДЕЛ УДАЛЁН', 'Раздел удалён', 'info');
-}
-
-// ================================================================
-// АДМИН: ИСТОРИЯ
-// ================================================================
-
-function loadHistory() {
-    const container = document.getElementById('historyList');
-    if (!db.history || db.history.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noHistory'] || 'История пуста') + '</p>';
-        return;
-    }
-    let html = '';
-    db.history.slice(-50).reverse().forEach(h => {
-        html += `
-            <div style="border-bottom:1px solid var(--border-color); padding:6px 0; color:var(--text-secondary); font-size:13px;">
-                <span style="color:var(--text-primary);">${h.userNick}</span> · ${h.action}
-                <span style="color:var(--text-muted); font-size:11px; display:block;">${h.details} · ${formatDate(h.date)}</span>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-// ================================================================
-// АДМИН: УПРАВЛЕНИЕ СЕМЬЯМИ
-// ================================================================
-
-function loadFamiliesAdmin() {
-    if (!db.allies) db.allies = [];
-    if (!db.enemies) db.enemies = [];
-    
-    const alliesContainer = document.getElementById('alliesList');
-    if (db.allies.length === 0) {
-        alliesContainer.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noAllies'] || 'Нет союзников') + '</p>';
-    } else {
-        let html = '';
-        db.allies.forEach((a, i) => {
-            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--border-color);">
-                <span style="color:var(--text-secondary);">${a}</span>
-                <button class="btn btn-small btn-danger" onclick="removeAlly(${i})" style="width:auto; padding:2px 10px; font-size:10px;">✕</button>
-            </div>`;
-        });
-        alliesContainer.innerHTML = html;
-    }
-    
-    const enemiesContainer = document.getElementById('enemiesList');
-    if (db.enemies.length === 0) {
-        enemiesContainer.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noEnemies'] || 'Нет недружественных семей') + '</p>';
-    } else {
-        let html = '';
-        db.enemies.forEach((e, i) => {
-            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--border-color);">
-                <span style="color:var(--text-secondary);">${e}</span>
-                <button class="btn btn-small btn-danger" onclick="removeEnemy(${i})" style="width:auto; padding:2px 10px; font-size:10px;">✕</button>
-            </div>`;
-        });
-        enemiesContainer.innerHTML = html;
-    }
-}
-
-async function addAlly() {
-    const name = document.getElementById('newAlly').value.trim();
-    if (!name) { showToast('Ошибка', 'Введите название семьи', 'danger'); return; }
-    if (!db.allies) db.allies = [];
-    if (db.allies.includes(name)) { showToast('Ошибка', 'Такая семья уже в списке', 'danger'); return; }
-    db.allies.push(name);
-    await saveDB();
-    document.getElementById('newAlly').value = '';
-    loadFamiliesAdmin();
-    loadFamiliesDisplay();
-    addHistory(currentUser.id, 'Добавление союзника', `Добавлена семья: ${name}`);
-    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в союзники`, 'info');
-}
-
-async function removeAlly(index) {
-    if (!db.allies) return;
-    const name = db.allies[index];
-    db.allies.splice(index, 1);
-    await saveDB();
-    loadFamiliesAdmin();
-    loadFamiliesDisplay();
-    addHistory(currentUser.id, 'Удаление союзника', `Удалена семья: ${name}`);
-    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из союзников`, 'info');
-}
-
-async function addEnemy() {
-    const name = document.getElementById('newEnemy').value.trim();
-    if (!name) { showToast('Ошибка', 'Введите название семьи', 'danger'); return; }
-    if (!db.enemies) db.enemies = [];
-    if (db.enemies.includes(name)) { showToast('Ошибка', 'Такая семья уже в списке', 'danger'); return; }
-    db.enemies.push(name);
-    await saveDB();
-    document.getElementById('newEnemy').value = '';
-    loadFamiliesAdmin();
-    loadFamiliesDisplay();
-    addHistory(currentUser.id, 'Добавление недружественной семьи', `Добавлена семья: ${name}`);
-    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
-}
-
-async function removeEnemy(index) {
-    if (!db.enemies) return;
-    const name = db.enemies[index];
-    db.enemies.splice(index, 1);
-    await saveDB();
-    loadFamiliesAdmin();
-    loadFamiliesDisplay();
-    addHistory(currentUser.id, 'Удаление недружественной семьи', `Удалена семья: ${name}`);
-    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из недружественных`, 'info');
-}
-
-// ================================================================
-// АДМИН: ПОИСК
-// ================================================================
-
-async function adminSearchUser() {
-    const id = document.getElementById('adminSearchId').value.trim();
-    const res = document.getElementById('adminSearchResult');
-    if (!id) { res.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { res.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    res.innerHTML = `
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>ID:</strong> ${user.id}</div>
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Игровой ник:</strong> ${user.gameNick}</div>
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Telegram:</strong> ${user.tgUser}</div>
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Email:</strong> ${user.email || '-'}</div>
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Статус:</strong> ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</div>
-        ${user.isBanned ? `<div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Причина бана:</strong> ${user.banInfo?.reason || '-'}</div>` : ''}
-        <div style="padding:6px 0;"><strong>Нарушений:</strong> ${(user.violations || []).length}</div>
-    `;
 }
 
 // ================================================================
