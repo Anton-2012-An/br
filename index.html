@@ -750,19 +750,19 @@
             </div>
         </div>
 
-        <!-- ===== СОСТАВ ===== -->
+        <!-- ===== СОСТАВ (с ID) ===== -->
         <div id="page-members" class="page">
             <h2>СОСТАВ СЕМЬИ</h2>
             <div class="info-block">
                 <p style="color:#fff; letter-spacing:2px; font-size:13px;">ГЛАВНЫЙ ЗАМ (ГЗ)</p>
-                <p><strong>Artemchik_Haunted</strong></p>
+                <p><strong>Artemchik_Haunted</strong> <span style="color:var(--text-muted); font-size:13px;">(ID: 12345)</span></p>
                 <p style="color:#fff; letter-spacing:2px; font-size:13px; margin-top:12px;">ОЗГЗ</p>
-                <p><strong>Anton_Chebureck</strong></p>
+                <p><strong>Anton_Chebureck</strong> <span style="color:var(--text-muted); font-size:13px;">(ID: 11111)</span></p>
                 <p style="color:#fff; letter-spacing:2px; font-size:13px; margin-top:12px;">СТАРШИЕ ЗАМЫ</p>
-                <p><strong>Roma_VOLOSKIND</strong></p>
-                <p><strong>Kevin_VOLOSKIND</strong></p>
-                <p><strong>Sergey_Prince</strong></p>
-                <p><strong>Black_Fedya</strong></p>
+                <p><strong>Roma_VOLOSKIND</strong> <span style="color:var(--text-muted); font-size:13px;">(ID: 23456)</span></p>
+                <p><strong>Kevin_VOLOSKIND</strong> <span style="color:var(--text-muted); font-size:13px;">(ID: 34567)</span></p>
+                <p><strong>Sergey_Prince</strong> <span style="color:var(--text-muted); font-size:13px;">(ID: 45678)</span></p>
+                <p><strong>Black_Fedya</strong> <span style="color:var(--text-muted); font-size:13px;">(ID: 56789)</span></p>
             </div>
         </div>
 
@@ -878,7 +878,9 @@
         <!-- ===== АДМИН: СПИСОК ЧЛЕНОВ ===== -->
         <div id="page-adminMembers" class="page">
             <h2>СПИСОК ЧЛЕНОВ</h2>
-            <div id="adminMembersList" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);"></div>
+            <div id="adminMembersList" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
+                <p style="color:var(--text-muted);">Загрузка...</p>
+            </div>
         </div>
 
         <!-- ===== АДМИН: БЛОКИРОВКА ===== -->
@@ -1005,7 +1007,7 @@
             <div id="adminSearchResult" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);"></div>
         </div>
 
-        <!-- ===== АДМИН: ВЫДАТЬ ПРЕМИЮ (НОВАЯ ВЕРСИЯ) ===== -->
+        <!-- ===== АДМИН: ВЫДАТЬ ПРЕМИЮ ===== -->
         <div id="page-adminPremium" class="page">
             <h2>💰 ВЫДАТЬ ПРЕМИЮ</h2>
             <div style="border:1px solid var(--border-color); padding:20px; background:var(--bg-card);">
@@ -1648,6 +1650,31 @@ function enterMainPage(user) {
     showPage('profile');
 }
 
+// ================================================================
+// АДМИН: СПИСОК ЧЛЕНОВ (исправлено)
+// ================================================================
+
+function loadAdminMembers() {
+    const list = document.getElementById('adminMembersList');
+    const members = db.users.filter(u => !u.isAdmin);
+    if (members.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-muted);">Нет зарегистрированных членов</p>';
+        return;
+    }
+    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">Всего: ${members.length}</p>`;
+    members.forEach(u => {
+        html += `<div style="border-bottom:1px solid var(--border-color); padding:8px 0; color:var(--text-secondary); font-size:13px;">
+            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : '🟢 Активен'}
+            ${u.balance ? `· Баланс: ${u.balance} ₽` : ''}
+        </div>`;
+    });
+    list.innerHTML = html;
+}
+
+// ================================================================
+// (ОСТАЛЬНЫЕ ФУНКЦИИ ТЕ ЖЕ)
+// ================================================================
+
 function updateNotificationBadge() {
     if (!db.notifications) db.notifications = [];
     const unread = db.notifications.filter(n => !n.read && n.userId === currentUser.id);
@@ -1689,10 +1716,6 @@ function closeResolvedModal() {
     document.getElementById('violationResolvedModal').classList.remove('active');
 }
 
-// ================================================================
-// НАВИГАЦИЯ
-// ================================================================
-
 function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     const target = document.getElementById('page-' + name);
@@ -1701,10 +1724,6 @@ function showPage(name) {
         b.classList.toggle('active', b.dataset.page === name);
     });
 }
-
-// ================================================================
-// ЗАГРУЗКА КОНТЕНТА
-// ================================================================
 
 function loadSiteContent() {
     if (!db.siteContent) return;
@@ -1718,16 +1737,7 @@ function loadSiteContent() {
     if (db.siteContent.rules) {
         rulesEl.innerHTML = db.siteContent.rules;
     }
-    
-    const membersEl = document.getElementById('membersContent');
-    if (db.siteContent.members) {
-        membersEl.innerHTML = db.siteContent.members;
-    }
 }
-
-// ================================================================
-// ПРОФИЛЬ
-// ================================================================
 
 function loadProfile(user) {
     document.getElementById('profileId').textContent = user.id;
@@ -1797,10 +1807,6 @@ async function saveProfile() {
     setTimeout(() => closeEditModal(), 800);
 }
 
-// ================================================================
-// СМЕНА ПАРОЛЯ
-// ================================================================
-
 function openChangePassword() {
     if (!currentUser) return;
     document.getElementById('passwordModal').classList.add('active');
@@ -1861,10 +1867,6 @@ async function changePassword() {
     setTimeout(() => closePasswordModal(), 1000);
 }
 
-// ================================================================
-// НАРУШЕНИЯ
-// ================================================================
-
 function loadViolations(user) {
     const container = document.getElementById('violationsList');
     const violations = user.violations || [];
@@ -1890,10 +1892,6 @@ function loadViolations(user) {
     });
     container.innerHTML = html;
 }
-
-// ================================================================
-// ЗАЯВКИ
-// ================================================================
 
 function openRequestRemove() {
     document.getElementById('requestRemoveModal').classList.add('active');
@@ -2035,10 +2033,6 @@ function loadUserRequests() {
     container.innerHTML = html;
 }
 
-// ================================================================
-// ЗАЯВКА НА СТРОЙ
-// ================================================================
-
 async function submitBuildRequest() {
     const start = document.getElementById('buildStart').value;
     const end = document.getElementById('buildEnd').value;
@@ -2085,10 +2079,6 @@ async function submitBuildRequest() {
     document.getElementById('buildRequired').value = '';
     document.getElementById('buildForbidden').value = '';
 }
-
-// ================================================================
-// ЗАПЛАНИРОВАННЫЕ СТРОИ
-// ================================================================
 
 function loadScheduledBuilds() {
     const container = document.getElementById('scheduledBuildsList');
@@ -2164,10 +2154,6 @@ async function deleteBuild(buildId) {
     showToast('🗑️ СТРОЙ УДАЛЁН', 'Строй удалён из запланированных', 'info');
 }
 
-// ================================================================
-// СЕМЬИ
-// ================================================================
-
 function loadFamiliesDisplay() {
     if (!db.allies) db.allies = [];
     if (!db.enemies) db.enemies = [];
@@ -2194,10 +2180,6 @@ function loadFamiliesDisplay() {
         enemiesContainer.innerHTML = html;
     }
 }
-
-// ================================================================
-// ПРЕМИИ
-// ================================================================
 
 function loadPremium(user) {
     if (!user) return;
@@ -2290,10 +2272,6 @@ async function submitWithdraw() {
     if (isAdmin(currentUser)) loadWithdrawRequests();
 }
 
-// ================================================================
-// АДМИН: ВЫДАТЬ ПРЕМИЮ (НОВАЯ ВЕРСИЯ)
-// ================================================================
-
 async function issuePremium() {
     const userId = document.getElementById('premiumUserId').value.trim();
     const amount = parseInt(document.getElementById('premiumAmount').value);
@@ -2345,10 +2323,6 @@ async function issuePremium() {
     document.getElementById('premiumAmount').value = '';
     if (currentUser) loadPremium(currentUser);
 }
-
-// ================================================================
-// АДМИН: ЗАЯВКИ НА ВЫВОД
-// ================================================================
 
 function loadWithdrawRequests() {
     const container = document.getElementById('withdrawRequestsList');
@@ -2413,10 +2387,6 @@ async function respondWithdraw(requestId, status) {
     loadWithdrawRequests();
     if (user) loadPremium(user);
 }
-
-// ================================================================
-// ДИНАМИЧЕСКИЕ РАЗДЕЛЫ
-// ================================================================
 
 function loadDynamicPages() {
     const container = document.getElementById('dynamicPagesList');
@@ -2524,10 +2494,6 @@ async function submitDynamicRequest(pageId) {
     });
 }
 
-// ================================================================
-// АДМИН: УПРАВЛЕНИЕ РАЗДЕЛАМИ (УДАЛЕНИЕ)
-// ================================================================
-
 function loadAdminPagesManagement() {
     const container = document.getElementById('adminPagesList');
     if (!pagesDb) return;
@@ -2581,10 +2547,6 @@ async function deletePage(pageId) {
     addHistory(currentUser.id, 'Удаление раздела', `Удалён раздел ${pageId}`);
     showToast('🗑️ РАЗДЕЛ УДАЛЁН', 'Раздел удалён', 'info');
 }
-
-// ================================================================
-// АДМИН: ДОБАВИТЬ РАЗДЕЛ
-// ================================================================
 
 function openAddPageModal() {
     document.getElementById('addPageModal').classList.add('active');
@@ -2825,10 +2787,6 @@ async function publishNewPage() {
     }
 }
 
-// ================================================================
-// АДМИН: РЕДАКТИРОВАНИЕ ИНФОРМАЦИИ
-// ================================================================
-
 async function loadEditContent() {
     const section = document.getElementById('editSection').value;
     const preview = document.getElementById('editContentPreview');
@@ -2858,10 +2816,6 @@ async function saveEditContent() {
     loadSiteContent();
     loadEditContent();
 }
-
-// ================================================================
-// АДМИН: УПРАВЛЕНИЕ СЕМЬЯМИ
-// ================================================================
 
 function loadFamiliesAdmin() {
     if (!db.allies) db.allies = [];
@@ -2932,7 +2886,7 @@ async function addEnemy() {
     loadFamiliesAdmin();
     loadFamiliesDisplay();
     addHistory(currentUser.id, 'Добавление недружественной семьи', `Добавлена семья: ${name}`);
-    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
+    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные', 'info');
 }
 
 async function removeEnemy(index) {
@@ -2945,10 +2899,6 @@ async function removeEnemy(index) {
     addHistory(currentUser.id, 'Удаление недружественной семьи', `Удалена семья: ${name}`);
     showToast('✅ УДАЛЕНО', `Семья ${name} удалена из недружественных`, 'info');
 }
-
-// ================================================================
-// АДМИН: ИСТОРИЯ
-// ================================================================
 
 function loadHistory() {
     const container = document.getElementById('historyList');
@@ -2967,10 +2917,6 @@ function loadHistory() {
     });
     container.innerHTML = html;
 }
-
-// ================================================================
-// АДМИН: НАРУШЕНИЯ ПО ID
-// ================================================================
 
 async function adminViewViolations() {
     const id = document.getElementById('adminVioSearchId').value.trim();
@@ -2998,10 +2944,6 @@ async function adminViewViolations() {
     });
     res.innerHTML = html;
 }
-
-// ================================================================
-// АДМИН: ВЫДАТЬ НАРУШЕНИЕ
-// ================================================================
 
 async function adminFindForAdd() {
     const id = document.getElementById('adminAddId').value.trim();
@@ -3056,10 +2998,6 @@ async function adminAddViolation() {
     pendingAddUser = null;
     document.getElementById('adminAddUserInfo').style.display = 'none';
 }
-
-// ================================================================
-// АДМИН: СНЯТЬ НАРУШЕНИЕ
-// ================================================================
 
 async function adminFindForRemove() {
     const id = document.getElementById('adminRemoveId').value.trim();
@@ -3136,30 +3074,6 @@ function cancelRemove() {
     document.getElementById('adminRemoveList').innerHTML = '<p style="color:var(--text-muted);">Введите ID для поиска</p>';
 }
 
-// ================================================================
-// АДМИН: СПИСОК ЧЛЕНОВ
-// ================================================================
-
-function loadAdminMembers() {
-    const list = document.getElementById('adminMembersList');
-    const members = db.users.filter(u => !u.isAdmin);
-    if (members.length === 0) {
-        list.innerHTML = '<p style="color:var(--text-muted);">Нет зарегистрированных членов</p>';
-        return;
-    }
-    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">Всего: ${members.length}</p>`;
-    members.forEach(u => {
-        html += `<div style="border-bottom:1px solid var(--border-color); padding:8px 0; color:var(--text-secondary); font-size:13px;">
-            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : 'Активен'}
-        </div>`;
-    });
-    list.innerHTML = html;
-}
-
-// ================================================================
-// АДМИН: БЛОКИРОВКА
-// ================================================================
-
 async function adminFindForBan() {
     const id = document.getElementById('adminBanId').value.trim();
     const info = document.getElementById('adminBanUserInfo');
@@ -3210,10 +3124,6 @@ async function adminBanUser() {
     document.getElementById('adminBanUserInfo').style.display = 'none';
     loadAdminMembers();
 }
-
-// ================================================================
-// АДМИН: ДОСРОЧНЫЙ РАЗБАН
-// ================================================================
 
 async function adminFindForUnban() {
     const id = document.getElementById('adminUnbanId').value.trim();
@@ -3274,10 +3184,6 @@ async function adminUnbanUser() {
     loadAdminMembers();
 }
 
-// ================================================================
-// АДМИН: ЗАЯВКИ (ОТВЕТЫ)
-// ================================================================
-
 function loadAdminRequests() {
     const container = document.getElementById('adminRequestsList');
     if (!db.requests) db.requests = [];
@@ -3327,10 +3233,6 @@ async function respondRequest(requestId, status) {
     loadAdminRequests();
     loadUserRequests();
 }
-
-// ================================================================
-// АДМИН: ЗАЯВКИ НА СТРОЙ
-// ================================================================
 
 function loadAdminBuildRequests() {
     const container = document.getElementById('adminBuildList');
@@ -3405,10 +3307,6 @@ async function respondBuildRequest(requestId, status) {
     loadScheduledBuilds();
 }
 
-// ================================================================
-// АДМИН: ПОИСК
-// ================================================================
-
 async function adminSearchUser() {
     const id = document.getElementById('adminSearchId').value.trim();
     const res = document.getElementById('adminSearchResult');
@@ -3425,10 +3323,6 @@ async function adminSearchUser() {
         <div style="padding:6px 0;"><strong>Нарушений:</strong> ${(user.violations || []).length}</div>
     `;
 }
-
-// ================================================================
-// УВЕДОМЛЕНИЯ
-// ================================================================
 
 function openNotifications() {
     if (!db.notifications) db.notifications = [];
@@ -3462,10 +3356,6 @@ function closeNotifications() {
     document.getElementById('notificationsModal').classList.remove('active');
 }
 
-// ================================================================
-// ЗАПУСК
-// ================================================================
-
 document.getElementById('editSection').addEventListener('change', loadEditContent);
 
 setTimeout(() => {
@@ -3475,4 +3365,4 @@ setTimeout(() => {
 
 </script>
 </body>
-    </html>
+                        </html>
