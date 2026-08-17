@@ -6,8 +6,37 @@
     <title>NIGHTMARE EMPIRE</title>
     <style>
         /* ============================================================
-           БАЗОВЫЕ СТИЛИ - ПРЕМИУМ МИНИМАЛИЗМ
+           БАЗОВЫЕ ПЕРЕМЕННЫЕ И СТИЛИ
            ============================================================ */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #111;
+            --bg-card: #1a1a1a;
+            --bg-input: #1a1a1a;
+            --text-primary: #ffffff;
+            --text-secondary: #aaaaaa;
+            --text-muted: #444444;
+            --border-color: #222222;
+            --accent-color: #d4a843;
+            --accent-hover: #c49a3a;
+            --shadow-color: rgba(212, 168, 67, 0.1);
+            --danger-color: #cc0000;
+            --success-color: #44ff44;
+            --transition: all 0.3s ease;
+        }
+        
+        [data-theme="light"] {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #e8e8e8;
+            --bg-card: #ffffff;
+            --bg-input: #f0f0f0;
+            --text-primary: #111111;
+            --text-secondary: #555555;
+            --text-muted: #999999;
+            --border-color: #dddddd;
+            --shadow-color: rgba(0, 0, 0, 0.05);
+        }
+        
         * {
             margin: 0;
             padding: 0;
@@ -16,16 +45,15 @@
         
         body {
             font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            background: #000000;
-            color: #ffffff;
+            background: var(--bg-primary);
+            color: var(--text-primary);
             min-height: 100vh;
-            overflow-x: hidden;
+            transition: var(--transition);
         }
         
-        ::-webkit-scrollbar { width: 4px; }
-        ::-webkit-scrollbar-track { background: #0a0a0a; }
-        ::-webkit-scrollbar-thumb { background: #333; }
-        ::-webkit-scrollbar-thumb:hover { background: #555; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--bg-secondary); }
+        ::-webkit-scrollbar-thumb { background: var(--accent-color); border-radius: 3px; }
         
         /* ============================================================
            СПЛЕШ-ЭКРАН
@@ -36,13 +64,14 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #000;
+            background: var(--bg-primary);
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 9999;
             animation: splashFade 3.5s forwards;
+            transition: var(--transition);
         }
         @keyframes splashFade {
             0% { opacity: 1; }
@@ -51,7 +80,7 @@
         }
         #splashScreen .splash-icon {
             font-size: 80px;
-            color: #fff;
+            color: var(--accent-color);
             animation: splashPulse 2s ease-in-out infinite;
         }
         @keyframes splashPulse {
@@ -62,16 +91,18 @@
             font-size: 2.5rem;
             font-weight: 300;
             letter-spacing: 12px;
-            color: #fff;
+            color: var(--text-primary);
             margin-top: 20px;
             text-transform: uppercase;
+            transition: var(--transition);
         }
         #splashScreen .sub {
             font-size: 0.8rem;
             letter-spacing: 6px;
-            color: #555;
+            color: var(--text-muted);
             margin-top: 8px;
             font-weight: 300;
+            transition: var(--transition);
         }
         
         /* ============================================================
@@ -82,15 +113,18 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #000;
+            background: var(--bg-primary);
             padding: 20px;
+            transition: var(--transition);
         }
         .auth-box {
             width: 100%;
             max-width: 380px;
             padding: 40px 30px;
-            border: 1px solid #222;
-            background: #0a0a0a;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
+            transition: var(--transition);
+            box-shadow: 0 0 30px var(--shadow-color);
         }
         .auth-box .brand {
             text-align: center;
@@ -100,82 +134,85 @@
             font-weight: 300;
             letter-spacing: 8px;
             font-size: 1.4rem;
-            color: #fff;
+            color: var(--text-primary);
+            transition: var(--transition);
         }
         .auth-box .brand .line {
             width: 40px;
             height: 1px;
-            background: #333;
+            background: var(--accent-color);
             margin: 10px auto;
         }
         .auth-box input {
             width: 100%;
             padding: 12px 14px;
             margin: 6px 0;
-            background: #111;
-            border: 1px solid #222;
-            color: #fff;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
             font-size: 14px;
             outline: none;
-            transition: border 0.3s;
+            transition: var(--transition);
             border-radius: 0;
         }
         .auth-box input:focus {
-            border-color: #fff;
+            border-color: var(--accent-color);
         }
         .auth-box input::placeholder {
-            color: #555;
+            color: var(--text-muted);
         }
         .auth-box label {
             display: flex;
             align-items: center;
             gap: 10px;
             margin: 12px 0;
-            color: #666;
+            color: var(--text-secondary);
             font-size: 13px;
             cursor: pointer;
+            transition: var(--transition);
         }
         .auth-box label input[type="checkbox"] {
             width: 16px;
             height: 16px;
             margin: 0;
-            accent-color: #fff;
+            accent-color: var(--accent-color);
         }
         
-        /* ===== КНОПКИ - БЕЛЫЕ НА ТЁМНОМ ===== */
+        /* ===== КНОПКИ ===== */
         .btn {
             width: 100%;
             padding: 13px;
             margin: 6px 0;
-            background: #ffffff;
+            background: var(--accent-color);
             color: #000000;
             border: none;
             font-size: 14px;
             font-weight: 500;
             letter-spacing: 2px;
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
             border-radius: 0;
             text-transform: uppercase;
         }
         .btn:hover {
-            background: #dddddd;
+            background: var(--accent-hover);
             transform: scale(1.01);
+            box-shadow: 0 0 20px var(--shadow-color);
         }
         .btn:active {
             transform: scale(0.98);
         }
         .btn-outline {
             background: transparent;
-            border: 1px solid #ffffff;
-            color: #ffffff;
+            border: 1px solid var(--accent-color);
+            color: var(--accent-color);
         }
         .btn-outline:hover {
-            background: #ffffff;
+            background: var(--accent-color);
             color: #000000;
         }
         .btn-danger {
-            background: #cc0000;
+            background: var(--danger-color);
             color: #ffffff;
         }
         .btn-danger:hover {
@@ -189,18 +226,19 @@
             margin: 4px 4px 4px 0;
         }
         .btn-success {
-            background: #ffffff;
+            background: var(--success-color);
             color: #000000;
         }
         .btn-success:hover {
-            background: #dddddd;
+            background: #55ff55;
         }
         .btn-secondary {
-            background: #222222;
-            color: #ffffff;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            border: 1px solid var(--border-color);
         }
         .btn-secondary:hover {
-            background: #333333;
+            background: var(--border-color);
         }
         .btn-green {
             background: #00cc44;
@@ -213,26 +251,27 @@
         .auth-switch {
             text-align: center;
             margin-top: 16px;
-            color: #555;
+            color: var(--text-muted);
             font-size: 13px;
+            transition: var(--transition);
         }
         .auth-switch span {
-            color: #fff;
+            color: var(--accent-color);
             cursor: pointer;
             text-decoration: underline;
             text-underline-offset: 3px;
         }
         .auth-switch span:hover {
-            color: #aaa;
+            opacity: 0.8;
         }
         .error-msg {
-            color: #cc0000;
+            color: var(--danger-color);
             font-size: 13px;
             margin: 5px 0;
             display: none;
         }
         .success-msg {
-            color: #44ff44;
+            color: var(--success-color);
             font-size: 13px;
             margin: 5px 0;
             display: none;
@@ -246,32 +285,35 @@
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            background: #000;
+            background: var(--bg-primary);
             padding: 20px;
+            transition: var(--transition);
         }
         .ban-box {
-            border: 1px solid #cc0000;
+            border: 1px solid var(--danger-color);
             padding: 50px 40px;
             max-width: 450px;
             width: 100%;
-            background: #0a0a0a;
+            background: var(--bg-card);
             text-align: center;
+            transition: var(--transition);
         }
         .ban-box h1 {
             font-weight: 300;
             letter-spacing: 4px;
-            color: #cc0000;
+            color: var(--danger-color);
             font-size: 1.8rem;
             margin-bottom: 20px;
         }
         .ban-box .ban-info {
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 14px;
             line-height: 1.8;
             text-align: left;
+            transition: var(--transition);
         }
         .ban-box .ban-info strong {
-            color: #fff;
+            color: var(--text-primary);
             font-weight: 400;
         }
         .ban-box .btn {
@@ -284,58 +326,90 @@
         #mainPage {
             display: none;
             min-height: 100vh;
-            background: #000;
+            background: var(--bg-primary);
+            transition: var(--transition);
         }
         
         /* Верхняя панель */
         .top-bar {
             padding: 18px 30px;
-            border-bottom: 1px solid #1a1a1a;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
             flex-wrap: wrap;
             gap: 12px;
-            background: #050505;
+            background: var(--bg-card);
             position: sticky;
             top: 0;
             z-index: 100;
+            transition: var(--transition);
         }
         .top-bar .brand {
             font-weight: 300;
             letter-spacing: 6px;
             font-size: 1.1rem;
-            color: #fff;
+            color: var(--text-primary);
+            transition: var(--transition);
         }
         .top-bar .brand span {
-            color: #444;
+            color: var(--text-muted);
         }
         .top-bar .user-info {
-            color: #666;
+            color: var(--text-secondary);
             font-size: 13px;
+            transition: var(--transition);
         }
         .top-bar .user-info strong {
-            color: #fff;
+            color: var(--text-primary);
             font-weight: 400;
         }
         .top-bar .user-info .admin-badge {
-            color: #cc0000;
+            color: var(--danger-color);
             margin-left: 8px;
             font-size: 11px;
             letter-spacing: 1px;
         }
+        .top-bar .controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .top-bar .controls .lang-toggle,
+        .top-bar .controls .theme-toggle {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 6px 12px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: var(--transition);
+            border-radius: 0;
+            letter-spacing: 1px;
+        }
+        .top-bar .controls .lang-toggle:hover,
+        .top-bar .controls .theme-toggle:hover {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
+        .top-bar .controls .lang-toggle.active,
+        .top-bar .controls .theme-toggle.active {
+            border-color: var(--accent-color);
+            color: var(--accent-color);
+        }
         .top-bar .notification-icon {
-            color: #fff;
+            color: var(--text-primary);
             cursor: pointer;
             font-size: 18px;
             position: relative;
-            margin-left: 10px;
+            transition: var(--transition);
         }
         .top-bar .notification-icon .badge {
             position: absolute;
             top: -8px;
             right: -8px;
-            background: #cc0000;
+            background: var(--danger-color);
             color: #fff;
             font-size: 10px;
             padding: 2px 6px;
@@ -346,17 +420,17 @@
         .btn-logout {
             padding: 6px 18px;
             background: transparent;
-            border: 1px solid #333;
-            color: #888;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
             cursor: pointer;
             font-size: 12px;
-            transition: all 0.3s;
+            transition: var(--transition);
             letter-spacing: 1px;
             border-radius: 0;
         }
         .btn-logout:hover {
-            border-color: #cc0000;
-            color: #cc0000;
+            border-color: var(--danger-color);
+            color: var(--danger-color);
         }
         
         /* Навигация */
@@ -365,30 +439,31 @@
             flex-wrap: wrap;
             gap: 2px;
             padding: 12px 30px;
-            background: #050505;
-            border-bottom: 1px solid #1a1a1a;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            transition: var(--transition);
         }
         .nav-menu button {
             padding: 8px 18px;
             background: transparent;
             border: none;
-            color: #666;
+            color: var(--text-muted);
             cursor: pointer;
             font-size: 12px;
             letter-spacing: 1px;
-            transition: all 0.3s;
+            transition: var(--transition);
             border-radius: 0;
             text-transform: uppercase;
         }
         .nav-menu button:hover {
-            color: #fff;
+            color: var(--text-primary);
         }
         .nav-menu button.active {
-            color: #fff;
-            border-bottom: 1px solid #fff;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--accent-color);
         }
         .nav-menu .admin-section {
-            border-top: 1px solid #1a1a1a;
+            border-top: 1px solid var(--border-color);
             padding-top: 10px;
             margin-top: 6px;
             width: 100%;
@@ -397,7 +472,7 @@
             gap: 2px;
         }
         .nav-menu .admin-section .label {
-            color: #444;
+            color: var(--text-muted);
             font-size: 10px;
             letter-spacing: 2px;
             width: 100%;
@@ -425,25 +500,28 @@
             font-weight: 300;
             letter-spacing: 4px;
             font-size: 1.4rem;
-            color: #fff;
-            border-bottom: 1px solid #1a1a1a;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 12px;
             margin-bottom: 20px;
+            transition: var(--transition);
         }
         .page .info-block {
-            border: 1px solid #1a1a1a;
+            border: 1px solid var(--border-color);
             padding: 20px 24px;
-            background: #050505;
+            background: var(--bg-card);
             margin-bottom: 14px;
+            transition: var(--transition);
         }
         .page .info-block p {
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 14px;
             line-height: 1.8;
             margin: 4px 0;
+            transition: var(--transition);
         }
         .page .info-block strong {
-            color: #fff;
+            color: var(--text-primary);
             font-weight: 400;
         }
         
@@ -451,13 +529,14 @@
            УКСП - СТИЛИ
            ============================================================ */
         .uksp-doc {
-            border: 1px solid #1a1a1a;
+            border: 1px solid var(--border-color);
             padding: 30px;
-            background: #050505;
+            background: var(--bg-card);
+            transition: var(--transition);
         }
         .uksp-doc .header {
             text-align: center;
-            border-bottom: 1px solid #1a1a1a;
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 20px;
             margin-bottom: 20px;
         }
@@ -465,22 +544,22 @@
             font-size: 1.6rem;
             font-weight: 300;
             letter-spacing: 6px;
-            color: #fff;
+            color: var(--text-primary);
         }
         .uksp-doc .header .subtitle {
-            color: #555;
+            color: var(--text-muted);
             font-size: 0.85rem;
             letter-spacing: 3px;
             margin-top: 6px;
         }
         .uksp-doc .header .meta {
-            color: #444;
+            color: var(--text-muted);
             font-size: 12px;
             margin-top: 12px;
             letter-spacing: 1px;
         }
         .uksp-doc .header .meta span {
-            color: #fff;
+            color: var(--text-primary);
         }
         .uksp-doc .section {
             margin: 24px 0;
@@ -489,52 +568,53 @@
             font-weight: 300;
             letter-spacing: 3px;
             font-size: 1rem;
-            color: #fff;
-            border-bottom: 1px solid #1a1a1a;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 8px;
             margin-bottom: 12px;
         }
         .uksp-doc .section .rule {
             padding: 6px 0 6px 16px;
-            border-left: 1px solid #222;
+            border-left: 1px solid var(--border-color);
             margin: 4px 0;
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 13px;
             line-height: 1.6;
         }
         .uksp-doc .section .rule strong {
-            color: #fff;
+            color: var(--text-primary);
             font-weight: 400;
         }
         .uksp-doc .section .rule .code {
-            color: #555;
+            color: var(--text-muted);
             font-size: 11px;
             letter-spacing: 1px;
             margin-right: 8px;
         }
         .uksp-doc .footer {
-            border-top: 1px solid #1a1a1a;
+            border-top: 1px solid var(--border-color);
             padding-top: 20px;
             margin-top: 20px;
-            color: #444;
+            color: var(--text-muted);
             font-size: 12px;
             letter-spacing: 1px;
         }
         .uksp-doc .footer span {
-            color: #fff;
+            color: var(--text-primary);
         }
         
         /* ============================================================
            ПРАВИЛА СТРОЯ
            ============================================================ */
         .rules-doc {
-            border: 1px solid #1a1a1a;
+            border: 1px solid var(--border-color);
             padding: 30px;
-            background: #050505;
+            background: var(--bg-card);
+            transition: var(--transition);
         }
         .rules-doc .header {
             text-align: center;
-            border-bottom: 1px solid #1a1a1a;
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 20px;
             margin-bottom: 20px;
         }
@@ -542,10 +622,10 @@
             font-size: 1.6rem;
             font-weight: 300;
             letter-spacing: 6px;
-            color: #fff;
+            color: var(--text-primary);
         }
         .rules-doc .header .subtitle {
-            color: #555;
+            color: var(--text-muted);
             font-size: 0.85rem;
             letter-spacing: 3px;
             margin-top: 6px;
@@ -557,93 +637,94 @@
             font-weight: 300;
             letter-spacing: 3px;
             font-size: 1rem;
-            color: #fff;
-            border-bottom: 1px solid #1a1a1a;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 8px;
             margin-bottom: 12px;
         }
         .rules-doc .section .rule {
             padding: 4px 0 4px 16px;
-            border-left: 1px solid #222;
+            border-left: 1px solid var(--border-color);
             margin: 3px 0;
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 13px;
             line-height: 1.6;
         }
         .rules-doc .section .rule strong {
-            color: #fff;
+            color: var(--text-primary);
             font-weight: 400;
         }
         .rules-doc .section .rule .code {
-            color: #555;
+            color: var(--text-muted);
             font-size: 11px;
             letter-spacing: 1px;
             margin-right: 8px;
         }
         .rules-doc .section .rule.danger {
-            border-left-color: #cc0000;
-            color: #cc0000;
+            border-left-color: var(--danger-color);
+            color: var(--danger-color);
         }
         .rules-doc .footer {
-            border-top: 1px solid #1a1a1a;
+            border-top: 1px solid var(--border-color);
             padding-top: 16px;
             margin-top: 16px;
-            color: #444;
+            color: var(--text-muted);
             font-size: 12px;
             letter-spacing: 1px;
         }
         .rules-doc .footer span {
-            color: #fff;
+            color: var(--text-primary);
         }
         
         /* ============================================================
            ЗАПЛАНИРОВАННЫЕ СТРОИ
            ============================================================ */
         .build-item {
-            border: 1px solid #1a1a1a;
+            border: 1px solid var(--border-color);
             padding: 16px 20px;
             margin: 8px 0;
-            background: #050505;
-            border-left: 2px solid #44ff44;
+            background: var(--bg-card);
+            border-left: 2px solid var(--success-color);
             cursor: pointer;
-            transition: all 0.3s;
+            transition: var(--transition);
         }
         .build-item:hover {
-            border-color: #fff;
+            border-color: var(--accent-color);
+            transform: translateX(4px);
         }
         .build-item .build-topic {
-            color: #fff;
+            color: var(--text-primary);
             font-size: 15px;
             font-weight: 500;
             letter-spacing: 1px;
         }
         .build-item .build-meta {
-            color: #444;
+            color: var(--text-muted);
             font-size: 12px;
             margin: 4px 0;
         }
         .build-item .build-meta strong {
-            color: #aaa;
+            color: var(--text-secondary);
             font-weight: 400;
         }
         .build-item .build-details {
-            color: #666;
+            color: var(--text-muted);
             font-size: 13px;
             margin: 4px 0;
         }
         .build-item .build-organizer {
-            color: #555;
+            color: var(--text-muted);
             font-size: 12px;
             margin-top: 6px;
         }
         .build-item .build-organizer strong {
-            color: #888;
+            color: var(--text-secondary);
             font-weight: 400;
         }
         .build-item .build-status {
             display: inline-block;
             padding: 2px 12px;
-            background: #00cc44;
+            background: var(--success-color);
             color: #000;
             font-size: 10px;
             letter-spacing: 1px;
@@ -653,24 +734,25 @@
         .build-item .build-actions {
             margin-top: 10px;
             padding-top: 10px;
-            border-top: 1px solid #1a1a1a;
+            border-top: 1px solid var(--border-color);
         }
         
         /* ============================================================
            ДИНАМИЧЕСКИЕ РАЗДЕЛЫ
            ============================================================ */
         .dynamic-page {
-            border: 1px solid #1a1a1a;
+            border: 1px solid var(--border-color);
             padding: 24px;
-            background: #050505;
+            background: var(--bg-card);
             margin-bottom: 16px;
+            transition: var(--transition);
         }
         .dynamic-page .page-title {
             font-size: 1.2rem;
             font-weight: 300;
             letter-spacing: 3px;
-            color: #fff;
-            border-bottom: 1px solid #1a1a1a;
+            color: var(--text-primary);
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 10px;
             margin-bottom: 16px;
             display: flex;
@@ -679,7 +761,7 @@
             flex-wrap: wrap;
         }
         .dynamic-page .page-content {
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 14px;
             line-height: 1.8;
         }
@@ -687,10 +769,10 @@
             margin: 6px 0;
         }
         .dynamic-page .page-meta {
-            color: #444;
+            color: var(--text-muted);
             font-size: 11px;
             margin-top: 12px;
-            border-top: 1px solid #1a1a1a;
+            border-top: 1px solid var(--border-color);
             padding-top: 10px;
         }
         
@@ -702,7 +784,7 @@
         }
         .request-form .form-field label {
             display: block;
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 13px;
             margin-bottom: 4px;
         }
@@ -711,26 +793,26 @@
         .request-form .form-field textarea {
             width: 100%;
             padding: 10px 12px;
-            background: #111;
-            border: 1px solid #222;
-            color: #fff;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
             font-size: 13px;
             outline: none;
-            transition: border 0.3s;
+            transition: var(--transition);
             border-radius: 0;
             font-family: inherit;
         }
         .request-form .form-field input:focus,
         .request-form .form-field select:focus,
         .request-form .form-field textarea:focus {
-            border-color: #fff;
+            border-color: var(--accent-color);
         }
         .request-form .form-field textarea {
             resize: vertical;
             min-height: 60px;
         }
         .request-form .form-field .required {
-            color: #cc0000;
+            color: var(--danger-color);
             margin-left: 4px;
         }
         
@@ -738,47 +820,48 @@
            НАРУШЕНИЯ
            ============================================================ */
         .violation-item {
-            border: 1px solid #1a1a1a;
+            border: 1px solid var(--border-color);
             padding: 14px 18px;
             margin: 6px 0;
-            background: #050505;
-            border-left: 2px solid #cc0000;
+            background: var(--bg-card);
+            border-left: 2px solid var(--danger-color);
+            transition: var(--transition);
         }
         .violation-item.resolved {
-            border-left-color: #333;
+            border-left-color: var(--text-muted);
             opacity: 0.6;
         }
         .violation-item .v-date {
-            color: #444;
+            color: var(--text-muted);
             font-size: 11px;
             letter-spacing: 1px;
         }
         .violation-item .v-type {
-            color: #cc0000;
+            color: var(--danger-color);
             font-weight: 400;
             font-size: 13px;
             margin: 4px 0;
         }
         .violation-item.resolved .v-type {
-            color: #555;
+            color: var(--text-muted);
         }
         .violation-item .v-desc {
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 13px;
             margin: 4px 0;
         }
         .violation-item .v-meta {
-            color: #444;
+            color: var(--text-muted);
             font-size: 11px;
         }
         .violation-item .v-resolved {
-            color: #555;
+            color: var(--text-muted);
             font-size: 12px;
             margin-top: 4px;
         }
         
         /* ============================================================
-           СЕМЬИ (общий раздел)
+           СЕМЬИ
            ============================================================ */
         .families-grid {
             display: flex;
@@ -788,9 +871,10 @@
         .families-grid .family-block {
             flex: 1;
             min-width: 250px;
-            border: 1px solid #1a1a1a;
+            border: 1px solid var(--border-color);
             padding: 20px 24px;
-            background: #050505;
+            background: var(--bg-card);
+            transition: var(--transition);
         }
         .families-grid .family-block h3 {
             font-weight: 300;
@@ -799,22 +883,22 @@
             margin-bottom: 12px;
         }
         .families-grid .family-block .ally-color {
-            color: #44ff44;
+            color: var(--success-color);
         }
         .families-grid .family-block .enemy-color {
-            color: #cc0000;
+            color: var(--danger-color);
         }
         .families-grid .family-block .family-item {
             padding: 6px 0;
-            border-bottom: 1px solid #1a1a1a;
-            color: #aaa;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
             font-size: 14px;
         }
         .families-grid .family-block .family-item:last-child {
             border-bottom: none;
         }
         .families-grid .family-block .empty {
-            color: #444;
+            color: var(--text-muted);
             font-size: 13px;
         }
         
@@ -828,11 +912,15 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.95);
+            background: rgba(0,0,0,0.92);
             z-index: 1000;
             justify-content: center;
             align-items: center;
             padding: 20px;
+            transition: var(--transition);
+        }
+        [data-theme="light"] .modal-overlay {
+            background: rgba(255,255,255,0.92);
         }
         .modal-overlay.active {
             display: flex;
@@ -842,10 +930,11 @@
             max-width: 600px;
             max-height: 85vh;
             overflow-y: auto;
-            background: #0a0a0a;
-            border: 1px solid #222;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             padding: 30px;
             animation: modalIn 0.3s ease;
+            transition: var(--transition);
         }
         .modal-box.wide {
             max-width: 750px;
@@ -861,7 +950,7 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            border-bottom: 1px solid #1a1a1a;
+            border-bottom: 1px solid var(--border-color);
             padding-bottom: 12px;
             margin-bottom: 18px;
         }
@@ -869,19 +958,19 @@
             font-weight: 300;
             letter-spacing: 3px;
             font-size: 1.1rem;
-            color: #fff;
+            color: var(--text-primary);
         }
         .modal-box .close-btn {
             background: none;
             border: none;
-            color: #444;
+            color: var(--text-muted);
             font-size: 22px;
             cursor: pointer;
-            transition: color 0.3s;
+            transition: var(--transition);
             line-height: 1;
         }
         .modal-box .close-btn:hover {
-            color: #fff;
+            color: var(--text-primary);
         }
         .modal-box input,
         .modal-box textarea,
@@ -889,19 +978,19 @@
             width: 100%;
             padding: 10px 12px;
             margin: 4px 0;
-            background: #111;
-            border: 1px solid #222;
-            color: #fff;
+            background: var(--bg-input);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
             font-size: 13px;
             outline: none;
-            transition: border 0.3s;
+            transition: var(--transition);
             border-radius: 0;
             font-family: inherit;
         }
         .modal-box input:focus,
         .modal-box textarea:focus,
         .modal-box select:focus {
-            border-color: #fff;
+            border-color: var(--accent-color);
         }
         .modal-box textarea {
             resize: vertical;
@@ -924,34 +1013,34 @@
             font-size: 13px;
         }
         .modal-box .result-msg.success {
-            color: #44ff44;
+            color: var(--success-color);
         }
         .modal-box .result-msg.error {
-            color: #cc0000;
+            color: var(--danger-color);
         }
         .modal-box .result-msg.info {
-            color: #fff;
+            color: var(--text-primary);
         }
         .modal-box .request-item {
-            border: 1px solid #1a1a1a;
+            border: 1px solid var(--border-color);
             padding: 12px 16px;
             margin: 6px 0;
-            background: #050505;
+            background: var(--bg-secondary);
         }
         .modal-box .request-item .req-meta {
-            color: #444;
+            color: var(--text-muted);
             font-size: 11px;
         }
         .modal-box .request-item .req-text {
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 13px;
             margin: 4px 0;
         }
         .modal-box .field-builder {
-            border: 1px solid #222;
+            border: 1px solid var(--border-color);
             padding: 12px 16px;
             margin: 8px 0;
-            background: #050505;
+            background: var(--bg-secondary);
         }
         .modal-box .field-builder .field-header {
             display: flex;
@@ -959,11 +1048,11 @@
             align-items: center;
         }
         .modal-box .field-builder .field-header .field-label {
-            color: #aaa;
+            color: var(--text-secondary);
             font-size: 13px;
         }
         .modal-box .field-builder .field-header .field-type {
-            color: #444;
+            color: var(--text-muted);
             font-size: 11px;
         }
         
@@ -983,13 +1072,14 @@
         }
         .toast {
             padding: 16px 20px;
-            border: 1px solid #222;
-            background: #0a0a0a;
+            border: 1px solid var(--border-color);
+            background: var(--bg-card);
             animation: toastIn 0.4s ease;
             display: flex;
             justify-content: space-between;
             align-items: center;
             gap: 12px;
+            transition: var(--transition);
         }
         @keyframes toastIn {
             from { opacity: 0; transform: translateX(30px); }
@@ -1002,29 +1092,29 @@
             font-size: 13px;
             font-weight: 500;
             letter-spacing: 1px;
-            color: #fff;
+            color: var(--text-primary);
         }
         .toast .toast-content .toast-title.danger {
-            color: #cc0000;
+            color: var(--danger-color);
         }
         .toast .toast-content .toast-title.success {
-            color: #44ff44;
+            color: var(--success-color);
         }
         .toast .toast-content .toast-text {
             font-size: 12px;
-            color: #888;
+            color: var(--text-muted);
             margin-top: 2px;
         }
         .toast .toast-close {
             background: none;
             border: none;
-            color: #444;
+            color: var(--text-muted);
             font-size: 18px;
             cursor: pointer;
             padding: 0 4px;
         }
         .toast .toast-close:hover {
-            color: #fff;
+            color: var(--text-primary);
         }
         
         /* ============================================================
@@ -1035,6 +1125,9 @@
                 padding: 12px 16px;
                 flex-direction: column;
                 text-align: center;
+            }
+            .top-bar .controls {
+                justify-content: center;
             }
             .nav-menu {
                 padding: 8px 12px;
@@ -1112,12 +1205,12 @@
     <div class="ban-box">
         <h1>⛔ ДОСТУП ЗАБЛОКИРОВАН</h1>
         <div class="ban-info">
-            <p><strong>Причина:</strong> <span id="banReason"></span></p>
-            <p><strong>Забанил:</strong> <span id="banBannedBy"></span></p>
-            <p><strong>Дата бана:</strong> <span id="banDate"></span></p>
-            <p><strong>Разблокировка:</strong> <span id="banUnbanDate"></span></p>
+            <p><strong data-lang="ban.reason">Причина:</strong> <span id="banReason"></span></p>
+            <p><strong data-lang="ban.bannedBy">Забанил:</strong> <span id="banBannedBy"></span></p>
+            <p><strong data-lang="ban.date">Дата бана:</strong> <span id="banDate"></span></p>
+            <p><strong data-lang="ban.unban">Разблокировка:</strong> <span id="banUnbanDate"></span></p>
         </div>
-        <button class="btn" onclick="logout()">Выйти</button>
+        <button class="btn" onclick="logout()" data-lang="ban.exit">Выйти</button>
     </div>
 </div>
 
@@ -1127,30 +1220,30 @@
         <div class="brand">
             <h2>NIGHTMARE</h2>
             <div class="line"></div>
-            <div style="color:#333; font-size:10px; letter-spacing:4px; margin-top:6px;">EMPIRE</div>
+            <div style="color:var(--text-muted); font-size:10px; letter-spacing:4px; margin-top:6px;">EMPIRE</div>
         </div>
         <div id="authForm">
-            <input type="text" id="loginInput" placeholder="Игровой ник или Telegram">
-            <input type="password" id="loginPassword" placeholder="Пароль">
+            <input type="text" id="loginInput" placeholder="Игровой ник или Telegram" data-lang="auth.loginPlaceholder">
+            <input type="password" id="loginPassword" placeholder="Пароль" data-lang="auth.passwordPlaceholder">
             <label>
-                <input type="checkbox" id="rememberMe"> Запомнить меня
+                <input type="checkbox" id="rememberMe"> <span data-lang="auth.remember">Запомнить меня</span>
             </label>
-            <div id="loginError" class="error-msg">Неверный логин или пароль</div>
-            <button class="btn" onclick="login()">Войти</button>
+            <div id="loginError" class="error-msg" data-lang="auth.error">Неверный логин или пароль</div>
+            <button class="btn" onclick="login()" data-lang="auth.login">Войти</button>
             <div class="auth-switch">
-                Нет аккаунта? <span onclick="showRegister()">Регистрация</span>
+                <span data-lang="auth.noAccount">Нет аккаунта?</span> <span onclick="showRegister()" data-lang="auth.register">Регистрация</span>
             </div>
         </div>
         <div id="registerForm" style="display:none;">
-            <input type="text" id="regNick" placeholder="Игровой ник (только буквы) *">
-            <input type="text" id="regTg" placeholder="Telegram (например @username) *">
-            <input type="email" id="regEmail" placeholder="Email">
-            <input type="password" id="regPassword" placeholder="Пароль *">
-            <input type="password" id="regPassword2" placeholder="Повторите пароль *">
+            <input type="text" id="regNick" placeholder="Игровой ник (только буквы) *" data-lang="auth.regNick">
+            <input type="text" id="regTg" placeholder="Telegram (например @username) *" data-lang="auth.regTg">
+            <input type="email" id="regEmail" placeholder="Email" data-lang="auth.regEmail">
+            <input type="password" id="regPassword" placeholder="Пароль *" data-lang="auth.regPassword">
+            <input type="password" id="regPassword2" placeholder="Повторите пароль *" data-lang="auth.regPassword2">
             <div id="regError" class="error-msg"></div>
-            <button class="btn" onclick="register()">Зарегистрироваться</button>
+            <button class="btn" onclick="register()" data-lang="auth.registerBtn">Зарегистрироваться</button>
             <div class="auth-switch">
-                Уже есть аккаунт? <span onclick="showLogin()">Войти</span>
+                <span data-lang="auth.hasAccount">Уже есть аккаунт?</span> <span onclick="showLogin()" data-lang="auth.login">Войти</span>
             </div>
         </div>
     </div>
@@ -1164,46 +1257,48 @@
         <div class="brand">NIGHTMARE <span>EMPIRE</span></div>
         <div class="user-info">
             <strong id="displayNick"></strong> · ID <span id="displayId"></span>
-            <span class="admin-badge" id="adminBadge" style="display:none;">АДМИН</span>
+            <span class="admin-badge" id="adminBadge" style="display:none;" data-lang="admin.badge">АДМИН</span>
         </div>
-        <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div class="controls">
+            <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" data-lang="theme.toggle">🌓</button>
+            <button class="lang-toggle" onclick="toggleLang()" id="langToggle">RU</button>
             <span class="notification-icon" onclick="openNotifications()">
                 🔔
                 <span class="badge" id="notifBadge" style="display:none;">0</span>
             </span>
-            <button class="btn-logout" onclick="logout()">ВЫЙТИ</button>
+            <button class="btn-logout" onclick="logout()" data-lang="auth.logout">ВЫЙТИ</button>
         </div>
     </div>
 
     <!-- Навигация -->
     <div class="nav-menu" id="navMenu">
-        <button class="active" data-page="profile" onclick="showPage('profile')">Профиль</button>
-        <button data-page="uksp" onclick="showPage('uksp')">УКСП</button>
-        <button data-page="rules" onclick="showPage('rules')">Правила строя</button>
-        <button data-page="members" onclick="showPage('members')">Состав</button>
-        <button data-page="violations" onclick="showPage('violations')">Нарушения</button>
-        <button data-page="requests" onclick="showPage('requests')">Заявки</button>
-        <button data-page="build" onclick="showPage('build')">Провести строй</button>
-        <button data-page="scheduled" onclick="showPage('scheduled')">Запланированные строи</button>
-        <button data-page="families" onclick="showPage('families')">Семьи</button>
-        <button data-page="dynamic" onclick="showPage('dynamic')">Разделы</button>
+        <button class="active" data-page="profile" onclick="showPage('profile')" data-lang="nav.profile">Профиль</button>
+        <button data-page="uksp" onclick="showPage('uksp')" data-lang="nav.uksp">УКСП</button>
+        <button data-page="rules" onclick="showPage('rules')" data-lang="nav.rules">Правила строя</button>
+        <button data-page="members" onclick="showPage('members')" data-lang="nav.members">Состав</button>
+        <button data-page="violations" onclick="showPage('violations')" data-lang="nav.violations">Нарушения</button>
+        <button data-page="requests" onclick="showPage('requests')" data-lang="nav.requests">Заявки</button>
+        <button data-page="build" onclick="showPage('build')" data-lang="nav.build">Провести строй</button>
+        <button data-page="scheduled" onclick="showPage('scheduled')" data-lang="nav.scheduled">Запланированные строи</button>
+        <button data-page="families" onclick="showPage('families')" data-lang="nav.families">Семьи</button>
+        <button data-page="dynamic" onclick="showPage('dynamic')" data-lang="nav.dynamic">Разделы</button>
         
         <div class="admin-section" id="adminSection" style="display:none;">
-            <div class="label">УПРАВЛЕНИЕ</div>
-            <button data-page="adminViolations" onclick="showPage('adminViolations')">Нарушения по ID</button>
-            <button data-page="adminAdd" onclick="showPage('adminAdd')">Выдать нарушение</button>
-            <button data-page="adminRemove" onclick="showPage('adminRemove')">Снять нарушение</button>
-            <button data-page="adminMembers" onclick="showPage('adminMembers')">Список членов</button>
-            <button data-page="adminBan" onclick="showPage('adminBan')">Блокировка</button>
-            <button data-page="adminUnban" onclick="showPage('adminUnban')">Досрочный разбан</button>
-            <button data-page="adminRequests" onclick="showPage('adminRequests')">Заявки (ответы)</button>
-            <button data-page="adminBuild" onclick="showPage('adminBuild')">Заявки на строй</button>
-            <button data-page="adminEdit" onclick="showPage('adminEdit')">Изменить информацию</button>
-            <button data-page="adminAddPage" onclick="showPage('adminAddPage')">➕ Добавить раздел</button>
-            <button data-page="adminManagePages" onclick="showPage('adminManagePages')">📋 Управление разделами</button>
-            <button data-page="adminHistory" onclick="showPage('adminHistory')">История</button>
-            <button data-page="adminFamilies" onclick="showPage('adminFamilies')">Управление семьями</button>
-            <button data-page="adminSearch" onclick="showPage('adminSearch')">Поиск</button>
+            <div class="label" data-lang="admin.control">УПРАВЛЕНИЕ</div>
+            <button data-page="adminViolations" onclick="showPage('adminViolations')" data-lang="admin.violationsId">Нарушения по ID</button>
+            <button data-page="adminAdd" onclick="showPage('adminAdd')" data-lang="admin.addViolation">Выдать нарушение</button>
+            <button data-page="adminRemove" onclick="showPage('adminRemove')" data-lang="admin.removeViolation">Снять нарушение</button>
+            <button data-page="adminMembers" onclick="showPage('adminMembers')" data-lang="admin.members">Список членов</button>
+            <button data-page="adminBan" onclick="showPage('adminBan')" data-lang="admin.ban">Блокировка</button>
+            <button data-page="adminUnban" onclick="showPage('adminUnban')" data-lang="admin.unban">Досрочный разбан</button>
+            <button data-page="adminRequests" onclick="showPage('adminRequests')" data-lang="admin.requests">Заявки (ответы)</button>
+            <button data-page="adminBuild" onclick="showPage('adminBuild')" data-lang="admin.buildRequests">Заявки на строй</button>
+            <button data-page="adminEdit" onclick="showPage('adminEdit')" data-lang="admin.edit">Изменить информацию</button>
+            <button data-page="adminAddPage" onclick="showPage('adminAddPage')" data-lang="admin.addPage">➕ Добавить раздел</button>
+            <button data-page="adminManagePages" onclick="showPage('adminManagePages')" data-lang="admin.managePages">📋 Управление разделами</button>
+            <button data-page="adminHistory" onclick="showPage('adminHistory')" data-lang="admin.history">История</button>
+            <button data-page="adminFamilies" onclick="showPage('adminFamilies')" data-lang="admin.families">Управление семьями</button>
+            <button data-page="adminSearch" onclick="showPage('adminSearch')" data-lang="admin.search">Поиск</button>
         </div>
     </div>
 
@@ -1212,24 +1307,24 @@
 
         <!-- ===== ПРОФИЛЬ ===== -->
         <div id="page-profile" class="page active">
-            <h2>ПРОФИЛЬ</h2>
+            <h2 data-lang="profile.title">ПРОФИЛЬ</h2>
             <div class="info-block">
-                <p><strong>ID:</strong> <span id="profileId"></span></p>
-                <p><strong>Игровой ник:</strong> <span id="profileNick"></span></p>
-                <p><strong>Telegram:</strong> <span id="profileTg"></span></p>
-                <p><strong>Email:</strong> <span id="profileEmail"></span></p>
-                <p><strong>Дата регистрации:</strong> <span id="profileRegDate"></span></p>
-                <p><strong>Статус:</strong> <span id="profileStatus" style="color:#44ff44;">Активен</span></p>
+                <p><strong data-lang="profile.id">ID:</strong> <span id="profileId"></span></p>
+                <p><strong data-lang="profile.nick">Игровой ник:</strong> <span id="profileNick"></span></p>
+                <p><strong data-lang="profile.tg">Telegram:</strong> <span id="profileTg"></span></p>
+                <p><strong data-lang="profile.email">Email:</strong> <span id="profileEmail"></span></p>
+                <p><strong data-lang="profile.regDate">Дата регистрации:</strong> <span id="profileRegDate"></span></p>
+                <p><strong data-lang="profile.status">Статус:</strong> <span id="profileStatus" style="color:var(--success-color);">Активен</span></p>
             </div>
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn btn-outline btn-small" onclick="openEditProfile()">Изменить информацию</button>
-                <button class="btn btn-outline btn-small" onclick="openChangePassword()">Сменить пароль</button>
+                <button class="btn btn-outline btn-small" onclick="openEditProfile()" data-lang="profile.edit">Изменить информацию</button>
+                <button class="btn btn-outline btn-small" onclick="openChangePassword()" data-lang="profile.changePass">Сменить пароль</button>
             </div>
         </div>
 
         <!-- ===== УКСП ===== -->
         <div id="page-uksp" class="page">
-            <h2>УКСП</h2>
+            <h2 data-lang="uksp.title">УКСП</h2>
             <div class="uksp-doc" id="ukspContent">
                 <!-- Загружается из БД -->
             </div>
@@ -1237,7 +1332,7 @@
 
         <!-- ===== ПРАВИЛА СТРОЯ ===== -->
         <div id="page-rules" class="page">
-            <h2>ПРАВИЛА СТРОЯ</h2>
+            <h2 data-lang="rules.title">ПРАВИЛА СТРОЯ</h2>
             <div class="rules-doc" id="rulesContent">
                 <!-- Загружается из БД -->
             </div>
@@ -1245,7 +1340,7 @@
 
         <!-- ===== СОСТАВ СЕМЬИ ===== -->
         <div id="page-members" class="page">
-            <h2>СОСТАВ СЕМЬИ</h2>
+            <h2 data-lang="members.title">СОСТАВ СЕМЬИ</h2>
             <div class="info-block" id="membersContent">
                 <!-- Загружается из БД -->
             </div>
@@ -1253,61 +1348,61 @@
 
         <!-- ===== МОИ НАРУШЕНИЯ ===== -->
         <div id="page-violations" class="page">
-            <h2>НАРУШЕНИЯ</h2>
+            <h2 data-lang="violations.title">НАРУШЕНИЯ</h2>
             <div id="violationsList">
-                <p style="color:#444;">Нет нарушений</p>
+                <p style="color:var(--text-muted);" data-lang="violations.empty">Нет нарушений</p>
             </div>
         </div>
 
         <!-- ===== ЗАЯВКИ ===== -->
         <div id="page-requests" class="page">
-            <h2>ЗАЯВКИ</h2>
+            <h2 data-lang="requests.title">ЗАЯВКИ</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
-                <button class="btn btn-small" onclick="openRequestRemove()">Заявка на снятие нарушения</button>
-                <button class="btn btn-small" onclick="openRequestAdd()">Заявка на выдачу нарушения</button>
+                <button class="btn btn-small" onclick="openRequestRemove()" data-lang="requests.remove">Заявка на снятие нарушения</button>
+                <button class="btn btn-small" onclick="openRequestAdd()" data-lang="requests.add">Заявка на выдачу нарушения</button>
             </div>
             <div id="userRequestsList">
-                <p style="color:#444;">Ваши заявки будут отображаться здесь</p>
+                <p style="color:var(--text-muted);" data-lang="requests.empty">Ваши заявки будут отображаться здесь</p>
             </div>
         </div>
 
         <!-- ===== ПРОВЕСТИ СТРОЙ ===== -->
         <div id="page-build" class="page">
-            <h2>ПРОВЕСТИ СТРОЙ</h2>
-            <div style="border:1px solid #1a1a1a; padding:20px; background:#050505;">
-                <p style="color:#aaa; margin-bottom:16px;">Заполните информацию о строе. Все поля обязательны.</p>
-                <input type="datetime-local" id="buildStart" placeholder="Дата и время начала">
-                <input type="datetime-local" id="buildEnd" placeholder="Дата и время окончания">
-                <input type="text" id="buildTopic" placeholder="Тема строя">
-                <input type="text" id="buildRequired" placeholder="Кто обязан явиться (через запятую)">
-                <input type="text" id="buildForbidden" placeholder="Кому нельзя появляться (через запятую)">
-                <button class="btn" onclick="submitBuildRequest()">Отправить заявку</button>
+            <h2 data-lang="build.title">ПРОВЕСТИ СТРОЙ</h2>
+            <div style="border:1px solid var(--border-color); padding:20px; background:var(--bg-card);">
+                <p style="color:var(--text-secondary); margin-bottom:16px;" data-lang="build.info">Заполните информацию о строе. Все поля обязательны.</p>
+                <input type="datetime-local" id="buildStart" placeholder="Дата и время начала" data-lang="build.start">
+                <input type="datetime-local" id="buildEnd" placeholder="Дата и время окончания" data-lang="build.end">
+                <input type="text" id="buildTopic" placeholder="Тема строя" data-lang="build.topic">
+                <input type="text" id="buildRequired" placeholder="Кто обязан явиться (через запятую)" data-lang="build.required">
+                <input type="text" id="buildForbidden" placeholder="Кому нельзя появляться (через запятую)" data-lang="build.forbidden">
+                <button class="btn" onclick="submitBuildRequest()" data-lang="build.submit">Отправить заявку</button>
                 <div id="buildResult" class="result-msg" style="margin-top:10px;"></div>
             </div>
         </div>
 
         <!-- ===== ЗАПЛАНИРОВАННЫЕ СТРОИ ===== -->
         <div id="page-scheduled" class="page">
-            <h2>ЗАПЛАНИРОВАННЫЕ СТРОИ</h2>
+            <h2 data-lang="scheduled.title">ЗАПЛАНИРОВАННЫЕ СТРОИ</h2>
             <div id="scheduledBuildsList">
-                <p style="color:#444;">Нет запланированных строев</p>
+                <p style="color:var(--text-muted);" data-lang="scheduled.empty">Нет запланированных строев</p>
             </div>
         </div>
 
         <!-- ===== СЕМЬИ (для всех) ===== -->
         <div id="page-families" class="page">
-            <h2>СЕМЬИ</h2>
+            <h2 data-lang="families.title">СЕМЬИ</h2>
             <div class="families-grid">
                 <div class="family-block">
-                    <h3 class="ally-color">🤝 СОЮЗНИКИ</h3>
+                    <h3 class="ally-color" data-lang="families.allies">🤝 СОЮЗНИКИ</h3>
                     <div id="alliesDisplay">
-                        <p class="empty">Нет союзников</p>
+                        <p class="empty" data-lang="families.noAllies">Нет союзников</p>
                     </div>
                 </div>
                 <div class="family-block">
-                    <h3 class="enemy-color">⚔️ НЕДРУЖЕСТВЕННЫЕ</h3>
+                    <h3 class="enemy-color" data-lang="families.enemies">⚔️ НЕДРУЖЕСТВЕННЫЕ</h3>
                     <div id="enemiesDisplay">
-                        <p class="empty">Нет недружественных семей</p>
+                        <p class="empty" data-lang="families.noEnemies">Нет недружественных семей</p>
                     </div>
                 </div>
             </div>
@@ -1315,169 +1410,169 @@
 
         <!-- ===== ДИНАМИЧЕСКИЕ РАЗДЕЛЫ ===== -->
         <div id="page-dynamic" class="page">
-            <h2>РАЗДЕЛЫ</h2>
+            <h2 data-lang="dynamic.title">РАЗДЕЛЫ</h2>
             <div id="dynamicPagesList">
-                <p style="color:#444;">Нет доступных разделов</p>
+                <p style="color:var(--text-muted);" data-lang="dynamic.empty">Нет доступных разделов</p>
             </div>
         </div>
 
         <!-- ===== АДМИН: НАРУШЕНИЯ ПО ID ===== -->
         <div id="page-adminViolations" class="page">
-            <h2>НАРУШЕНИЯ ПО ID</h2>
+            <h2 data-lang="admin.violationsId">НАРУШЕНИЯ ПО ID</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                <input type="text" id="adminVioSearchId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                <button class="btn btn-small" onclick="adminViewViolations()" style="width:auto;">Найти</button>
+                <input type="text" id="adminVioSearchId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
+                <button class="btn btn-small" onclick="adminViewViolations()" style="width:auto;" data-lang="admin.search">Найти</button>
             </div>
             <div id="adminVioResult"></div>
         </div>
 
         <!-- ===== АДМИН: ВЫДАТЬ НАРУШЕНИЕ ===== -->
         <div id="page-adminAdd" class="page">
-            <h2>ВЫДАТЬ НАРУШЕНИЕ</h2>
+            <h2 data-lang="admin.addViolation">ВЫДАТЬ НАРУШЕНИЕ</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                <input type="text" id="adminAddId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                <button class="btn btn-small" onclick="adminFindForAdd()" style="width:auto;">Найти</button>
+                <input type="text" id="adminAddId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
+                <button class="btn btn-small" onclick="adminFindForAdd()" style="width:auto;" data-lang="admin.search">Найти</button>
             </div>
-            <div id="adminAddUserInfo" style="display:none; border:1px solid #1a1a1a; padding:14px; background:#050505; margin-bottom:12px;"></div>
-            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                <input type="text" id="adminAddType" placeholder="Тип нарушения (например ФП 1.1)">
-                <textarea id="adminAddDesc" placeholder="Текст нарушения"></textarea>
-                <button class="btn" onclick="adminAddViolation()">Выдать нарушение</button>
+            <div id="adminAddUserInfo" style="display:none; border:1px solid var(--border-color); padding:14px; background:var(--bg-secondary); margin-bottom:12px;"></div>
+            <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
+                <input type="text" id="adminAddType" placeholder="Тип нарушения (например ФП 1.1)" data-lang="admin.violationType">
+                <textarea id="adminAddDesc" placeholder="Текст нарушения" data-lang="admin.violationDesc"></textarea>
+                <button class="btn" onclick="adminAddViolation()" data-lang="admin.issue">Выдать нарушение</button>
                 <div id="adminAddResult" class="result-msg" style="margin-top:10px;"></div>
             </div>
         </div>
 
         <!-- ===== АДМИН: СНЯТЬ НАРУШЕНИЕ ===== -->
         <div id="page-adminRemove" class="page">
-            <h2>СНЯТЬ НАРУШЕНИЕ</h2>
+            <h2 data-lang="admin.removeViolation">СНЯТЬ НАРУШЕНИЕ</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                <input type="text" id="adminRemoveId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                <button class="btn btn-small" onclick="adminFindForRemove()" style="width:auto;">Найти</button>
+                <input type="text" id="adminRemoveId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
+                <button class="btn btn-small" onclick="adminFindForRemove()" style="width:auto;" data-lang="admin.search">Найти</button>
             </div>
             <div id="adminRemoveList"></div>
         </div>
 
         <!-- ===== АДМИН: СПИСОК ЧЛЕНОВ ===== -->
         <div id="page-adminMembers" class="page">
-            <h2>СПИСОК ЧЛЕНОВ</h2>
-            <div id="adminMembersList" style="border:1px solid #1a1a1a; padding:16px; background:#050505;"></div>
+            <h2 data-lang="admin.members">СПИСОК ЧЛЕНОВ</h2>
+            <div id="adminMembersList" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);"></div>
         </div>
 
         <!-- ===== АДМИН: БЛОКИРОВКА ===== -->
         <div id="page-adminBan" class="page">
-            <h2>БЛОКИРОВКА</h2>
+            <h2 data-lang="admin.ban">БЛОКИРОВКА</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                <input type="text" id="adminBanId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                <button class="btn btn-small" onclick="adminFindForBan()" style="width:auto;">Найти</button>
+                <input type="text" id="adminBanId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
+                <button class="btn btn-small" onclick="adminFindForBan()" style="width:auto;" data-lang="admin.search">Найти</button>
             </div>
-            <div id="adminBanUserInfo" style="display:none; border:1px solid #1a1a1a; padding:14px; background:#050505; margin-bottom:12px;"></div>
-            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                <input type="text" id="adminBanReason" placeholder="Причина блокировки">
+            <div id="adminBanUserInfo" style="display:none; border:1px solid var(--border-color); padding:14px; background:var(--bg-secondary); margin-bottom:12px;"></div>
+            <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
+                <input type="text" id="adminBanReason" placeholder="Причина блокировки" data-lang="admin.banReason">
                 <input type="datetime-local" id="adminBanUnbanDate">
-                <button class="btn" onclick="adminBanUser()">Заблокировать</button>
+                <button class="btn" onclick="adminBanUser()" data-lang="admin.banBtn">Заблокировать</button>
                 <div id="adminBanResult" class="result-msg" style="margin-top:10px;"></div>
             </div>
         </div>
 
         <!-- ===== АДМИН: ДОСРОЧНЫЙ РАЗБАН ===== -->
         <div id="page-adminUnban" class="page">
-            <h2>ДОСРОЧНЫЙ РАЗБАН</h2>
+            <h2 data-lang="admin.unban">ДОСРОЧНЫЙ РАЗБАН</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                <input type="text" id="adminUnbanId" placeholder="ID заблокированного пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                <button class="btn btn-small" onclick="adminFindForUnban()" style="width:auto;">Найти</button>
+                <input type="text" id="adminUnbanId" placeholder="ID заблокированного пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
+                <button class="btn btn-small" onclick="adminFindForUnban()" style="width:auto;" data-lang="admin.search">Найти</button>
             </div>
-            <div id="adminUnbanUserInfo" style="display:none; border:1px solid #1a1a1a; padding:14px; background:#050505; margin-bottom:12px;"></div>
-            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                <input type="text" id="adminUnbanReason" placeholder="Причина досрочного разбана (опционально)">
-                <button class="btn btn-success" onclick="adminUnbanUser()">Разблокировать досрочно</button>
+            <div id="adminUnbanUserInfo" style="display:none; border:1px solid var(--border-color); padding:14px; background:var(--bg-secondary); margin-bottom:12px;"></div>
+            <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
+                <input type="text" id="adminUnbanReason" placeholder="Причина досрочного разбана (опционально)" data-lang="admin.unbanReason">
+                <button class="btn btn-success" onclick="adminUnbanUser()" data-lang="admin.unbanBtn">Разблокировать досрочно</button>
                 <div id="adminUnbanResult" class="result-msg" style="margin-top:10px;"></div>
             </div>
         </div>
 
         <!-- ===== АДМИН: ЗАЯВКИ (ОТВЕТЫ) ===== -->
         <div id="page-adminRequests" class="page">
-            <h2>ЗАЯВКИ (ОТВЕТЫ)</h2>
+            <h2 data-lang="admin.requests">ЗАЯВКИ (ОТВЕТЫ)</h2>
             <div id="adminRequestsList">
-                <p style="color:#444;">Нет активных заявок</p>
+                <p style="color:var(--text-muted);" data-lang="admin.noRequests">Нет активных заявок</p>
             </div>
         </div>
 
         <!-- ===== АДМИН: ЗАЯВКИ НА СТРОЙ ===== -->
         <div id="page-adminBuild" class="page">
-            <h2>ЗАЯВКИ НА СТРОЙ</h2>
+            <h2 data-lang="admin.buildRequests">ЗАЯВКИ НА СТРОЙ</h2>
             <div id="adminBuildList">
-                <p style="color:#444;">Нет заявок на строй</p>
+                <p style="color:var(--text-muted);" data-lang="admin.noBuildRequests">Нет заявок на строй</p>
             </div>
         </div>
 
         <!-- ===== АДМИН: ИЗМЕНИТЬ ИНФОРМАЦИЮ ===== -->
         <div id="page-adminEdit" class="page">
-            <h2>ИЗМЕНИТЬ ИНФОРМАЦИЮ</h2>
-            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                <p style="color:#aaa; margin-bottom:12px;">Выберите раздел для редактирования:</p>
-                <select id="editSection" style="width:100%; padding:10px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                    <option value="uksp">УКСП</option>
-                    <option value="rules">Правила строя</option>
-                    <option value="members">Состав семьи</option>
-                    <option value="family_info">Информация о семье</option>
+            <h2 data-lang="admin.edit">ИЗМЕНИТЬ ИНФОРМАЦИЮ</h2>
+            <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
+                <p style="color:var(--text-secondary); margin-bottom:12px;" data-lang="admin.selectSection">Выберите раздел для редактирования:</p>
+                <select id="editSection" style="width:100%; padding:10px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
+                    <option value="uksp" data-lang="admin.section.uksp">УКСП</option>
+                    <option value="rules" data-lang="admin.section.rules">Правила строя</option>
+                    <option value="members" data-lang="admin.section.members">Состав семьи</option>
+                    <option value="family_info" data-lang="admin.section.family">Информация о семье</option>
                 </select>
-                <div style="margin:10px 0; border:1px solid #1a1a1a; padding:12px; background:#050505; max-height:300px; overflow-y:auto;">
-                    <p style="color:#555; font-size:11px; margin-bottom:8px;">ТЕКУЩЕЕ СОДЕРЖИМОЕ:</p>
-                    <div id="editContentPreview" style="color:#aaa; font-size:13px; white-space:pre-wrap; word-wrap:break-word;"></div>
+                <div style="margin:10px 0; border:1px solid var(--border-color); padding:12px; background:var(--bg-secondary); max-height:300px; overflow-y:auto;">
+                    <p style="color:var(--text-muted); font-size:11px; margin-bottom:8px;" data-lang="admin.currentContent">ТЕКУЩЕЕ СОДЕРЖИМОЕ:</p>
+                    <div id="editContentPreview" style="color:var(--text-secondary); font-size:13px; white-space:pre-wrap; word-wrap:break-word;"></div>
                 </div>
-                <textarea id="editContent" rows="10" placeholder="Введите новый текст раздела здесь..."></textarea>
-                <button class="btn" onclick="saveEditContent()">Сохранить изменения</button>
+                <textarea id="editContent" rows="10" placeholder="Введите новый текст раздела здесь..." data-lang="admin.editPlaceholder"></textarea>
+                <button class="btn" onclick="saveEditContent()" data-lang="admin.save">Сохранить изменения</button>
                 <div id="editResult" class="result-msg" style="margin-top:10px;"></div>
             </div>
         </div>
 
         <!-- ===== АДМИН: ДОБАВИТЬ РАЗДЕЛ ===== -->
         <div id="page-adminAddPage" class="page">
-            <h2>➕ ДОБАВИТЬ РАЗДЕЛ</h2>
-            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                <p style="color:#aaa; margin-bottom:16px;">Создайте новый раздел для сайта.</p>
-                <button class="btn" onclick="openAddPageModal()">Создать новый раздел</button>
+            <h2 data-lang="admin.addPage">➕ ДОБАВИТЬ РАЗДЕЛ</h2>
+            <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
+                <p style="color:var(--text-secondary); margin-bottom:16px;" data-lang="admin.createSection">Создайте новый раздел для сайта.</p>
+                <button class="btn" onclick="openAddPageModal()" data-lang="admin.createBtn">Создать новый раздел</button>
                 <div id="addPageResult" class="result-msg" style="margin-top:10px;"></div>
             </div>
         </div>
 
         <!-- ===== АДМИН: УПРАВЛЕНИЕ РАЗДЕЛАМИ ===== -->
         <div id="page-adminManagePages" class="page">
-            <h2>📋 УПРАВЛЕНИЕ РАЗДЕЛАМИ</h2>
-            <div style="border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                <p style="color:#aaa; margin-bottom:12px;">Здесь вы можете удалять созданные разделы.</p>
+            <h2 data-lang="admin.managePages">📋 УПРАВЛЕНИЕ РАЗДЕЛАМИ</h2>
+            <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
+                <p style="color:var(--text-secondary); margin-bottom:12px;" data-lang="admin.deleteSection">Здесь вы можете удалять созданные разделы.</p>
                 <div id="adminPagesList">
-                    <p style="color:#444;">Нет созданных разделов</p>
+                    <p style="color:var(--text-muted);" data-lang="admin.noPages">Нет созданных разделов</p>
                 </div>
             </div>
         </div>
 
         <!-- ===== АДМИН: ИСТОРИЯ ===== -->
         <div id="page-adminHistory" class="page">
-            <h2>ИСТОРИЯ</h2>
-            <div id="historyList" style="border:1px solid #1a1a1a; padding:16px; background:#050505; max-height:500px; overflow-y:auto;">
-                <p style="color:#444;">История пуста</p>
+            <h2 data-lang="admin.history">ИСТОРИЯ</h2>
+            <div id="historyList" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card); max-height:500px; overflow-y:auto;">
+                <p style="color:var(--text-muted);" data-lang="admin.noHistory">История пуста</p>
             </div>
         </div>
 
         <!-- ===== АДМИН: УПРАВЛЕНИЕ СЕМЬЯМИ ===== -->
         <div id="page-adminFamilies" class="page">
-            <h2>УПРАВЛЕНИЕ СЕМЬЯМИ</h2>
+            <h2 data-lang="admin.families">УПРАВЛЕНИЕ СЕМЬЯМИ</h2>
             <div style="display:flex; gap:20px; flex-wrap:wrap;">
-                <div style="flex:1; min-width:250px; border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                    <h3 style="color:#44ff44; font-weight:300; letter-spacing:2px; margin-bottom:12px;">🤝 СОЮЗНИКИ</h3>
-                    <div id="alliesList"><p style="color:#444;">Нет союзников</p></div>
+                <div style="flex:1; min-width:250px; border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
+                    <h3 style="color:var(--success-color); font-weight:300; letter-spacing:2px; margin-bottom:12px;" data-lang="admin.allies">🤝 СОЮЗНИКИ</h3>
+                    <div id="alliesList"><p style="color:var(--text-muted);" data-lang="admin.noAllies">Нет союзников</p></div>
                     <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
-                        <input type="text" id="newAlly" placeholder="Название семьи" style="flex:1; min-width:120px; padding:8px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                        <button class="btn btn-small btn-green" onclick="addAlly()" style="width:auto;">Добавить</button>
+                        <input type="text" id="newAlly" placeholder="Название семьи" style="flex:1; min-width:120px; padding:8px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;" data-lang="admin.familyName">
+                        <button class="btn btn-small btn-green" onclick="addAlly()" style="width:auto;" data-lang="admin.add">Добавить</button>
                     </div>
                 </div>
-                <div style="flex:1; min-width:250px; border:1px solid #1a1a1a; padding:16px; background:#050505;">
-                    <h3 style="color:#cc0000; font-weight:300; letter-spacing:2px; margin-bottom:12px;">⚔️ НЕДРУЖЕСТВЕННЫЕ</h3>
-                    <div id="enemiesList"><p style="color:#444;">Нет недружественных семей</p></div>
+                <div style="flex:1; min-width:250px; border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
+                    <h3 style="color:var(--danger-color); font-weight:300; letter-spacing:2px; margin-bottom:12px;" data-lang="admin.enemies">⚔️ НЕДРУЖЕСТВЕННЫЕ</h3>
+                    <div id="enemiesList"><p style="color:var(--text-muted);" data-lang="admin.noEnemies">Нет недружественных семей</p></div>
                     <div style="margin-top:12px; display:flex; gap:8px; flex-wrap:wrap;">
-                        <input type="text" id="newEnemy" placeholder="Название семьи" style="flex:1; min-width:120px; padding:8px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                        <button class="btn btn-small btn-danger" onclick="addEnemy()" style="width:auto;">Добавить</button>
+                        <input type="text" id="newEnemy" placeholder="Название семьи" style="flex:1; min-width:120px; padding:8px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;" data-lang="admin.familyName">
+                        <button class="btn btn-small btn-danger" onclick="addEnemy()" style="width:auto;" data-lang="admin.add">Добавить</button>
                     </div>
                 </div>
             </div>
@@ -1485,181 +1580,178 @@
 
         <!-- ===== АДМИН: ПОИСК ===== -->
         <div id="page-adminSearch" class="page">
-            <h2>ПОИСК ПОЛЬЗОВАТЕЛЯ</h2>
+            <h2 data-lang="admin.search">ПОИСК ПОЛЬЗОВАТЕЛЯ</h2>
             <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px;">
-                <input type="text" id="adminSearchId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:#111; border:1px solid #222; color:#fff; outline:none;">
-                <button class="btn btn-small" onclick="adminSearchUser()" style="width:auto;">Найти</button>
+                <input type="text" id="adminSearchId" placeholder="ID пользователя" style="flex:1; min-width:150px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;" data-lang="admin.userId">
+                <button class="btn btn-small" onclick="adminSearchUser()" style="width:auto;" data-lang="admin.search">Найти</button>
             </div>
-            <div id="adminSearchResult" style="border:1px solid #1a1a1a; padding:16px; background:#050505;"></div>
+            <div id="adminSearchResult" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);"></div>
         </div>
 
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: РЕДАКТИРОВАНИЕ ===== -->
+<!-- ===== МОДАЛЬНЫЕ ОКНА ===== -->
+
+<!-- Редактирование профиля -->
 <div class="modal-overlay" id="editModal">
     <div class="modal-box">
         <div class="modal-header">
-            <h3>Изменить информацию</h3>
+            <h3 data-lang="profile.edit">Изменить информацию</h3>
             <button class="close-btn" onclick="closeEditModal()">✕</button>
         </div>
-        <input type="text" id="editNick" placeholder="Игровой ник (только буквы)">
-        <input type="text" id="editTg" placeholder="Telegram">
-        <input type="email" id="editEmail" placeholder="Email">
-        <button class="btn" onclick="saveProfile()">Сохранить</button>
+        <input type="text" id="editNick" placeholder="Игровой ник (только буквы)" data-lang="auth.regNick">
+        <input type="text" id="editTg" placeholder="Telegram" data-lang="auth.regTg">
+        <input type="email" id="editEmail" placeholder="Email" data-lang="auth.regEmail">
+        <button class="btn" onclick="saveProfile()" data-lang="profile.save">Сохранить</button>
         <div id="editResult" class="result-msg"></div>
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: СМЕНА ПАРОЛЯ ===== -->
+<!-- Смена пароля -->
 <div class="modal-overlay" id="passwordModal">
     <div class="modal-box">
         <div class="modal-header">
-            <h3>Сменить пароль</h3>
+            <h3 data-lang="profile.changePass">Сменить пароль</h3>
             <button class="close-btn" onclick="closePasswordModal()">✕</button>
         </div>
-        <input type="password" id="oldPassword" placeholder="Текущий пароль">
-        <input type="password" id="newPassword" placeholder="Новый пароль">
-        <input type="password" id="newPassword2" placeholder="Повторите новый пароль">
-        <button class="btn" onclick="changePassword()">Сменить пароль</button>
+        <input type="password" id="oldPassword" placeholder="Текущий пароль" data-lang="profile.oldPass">
+        <input type="password" id="newPassword" placeholder="Новый пароль" data-lang="profile.newPass">
+        <input type="password" id="newPassword2" placeholder="Повторите новый пароль" data-lang="profile.newPass2">
+        <button class="btn" onclick="changePassword()" data-lang="profile.changePass">Сменить пароль</button>
         <div id="passwordResult" class="result-msg"></div>
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: ЗАЯВКА НА СНЯТИЕ ===== -->
+<!-- Заявка на снятие нарушения -->
 <div class="modal-overlay" id="requestRemoveModal">
     <div class="modal-box wide">
         <div class="modal-header">
-            <h3>Заявка на снятие нарушения</h3>
+            <h3 data-lang="requests.remove">Заявка на снятие нарушения</h3>
             <button class="close-btn" onclick="closeRequestModal('requestRemoveModal')">✕</button>
         </div>
-        <input type="text" id="rrTarget" placeholder="ID, ник или Telegram (если не для себя)">
-        <textarea id="rrReason" placeholder="Причина нарушения"></textarea>
-        <input type="text" id="rrIssuedBy" placeholder="Кто выдал нарушение">
-        <input type="datetime-local" id="rrIssuedDate" placeholder="Когда выдали">
-        <textarea id="rrRemoveReason" placeholder="Причина снятия"></textarea>
-        <button class="btn" onclick="submitRequestRemove()">Отправить заявку</button>
+        <input type="text" id="rrTarget" placeholder="ID, ник или Telegram (если не для себя)" data-lang="requests.target">
+        <textarea id="rrReason" placeholder="Причина нарушения" data-lang="requests.reason"></textarea>
+        <input type="text" id="rrIssuedBy" placeholder="Кто выдал нарушение" data-lang="requests.issuedBy">
+        <input type="datetime-local" id="rrIssuedDate" placeholder="Когда выдали" data-lang="requests.issuedDate">
+        <textarea id="rrRemoveReason" placeholder="Причина снятия" data-lang="requests.removeReason"></textarea>
+        <button class="btn" onclick="submitRequestRemove()" data-lang="requests.send">Отправить заявку</button>
         <div id="rrResult" class="result-msg" style="margin-top:10px;"></div>
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: ЗАЯВКА НА ВЫДАЧУ ===== -->
+<!-- Заявка на выдачу нарушения -->
 <div class="modal-overlay" id="requestAddModal">
     <div class="modal-box wide">
         <div class="modal-header">
-            <h3>Заявка на выдачу нарушения</h3>
+            <h3 data-lang="requests.add">Заявка на выдачу нарушения</h3>
             <button class="close-btn" onclick="closeRequestModal('requestAddModal')">✕</button>
         </div>
-        <input type="text" id="raTarget" placeholder="ID, ник или Telegram нарушителя">
-        <textarea id="raReason" placeholder="Причина нарушения"></textarea>
-        <input type="datetime-local" id="raDate" placeholder="Дата и время нарушения">
-        <input type="text" id="raPlace" placeholder="Место нарушения">
-        <button class="btn" onclick="submitRequestAdd()">Отправить заявку</button>
+        <input type="text" id="raTarget" placeholder="ID, ник или Telegram нарушителя" data-lang="requests.target">
+        <textarea id="raReason" placeholder="Причина нарушения" data-lang="requests.reason"></textarea>
+        <input type="datetime-local" id="raDate" placeholder="Дата и время нарушения" data-lang="requests.date">
+        <input type="text" id="raPlace" placeholder="Место нарушения" data-lang="requests.place">
+        <button class="btn" onclick="submitRequestAdd()" data-lang="requests.send">Отправить заявку</button>
         <div id="raResult" class="result-msg" style="margin-top:10px;"></div>
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: ДОБАВИТЬ РАЗДЕЛ ===== -->
+<!-- Добавить раздел -->
 <div class="modal-overlay" id="addPageModal">
     <div class="modal-box full">
         <div class="modal-header">
-            <h3>➕ Добавить новый раздел</h3>
+            <h3 data-lang="admin.addPage">➕ Добавить новый раздел</h3>
             <button class="close-btn" onclick="closeAddPageModal()">✕</button>
         </div>
         
-        <!-- Шаг 1: Выбор типа -->
         <div id="addPageStep1">
-            <p style="color:#aaa; margin-bottom:12px;">Выберите тип раздела:</p>
+            <p style="color:var(--text-secondary); margin-bottom:12px;" data-lang="admin.selectType">Выберите тип раздела:</p>
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                <button class="btn btn-small" onclick="addPageSelectType('public')" style="width:auto;">Публичный</button>
-                <button class="btn btn-small btn-outline" onclick="addPageSelectType('admin')" style="width:auto;">Для админов</button>
+                <button class="btn btn-small" onclick="addPageSelectType('public')" style="width:auto;" data-lang="admin.public">Публичный</button>
+                <button class="btn btn-small btn-outline" onclick="addPageSelectType('admin')" style="width:auto;" data-lang="admin.forAdmins">Для админов</button>
             </div>
             <div id="addPageTypeResult" class="result-msg" style="margin-top:10px;"></div>
         </div>
         
-        <!-- Шаг 2: Выбор подтипа (для публичных) -->
         <div id="addPageStep2" style="display:none;">
-            <p style="color:#aaa; margin-bottom:12px;">Выберите тип публичного раздела:</p>
+            <p style="color:var(--text-secondary); margin-bottom:12px;" data-lang="admin.selectPublicType">Выберите тип публичного раздела:</p>
             <div style="display:flex; gap:12px; flex-wrap:wrap;">
-                <button class="btn btn-small" onclick="addPageSelectSubtype('info')" style="width:auto;">Информационный</button>
-                <button class="btn btn-small btn-outline" onclick="addPageSelectSubtype('request')" style="width:auto;">С заявками</button>
+                <button class="btn btn-small" onclick="addPageSelectSubtype('info')" style="width:auto;" data-lang="admin.info">Информационный</button>
+                <button class="btn btn-small btn-outline" onclick="addPageSelectSubtype('request')" style="width:auto;" data-lang="admin.withRequests">С заявками</button>
             </div>
             <div id="addPageSubtypeResult" class="result-msg" style="margin-top:10px;"></div>
         </div>
         
-        <!-- Шаг 3: Заполнение -->
         <div id="addPageStep3" style="display:none;">
             <div style="margin-bottom:12px;">
-                <label style="color:#aaa; font-size:13px;">Название раздела <span style="color:#cc0000;">*</span></label>
-                <input type="text" id="addPageName" placeholder="Введите название раздела">
+                <label style="color:var(--text-secondary); font-size:13px;" data-lang="admin.pageName">Название раздела <span style="color:var(--danger-color);">*</span></label>
+                <input type="text" id="addPageName" placeholder="Введите название раздела" data-lang="admin.pageNamePlaceholder">
             </div>
             
             <div id="addPageInfoFields" style="display:none;">
-                <label style="color:#aaa; font-size:13px;">Содержание <span style="color:#cc0000;">*</span></label>
-                <textarea id="addPageContent" rows="12" placeholder="Введите текст раздела..."></textarea>
+                <label style="color:var(--text-secondary); font-size:13px;" data-lang="admin.content">Содержание <span style="color:var(--danger-color);">*</span></label>
+                <textarea id="addPageContent" rows="12" placeholder="Введите текст раздела..." data-lang="admin.contentPlaceholder"></textarea>
             </div>
             
             <div id="addPageRequestFields" style="display:none;">
-                <p style="color:#aaa; font-size:13px; margin-bottom:10px;">Конструктор полей для заявок:</p>
-                <div id="requestFieldsBuilder">
-                    <!-- Поля добавляются сюда -->
-                </div>
+                <p style="color:var(--text-secondary); font-size:13px; margin-bottom:10px;" data-lang="admin.fieldBuilder">Конструктор полей для заявок:</p>
+                <div id="requestFieldsBuilder"></div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:10px;">
-                    <button class="btn btn-small btn-secondary" onclick="addRequestField('text')" style="width:auto;">➕ Поле ввода</button>
-                    <button class="btn btn-small btn-secondary" onclick="addRequestField('select')" style="width:auto;">➕ Выбор</button>
+                    <button class="btn btn-small btn-secondary" onclick="addRequestField('text')" style="width:auto;" data-lang="admin.addText">➕ Поле ввода</button>
+                    <button class="btn btn-small btn-secondary" onclick="addRequestField('select')" style="width:auto;" data-lang="admin.addSelect">➕ Выбор</button>
                 </div>
             </div>
             
-            <button class="btn" onclick="publishNewPage()" style="margin-top:16px;">📢 Опубликовать раздел</button>
+            <button class="btn" onclick="publishNewPage()" style="margin-top:16px;" data-lang="admin.publish">📢 Опубликовать раздел</button>
             <div id="addPageResult" class="result-msg" style="margin-top:10px;"></div>
         </div>
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: ДЕТАЛИ СТРОЯ ===== -->
+<!-- Детали строя -->
 <div class="modal-overlay" id="buildDetailModal">
     <div class="modal-box wide">
         <div class="modal-header">
-            <h3>📋 ДЕТАЛИ СТРОЯ</h3>
+            <h3 data-lang="scheduled.details">📋 ДЕТАЛИ СТРОЯ</h3>
             <button class="close-btn" onclick="closeBuildDetail()">✕</button>
         </div>
         <div id="buildDetailContent"></div>
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: УВЕДОМЛЕНИЕ О НАРУШЕНИИ ===== -->
+<!-- Уведомление о нарушении -->
 <div class="modal-overlay" id="violationNotifyModal">
     <div class="modal-box">
         <div class="modal-header">
-            <h3>⚠️ НОВОЕ НАРУШЕНИЕ</h3>
+            <h3 data-lang="notify.violation">⚠️ НОВОЕ НАРУШЕНИЕ</h3>
             <button class="close-btn" onclick="closeNotifyModal()">✕</button>
         </div>
-        <p style="color:#aaa; font-size:14px; line-height:1.6;">Вам выписано дисциплинарное взыскание. Ознакомьтесь с ним в разделе <strong style="color:#fff;">«Нарушения»</strong>.</p>
-        <button class="btn" onclick="closeNotifyModal()" style="margin-top:12px;">Понятно</button>
+        <p style="color:var(--text-secondary); font-size:14px; line-height:1.6;" data-lang="notify.violationText">Вам выписано дисциплинарное взыскание. Ознакомьтесь с ним в разделе <strong style="color:var(--text-primary);">«Нарушения»</strong>.</p>
+        <button class="btn" onclick="closeNotifyModal()" style="margin-top:12px;" data-lang="notify.ok">Понятно</button>
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: СНЯТИЕ НАРУШЕНИЯ ===== -->
+<!-- Снятие нарушения -->
 <div class="modal-overlay" id="violationResolvedModal">
     <div class="modal-box">
         <div class="modal-header">
-            <h3>✅ НАРУШЕНИЕ СНЯТО</h3>
+            <h3 data-lang="notify.resolved">✅ НАРУШЕНИЕ СНЯТО</h3>
             <button class="close-btn" onclick="closeResolvedModal()">✕</button>
         </div>
-        <p style="color:#aaa; font-size:14px; line-height:1.6;">С вас снято дисциплинарное взыскание. Подробности в разделе <strong style="color:#fff;">«Нарушения»</strong>.</p>
-        <button class="btn" onclick="closeResolvedModal()" style="margin-top:12px;">Понятно</button>
+        <p style="color:var(--text-secondary); font-size:14px; line-height:1.6;" data-lang="notify.resolvedText">С вас снято дисциплинарное взыскание. Подробности в разделе <strong style="color:var(--text-primary);">«Нарушения»</strong>.</p>
+        <button class="btn" onclick="closeResolvedModal()" style="margin-top:12px;" data-lang="notify.ok">Понятно</button>
     </div>
 </div>
 
-<!-- ===== МОДАЛЬНОЕ ОКНО: УВЕДОМЛЕНИЯ ===== -->
+<!-- Уведомления -->
 <div class="modal-overlay" id="notificationsModal">
     <div class="modal-box wide">
         <div class="modal-header">
-            <h3>УВЕДОМЛЕНИЯ</h3>
+            <h3 data-lang="notify.title">УВЕДОМЛЕНИЯ</h3>
             <button class="close-btn" onclick="closeNotifications()">✕</button>
         </div>
         <div id="notificationsList">
-            <p style="color:#444;">Нет уведомлений</p>
+            <p style="color:var(--text-muted);" data-lang="notify.empty">Нет уведомлений</p>
         </div>
     </div>
 </div>
@@ -1678,6 +1770,9 @@ const PAGES_KEY = '$2a$10$/lKNp2cCj9lOUJxhWQ0uI./vRHpINQt.MWizWPJOnRinj62u0JIgO'
 let db = null;
 let pagesDb = null;
 let currentUser = null;
+let currentLang = 'ru';
+let currentTheme = 'dark';
+
 let pendingAddUser = null;
 let pendingRemoveUser = null;
 let pendingRemoveViolation = null;
@@ -1687,6 +1782,309 @@ let pendingUnbanUser = null;
 let addPageType = null;
 let addPageSubtype = null;
 let addPageFields = [];
+
+// ================================================================
+// ПЕРЕВОДЫ
+// ================================================================
+
+const translations = {
+    ru: {
+        'auth.loginPlaceholder': 'Игровой ник или Telegram',
+        'auth.passwordPlaceholder': 'Пароль',
+        'auth.remember': 'Запомнить меня',
+        'auth.error': 'Неверный логин или пароль',
+        'auth.login': 'Войти',
+        'auth.noAccount': 'Нет аккаунта?',
+        'auth.register': 'Регистрация',
+        'auth.regNick': 'Игровой ник (только буквы) *',
+        'auth.regTg': 'Telegram (например @username) *',
+        'auth.regEmail': 'Email',
+        'auth.regPassword': 'Пароль *',
+        'auth.regPassword2': 'Повторите пароль *',
+        'auth.registerBtn': 'Зарегистрироваться',
+        'auth.hasAccount': 'Уже есть аккаунт?',
+        'auth.logout': 'ВЫЙТИ',
+        'ban.reason': 'Причина:',
+        'ban.bannedBy': 'Забанил:',
+        'ban.date': 'Дата бана:',
+        'ban.unban': 'Разблокировка:',
+        'ban.exit': 'Выйти',
+        'admin.badge': 'АДМИН',
+        'theme.toggle': '🌓',
+        'nav.profile': 'Профиль',
+        'nav.uksp': 'УКСП',
+        'nav.rules': 'Правила строя',
+        'nav.members': 'Состав',
+        'nav.violations': 'Нарушения',
+        'nav.requests': 'Заявки',
+        'nav.build': 'Провести строй',
+        'nav.scheduled': 'Запланированные строи',
+        'nav.families': 'Семьи',
+        'nav.dynamic': 'Разделы',
+        'admin.control': 'УПРАВЛЕНИЕ',
+        'admin.violationsId': 'Нарушения по ID',
+        'admin.addViolation': 'Выдать нарушение',
+        'admin.removeViolation': 'Снять нарушение',
+        'admin.members': 'Список членов',
+        'admin.ban': 'Блокировка',
+        'admin.unban': 'Досрочный разбан',
+        'admin.requests': 'Заявки (ответы)',
+        'admin.buildRequests': 'Заявки на строй',
+        'admin.edit': 'Изменить информацию',
+        'admin.addPage': '➕ Добавить раздел',
+        'admin.managePages': '📋 Управление разделами',
+        'admin.history': 'История',
+        'admin.families': 'Управление семьями',
+        'admin.search': 'Поиск',
+        'admin.searchBtn': 'Найти',
+        'admin.violationType': 'Тип нарушения (например ФП 1.1)',
+        'admin.violationDesc': 'Текст нарушения',
+        'admin.issue': 'Выдать нарушение',
+        'admin.banReason': 'Причина блокировки',
+        'admin.banBtn': 'Заблокировать',
+        'admin.unbanReason': 'Причина досрочного разбана (опционально)',
+        'admin.unbanBtn': 'Разблокировать досрочно',
+        'admin.noRequests': 'Нет активных заявок',
+        'admin.noBuildRequests': 'Нет заявок на строй',
+        'admin.selectSection': 'Выберите раздел для редактирования:',
+        'admin.section.uksp': 'УКСП',
+        'admin.section.rules': 'Правила строя',
+        'admin.section.members': 'Состав семьи',
+        'admin.section.family': 'Информация о семье',
+        'admin.currentContent': 'ТЕКУЩЕЕ СОДЕРЖИМОЕ:',
+        'admin.editPlaceholder': 'Введите новый текст раздела здесь...',
+        'admin.save': 'Сохранить изменения',
+        'admin.createSection': 'Создайте новый раздел для сайта.',
+        'admin.createBtn': 'Создать новый раздел',
+        'admin.deleteSection': 'Здесь вы можете удалять созданные разделы.',
+        'admin.noPages': 'Нет созданных разделов',
+        'admin.noHistory': 'История пуста',
+        'admin.allies': '🤝 СОЮЗНИКИ',
+        'admin.enemies': '⚔️ НЕДРУЖЕСТВЕННЫЕ',
+        'admin.noAllies': 'Нет союзников',
+        'admin.noEnemies': 'Нет недружественных семей',
+        'admin.familyName': 'Название семьи',
+        'admin.add': 'Добавить',
+        'admin.userId': 'ID пользователя',
+        'admin.selectType': 'Выберите тип раздела:',
+        'admin.public': 'Публичный',
+        'admin.forAdmins': 'Для админов',
+        'admin.selectPublicType': 'Выберите тип публичного раздела:',
+        'admin.info': 'Информационный',
+        'admin.withRequests': 'С заявками',
+        'admin.pageName': 'Название раздела',
+        'admin.pageNamePlaceholder': 'Введите название раздела',
+        'admin.content': 'Содержание',
+        'admin.contentPlaceholder': 'Введите текст раздела...',
+        'admin.fieldBuilder': 'Конструктор полей для заявок:',
+        'admin.addText': '➕ Поле ввода',
+        'admin.addSelect': '➕ Выбор',
+        'admin.publish': '📢 Опубликовать раздел',
+        'profile.title': 'ПРОФИЛЬ',
+        'profile.id': 'ID:',
+        'profile.nick': 'Игровой ник:',
+        'profile.tg': 'Telegram:',
+        'profile.email': 'Email:',
+        'profile.regDate': 'Дата регистрации:',
+        'profile.status': 'Статус:',
+        'profile.edit': 'Изменить информацию',
+        'profile.changePass': 'Сменить пароль',
+        'profile.save': 'Сохранить',
+        'profile.oldPass': 'Текущий пароль',
+        'profile.newPass': 'Новый пароль',
+        'profile.newPass2': 'Повторите новый пароль',
+        'uksp.title': 'УКСП',
+        'rules.title': 'ПРАВИЛА СТРОЯ',
+        'members.title': 'СОСТАВ СЕМЬИ',
+        'violations.title': 'НАРУШЕНИЯ',
+        'violations.empty': 'Нет нарушений',
+        'requests.title': 'ЗАЯВКИ',
+        'requests.remove': 'Заявка на снятие нарушения',
+        'requests.add': 'Заявка на выдачу нарушения',
+        'requests.empty': 'Ваши заявки будут отображаться здесь',
+        'requests.target': 'ID, ник или Telegram (если не для себя)',
+        'requests.reason': 'Причина нарушения',
+        'requests.issuedBy': 'Кто выдал нарушение',
+        'requests.issuedDate': 'Когда выдали',
+        'requests.removeReason': 'Причина снятия',
+        'requests.send': 'Отправить заявку',
+        'requests.date': 'Дата и время нарушения',
+        'requests.place': 'Место нарушения',
+        'build.title': 'ПРОВЕСТИ СТРОЙ',
+        'build.info': 'Заполните информацию о строе. Все поля обязательны.',
+        'build.start': 'Дата и время начала',
+        'build.end': 'Дата и время окончания',
+        'build.topic': 'Тема строя',
+        'build.required': 'Кто обязан явиться (через запятую)',
+        'build.forbidden': 'Кому нельзя появляться (через запятую)',
+        'build.submit': 'Отправить заявку',
+        'scheduled.title': 'ЗАПЛАНИРОВАННЫЕ СТРОИ',
+        'scheduled.empty': 'Нет запланированных строев',
+        'scheduled.details': '📋 ДЕТАЛИ СТРОЯ',
+        'families.title': 'СЕМЬИ',
+        'families.allies': '🤝 СОЮЗНИКИ',
+        'families.enemies': '⚔️ НЕДРУЖЕСТВЕННЫЕ',
+        'families.noAllies': 'Нет союзников',
+        'families.noEnemies': 'Нет недружественных семей',
+        'dynamic.title': 'РАЗДЕЛЫ',
+        'dynamic.empty': 'Нет доступных разделов',
+        'notify.violation': '⚠️ НОВОЕ НАРУШЕНИЕ',
+        'notify.violationText': 'Вам выписано дисциплинарное взыскание. Ознакомьтесь с ним в разделе «Нарушения».',
+        'notify.resolved': '✅ НАРУШЕНИЕ СНЯТО',
+        'notify.resolvedText': 'С вас снято дисциплинарное взыскание. Подробности в разделе «Нарушения».',
+        'notify.ok': 'Понятно',
+        'notify.title': 'УВЕДОМЛЕНИЯ',
+        'notify.empty': 'Нет уведомлений'
+    },
+    en: {
+        'auth.loginPlaceholder': 'Game nickname or Telegram',
+        'auth.passwordPlaceholder': 'Password',
+        'auth.remember': 'Remember me',
+        'auth.error': 'Invalid login or password',
+        'auth.login': 'Login',
+        'auth.noAccount': 'No account?',
+        'auth.register': 'Register',
+        'auth.regNick': 'Game nickname (letters only) *',
+        'auth.regTg': 'Telegram (e.g. @username) *',
+        'auth.regEmail': 'Email',
+        'auth.regPassword': 'Password *',
+        'auth.regPassword2': 'Repeat password *',
+        'auth.registerBtn': 'Register',
+        'auth.hasAccount': 'Already have an account?',
+        'auth.logout': 'LOGOUT',
+        'ban.reason': 'Reason:',
+        'ban.bannedBy': 'Banned by:',
+        'ban.date': 'Ban date:',
+        'ban.unban': 'Unban date:',
+        'ban.exit': 'Exit',
+        'admin.badge': 'ADMIN',
+        'theme.toggle': '🌓',
+        'nav.profile': 'Profile',
+        'nav.uksp': 'UKSP',
+        'nav.rules': 'Rules',
+        'nav.members': 'Members',
+        'nav.violations': 'Violations',
+        'nav.requests': 'Requests',
+        'nav.build': 'Conduct a build',
+        'nav.scheduled': 'Scheduled builds',
+        'nav.families': 'Families',
+        'nav.dynamic': 'Sections',
+        'admin.control': 'CONTROL',
+        'admin.violationsId': 'Violations by ID',
+        'admin.addViolation': 'Issue violation',
+        'admin.removeViolation': 'Remove violation',
+        'admin.members': 'Members list',
+        'admin.ban': 'Block',
+        'admin.unban': 'Early unban',
+        'admin.requests': 'Requests (responses)',
+        'admin.buildRequests': 'Build requests',
+        'admin.edit': 'Edit information',
+        'admin.addPage': '➕ Add section',
+        'admin.managePages': '📋 Manage sections',
+        'admin.history': 'History',
+        'admin.families': 'Manage families',
+        'admin.search': 'Search',
+        'admin.searchBtn': 'Search',
+        'admin.violationType': 'Violation type (e.g. FP 1.1)',
+        'admin.violationDesc': 'Violation text',
+        'admin.issue': 'Issue violation',
+        'admin.banReason': 'Block reason',
+        'admin.banBtn': 'Block',
+        'admin.unbanReason': 'Early unban reason (optional)',
+        'admin.unbanBtn': 'Unban early',
+        'admin.noRequests': 'No active requests',
+        'admin.noBuildRequests': 'No build requests',
+        'admin.selectSection': 'Select section to edit:',
+        'admin.section.uksp': 'UKSP',
+        'admin.section.rules': 'Build rules',
+        'admin.section.members': 'Family composition',
+        'admin.section.family': 'Family information',
+        'admin.currentContent': 'CURRENT CONTENT:',
+        'admin.editPlaceholder': 'Enter new section text here...',
+        'admin.save': 'Save changes',
+        'admin.createSection': 'Create a new section for the site.',
+        'admin.createBtn': 'Create new section',
+        'admin.deleteSection': 'Here you can delete created sections.',
+        'admin.noPages': 'No sections created',
+        'admin.noHistory': 'History is empty',
+        'admin.allies': '🤝 ALLIES',
+        'admin.enemies': '⚔️ ENEMIES',
+        'admin.noAllies': 'No allies',
+        'admin.noEnemies': 'No enemies',
+        'admin.familyName': 'Family name',
+        'admin.add': 'Add',
+        'admin.userId': 'User ID',
+        'admin.selectType': 'Select section type:',
+        'admin.public': 'Public',
+        'admin.forAdmins': 'For admins',
+        'admin.selectPublicType': 'Select public section type:',
+        'admin.info': 'Information',
+        'admin.withRequests': 'With requests',
+        'admin.pageName': 'Section name',
+        'admin.pageNamePlaceholder': 'Enter section name',
+        'admin.content': 'Content',
+        'admin.contentPlaceholder': 'Enter section text...',
+        'admin.fieldBuilder': 'Request field builder:',
+        'admin.addText': '➕ Text field',
+        'admin.addSelect': '➕ Select field',
+        'admin.publish': '📢 Publish section',
+        'profile.title': 'PROFILE',
+        'profile.id': 'ID:',
+        'profile.nick': 'Game nickname:',
+        'profile.tg': 'Telegram:',
+        'profile.email': 'Email:',
+        'profile.regDate': 'Registration date:',
+        'profile.status': 'Status:',
+        'profile.edit': 'Edit information',
+        'profile.changePass': 'Change password',
+        'profile.save': 'Save',
+        'profile.oldPass': 'Current password',
+        'profile.newPass': 'New password',
+        'profile.newPass2': 'Repeat new password',
+        'uksp.title': 'UKSP',
+        'rules.title': 'BUILD RULES',
+        'members.title': 'FAMILY COMPOSITION',
+        'violations.title': 'VIOLATIONS',
+        'violations.empty': 'No violations',
+        'requests.title': 'REQUESTS',
+        'requests.remove': 'Request to remove violation',
+        'requests.add': 'Request to issue violation',
+        'requests.empty': 'Your requests will appear here',
+        'requests.target': 'ID, nickname or Telegram (if not for yourself)',
+        'requests.reason': 'Reason for violation',
+        'requests.issuedBy': 'Who issued the violation',
+        'requests.issuedDate': 'When issued',
+        'requests.removeReason': 'Reason for removal',
+        'requests.send': 'Send request',
+        'requests.date': 'Date and time of violation',
+        'requests.place': 'Place of violation',
+        'build.title': 'CONDUCT A BUILD',
+        'build.info': 'Fill in the build information. All fields are required.',
+        'build.start': 'Start date and time',
+        'build.end': 'End date and time',
+        'build.topic': 'Build topic',
+        'build.required': 'Who must attend (comma separated)',
+        'build.forbidden': 'Who cannot appear (comma separated)',
+        'build.submit': 'Submit request',
+        'scheduled.title': 'SCHEDULED BUILDS',
+        'scheduled.empty': 'No scheduled builds',
+        'scheduled.details': '📋 BUILD DETAILS',
+        'families.title': 'FAMILIES',
+        'families.allies': '🤝 ALLIES',
+        'families.enemies': '⚔️ ENEMIES',
+        'families.noAllies': 'No allies',
+        'families.noEnemies': 'No enemies',
+        'dynamic.title': 'SECTIONS',
+        'dynamic.empty': 'No sections available',
+        'notify.violation': '⚠️ NEW VIOLATION',
+        'notify.violationText': 'You have been issued a disciplinary sanction. Check it in the "Violations" section.',
+        'notify.resolved': '✅ VIOLATION REMOVED',
+        'notify.resolvedText': 'The disciplinary sanction has been removed from you. Details in the "Violations" section.',
+        'notify.ok': 'OK',
+        'notify.title': 'NOTIFICATIONS',
+        'notify.empty': 'No notifications'
+    }
+};
 
 // ================================================================
 // РАБОТА С JSONBIN
@@ -1767,6 +2165,41 @@ async function savePagesDB() {
         });
         return true;
     } catch (e) { return false; }
+}
+
+// ================================================================
+// ЯЗЫК И ТЕМА
+// ================================================================
+
+function toggleLang() {
+    currentLang = currentLang === 'ru' ? 'en' : 'ru';
+    document.getElementById('langToggle').textContent = currentLang.toUpperCase();
+    applyLanguage(currentLang);
+    localStorage.setItem('nightmare_lang', currentLang);
+}
+
+function applyLanguage(lang) {
+    const elements = document.querySelectorAll('[data-lang]');
+    elements.forEach(el => {
+        const key = el.dataset.lang;
+        if (translations[lang] && translations[lang][key]) {
+            el.textContent = translations[lang][key];
+        }
+    });
+    // Обновляем плейсхолдеры отдельно
+    document.querySelectorAll('input[data-lang], textarea[data-lang]').forEach(el => {
+        const key = el.dataset.lang;
+        if (translations[lang] && translations[lang][key]) {
+            el.placeholder = translations[lang][key];
+        }
+    });
+}
+
+function toggleTheme() {
+    currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+    document.getElementById('themeToggle').textContent = currentTheme === 'dark' ? '🌓' : '☀️';
+    localStorage.setItem('nightmare_theme', currentTheme);
 }
 
 // ================================================================
@@ -1873,6 +2306,21 @@ async function init() {
     pagesDb.adminPages = [];
     pagesDb.pageCounter = 0;
     await savePagesDB();
+    
+    // Восстанавливаем язык и тему
+    const savedLang = localStorage.getItem('nightmare_lang');
+    if (savedLang) {
+        currentLang = savedLang;
+        document.getElementById('langToggle').textContent = savedLang.toUpperCase();
+        applyLanguage(savedLang);
+    }
+    
+    const savedTheme = localStorage.getItem('nightmare_theme');
+    if (savedTheme) {
+        currentTheme = savedTheme;
+        document.documentElement.setAttribute('data-theme', savedTheme);
+        document.getElementById('themeToggle').textContent = savedTheme === 'dark' ? '🌓' : '☀️';
+    }
     
     const sessionId = localStorage.getItem('nightmare_session');
     if (sessionId) {
@@ -2141,13 +2589,12 @@ function loadDynamicPages() {
     }
     
     if (allPages.length === 0) {
-        container.innerHTML = '<p style="color:#444;">Нет доступных разделов</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['dynamic.empty'] || 'Нет доступных разделов') + '</p>';
         return;
     }
     
     let html = '';
     allPages.forEach(p => {
-        const typeLabel = p.type === 'info' ? '📄 Информация' : '📝 Заявки';
         const adminLabel = p.isPublic ? '' : ' [АДМИН]';
         html += `
             <div class="dynamic-page">
@@ -2158,7 +2605,7 @@ function loadDynamicPages() {
                     <div class="page-content">${p.content || 'Нет содержимого'}</div>
                 ` : `
                     <div class="page-content">
-                        <p style="color:#555; margin-bottom:10px;">${p.content || ''}</p>
+                        <p style="color:var(--text-muted); margin-bottom:10px;">${p.content || ''}</p>
                         <div class="request-form" data-page-id="${p.id}" data-page-name="${p.name}">
                             ${p.fields ? p.fields.map(f => `
                                 <div class="form-field">
@@ -2172,7 +2619,7 @@ function loadDynamicPages() {
                                     ` : ''}
                                 </div>
                             `).join('') : ''}
-                            <button class="btn btn-small" onclick="submitDynamicRequest('${p.id}')" style="width:auto; margin-top:10px;">📤 Отправить заявку</button>
+                            <button class="btn btn-small" onclick="submitDynamicRequest('${p.id}')" style="width:auto; margin-top:10px;">📤 ${translations[currentLang]?.['requests.send'] || 'Отправить заявку'}</button>
                         </div>
                         <div id="dynamicReqResult_${p.id}" class="result-msg" style="margin-top:10px;"></div>
                     </div>
@@ -2247,7 +2694,7 @@ function loadProfile(user) {
     document.getElementById('profileRegDate').textContent = formatDate(user.registrationDate);
     const status = user.isBanned ? '🔴 Заблокирован' : 'Активен';
     document.getElementById('profileStatus').textContent = status;
-    document.getElementById('profileStatus').style.color = user.isBanned ? '#cc0000' : '#44ff44';
+    document.getElementById('profileStatus').style.color = user.isBanned ? 'var(--danger-color)' : 'var(--success-color)';
 }
 
 function openEditProfile() {
@@ -2379,7 +2826,7 @@ function loadViolations(user) {
     const container = document.getElementById('violationsList');
     const violations = user.violations || [];
     if (violations.length === 0) {
-        container.innerHTML = '<p style="color:#444;">Нарушений нет</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['violations.empty'] || 'Нет нарушений') + '</p>';
         return;
     }
     const sorted = [...violations].sort((a, b) => {
@@ -2521,24 +2968,24 @@ function loadUserRequests() {
     if (!db.requests) db.requests = [];
     const userRequests = db.requests.filter(r => r.userId === currentUser.id);
     if (userRequests.length === 0) {
-        container.innerHTML = '<p style="color:#444;">У вас нет заявок</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['requests.empty'] || 'Ваши заявки будут отображаться здесь') + '</p>';
         return;
     }
     let html = '';
     userRequests.sort((a, b) => new Date(b.date || b.requestDate) - new Date(a.date || a.requestDate));
     userRequests.forEach(r => {
         const statusText = r.status === 'pending' ? '⏳ Ожидает' : r.status === 'approved' ? '✅ Одобрена' : '❌ Отклонена';
-        const statusColor = r.status === 'pending' ? '#ffaa00' : r.status === 'approved' ? '#44ff44' : '#cc0000';
+        const statusColor = r.status === 'pending' ? '#ffaa00' : r.status === 'approved' ? 'var(--success-color)' : 'var(--danger-color)';
         const typeText = r.type === 'remove' ? 'Снятие нарушения' : 'Выдача нарушения';
         html += `
             <div class="request-item">
                 <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-                    <span style="color:#fff;">${typeText}</span>
+                    <span style="color:var(--text-primary);">${typeText}</span>
                     <span style="color:${statusColor};">${statusText}</span>
                 </div>
                 <div class="req-text">${r.type === 'remove' ? r.reason : r.reason}</div>
                 <div class="req-meta">${formatDate(r.date || r.requestDate)}</div>
-                ${r.response ? `<div class="req-text" style="color:#555;">Ответ: ${r.response}</div>` : ''}
+                ${r.response ? `<div class="req-text" style="color:var(--text-muted);">Ответ: ${r.response}</div>` : ''}
             </div>
         `;
     });
@@ -2608,7 +3055,7 @@ function loadScheduledBuilds() {
     db.scheduledBuilds = db.scheduledBuilds.filter(b => new Date(b.end) > now);
     
     if (db.scheduledBuilds.length === 0) {
-        container.innerHTML = '<p style="color:#444;">Нет запланированных строев</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['scheduled.empty'] || 'Нет запланированных строев') + '</p>';
         return;
     }
     
@@ -2620,10 +3067,10 @@ function loadScheduledBuilds() {
             <div class="build-item" onclick="openBuildDetail('${b.id}')">
                 <div class="build-topic">${b.topic}</div>
                 <div class="build-meta">
-                    <strong>Начало:</strong> ${formatDateShort(b.start)}
+                    <strong>${translations[currentLang]?.['build.start'] || 'Начало:'}</strong> ${formatDateShort(b.start)}
                 </div>
-                <div class="build-status">✅ ОДОБРЕН</div>
-                <div style="color:#444; font-size:11px; margin-top:4px;">Нажмите для подробностей</div>
+                <div class="build-status">✅ ${translations[currentLang]?.['scheduled.approved'] || 'ОДОБРЕН'}</div>
+                <div style="color:var(--text-muted); font-size:11px; margin-top:4px;">${translations[currentLang]?.['scheduled.click'] || 'Нажмите для подробностей'}</div>
             </div>
         `;
     });
@@ -2636,23 +3083,23 @@ function openBuildDetail(buildId) {
     
     const container = document.getElementById('buildDetailContent');
     let html = `
-        <div style="border-bottom:1px solid #1a1a1a; padding-bottom:12px; margin-bottom:12px;">
-            <h3 style="color:#fff; font-weight:300; letter-spacing:2px;">${build.topic}</h3>
+        <div style="border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:12px;">
+            <h3 style="color:var(--text-primary); font-weight:300; letter-spacing:2px;">${build.topic}</h3>
         </div>
-        <div style="color:#aaa; font-size:14px; line-height:1.8;">
-            <p><strong style="color:#fff;">Начало:</strong> ${formatDate(build.start)}</p>
-            <p><strong style="color:#fff;">Окончание:</strong> ${formatDate(build.end)}</p>
-            <p><strong style="color:#fff;">Организатор:</strong> ${build.organizerNick || build.userNick || 'Неизвестен'}</p>
-            <p><strong style="color:#fff;">Обязаны явиться:</strong> ${build.required.join(', ')}</p>
-            <p><strong style="color:#fff;">Нельзя появляться:</strong> ${build.forbidden.join(', ')}</p>
-            <p><strong style="color:#fff;">Статус:</strong> <span style="color:#44ff44;">✅ Одобрен</span></p>
+        <div style="color:var(--text-secondary); font-size:14px; line-height:1.8;">
+            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['build.start'] || 'Начало:'}</strong> ${formatDate(build.start)}</p>
+            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['build.end'] || 'Окончание:'}</strong> ${formatDate(build.end)}</p>
+            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['scheduled.organizer'] || 'Организатор:'}</strong> ${build.organizerNick || build.userNick || 'Неизвестен'}</p>
+            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['build.required'] || 'Обязаны явиться:'}</strong> ${build.required.join(', ')}</p>
+            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['build.forbidden'] || 'Нельзя появляться:'}</strong> ${build.forbidden.join(', ')}</p>
+            <p><strong style="color:var(--text-primary);">${translations[currentLang]?.['scheduled.status'] || 'Статус:'}</strong> <span style="color:var(--success-color);">✅ ${translations[currentLang]?.['scheduled.approved'] || 'Одобрен'}</span></p>
         </div>
     `;
     
     if (isAdmin(currentUser)) {
         html += `
-            <div style="margin-top:16px; padding-top:16px; border-top:1px solid #1a1a1a;">
-                <button class="btn btn-danger" onclick="deleteBuild('${build.id}')" style="width:auto; padding:8px 24px;">🗑️ Удалить строй</button>
+            <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border-color);">
+                <button class="btn btn-danger" onclick="deleteBuild('${build.id}')" style="width:auto; padding:8px 24px;">🗑️ ${translations[currentLang]?.['scheduled.delete'] || 'Удалить строй'}</button>
             </div>
         `;
     }
@@ -2666,7 +3113,7 @@ function closeBuildDetail() {
 }
 
 async function deleteBuild(buildId) {
-    if (!confirm('Вы уверены, что хотите удалить этот строй?')) return;
+    if (!confirm(translations[currentLang]?.['scheduled.confirmDelete'] || 'Вы уверены, что хотите удалить этот строй?')) return;
     
     db.scheduledBuilds = db.scheduledBuilds.filter(b => b.id !== buildId);
     await saveDB();
@@ -2686,7 +3133,7 @@ function loadFamiliesDisplay() {
     
     const alliesContainer = document.getElementById('alliesDisplay');
     if (db.allies.length === 0) {
-        alliesContainer.innerHTML = '<p class="empty">Нет союзников</p>';
+        alliesContainer.innerHTML = '<p class="empty">' + (translations[currentLang]?.['families.noAllies'] || 'Нет союзников') + '</p>';
     } else {
         let html = '';
         db.allies.forEach(a => {
@@ -2697,7 +3144,7 @@ function loadFamiliesDisplay() {
     
     const enemiesContainer = document.getElementById('enemiesDisplay');
     if (db.enemies.length === 0) {
-        enemiesContainer.innerHTML = '<p class="empty">Нет недружественных семей</p>';
+        enemiesContainer.innerHTML = '<p class="empty">' + (translations[currentLang]?.['families.noEnemies'] || 'Нет недружественных семей') + '</p>';
     } else {
         let html = '';
         db.enemies.forEach(e => {
@@ -2720,17 +3167,17 @@ function openNotifications() {
     
     const container = document.getElementById('notificationsList');
     if (userNotifs.length === 0) {
-        container.innerHTML = '<p style="color:#444;">Нет уведомлений</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['notify.empty'] || 'Нет уведомлений') + '</p>';
     } else {
         let html = '';
         userNotifs.sort((a, b) => new Date(b.date) - new Date(a.date));
         userNotifs.forEach(n => {
-            const color = n.type === 'danger' ? '#cc0000' : '#44ff44';
+            const color = n.type === 'danger' ? 'var(--danger-color)' : 'var(--success-color)';
             html += `
-                <div style="border-bottom:1px solid #1a1a1a; padding:10px 0;">
+                <div style="border-bottom:1px solid var(--border-color); padding:10px 0;">
                     <div style="color:${color};">${n.title}</div>
-                    <div style="color:#aaa; font-size:13px;">${n.text}</div>
-                    <div style="color:#444; font-size:11px;">${formatDate(n.date)}</div>
+                    <div style="color:var(--text-secondary); font-size:13px;">${n.text}</div>
+                    <div style="color:var(--text-muted); font-size:11px;">${formatDate(n.date)}</div>
                 </div>
             `;
         });
@@ -2750,16 +3197,16 @@ function closeNotifications() {
 async function adminViewViolations() {
     const id = document.getElementById('adminVioSearchId').value.trim();
     const res = document.getElementById('adminVioResult');
-    if (!id) { res.innerHTML = '<p style="color:#cc0000;">Введите ID</p>'; return; }
+    if (!id) { res.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
     const user = getUserById(id);
-    if (!user) { res.innerHTML = '<p style="color:#cc0000;">Пользователь не найден</p>'; return; }
+    if (!user) { res.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
     const violations = user.violations || [];
     if (violations.length === 0) {
-        res.innerHTML = `<p style="color:#444;">У ${user.gameNick} (${user.id}) нет нарушений</p>`;
+        res.innerHTML = `<p style="color:var(--text-muted);">У ${user.gameNick} (${user.id}) нет нарушений</p>`;
         return;
     }
     const sorted = [...violations].sort((a, b) => new Date(b.date) - new Date(a.date));
-    let html = `<p style="color:#fff; margin-bottom:10px;">${user.gameNick} (${user.id}) — ${violations.length} нарушений</p>`;
+    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">${user.gameNick} (${user.id}) — ${violations.length} нарушений</p>`;
     sorted.forEach(v => {
         html += `
             <div class="violation-item ${v.resolved ? 'resolved' : ''}">
@@ -2781,12 +3228,12 @@ async function adminViewViolations() {
 async function adminFindForAdd() {
     const id = document.getElementById('adminAddId').value.trim();
     const info = document.getElementById('adminAddUserInfo');
-    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:#cc0000;">Введите ID</p>'; return; }
+    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
     const user = getUserById(id);
-    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:#cc0000;">Пользователь не найден</p>'; return; }
+    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
     pendingAddUser = user;
     info.style.display = 'block';
-    info.innerHTML = `<p style="color:#fff;">Найден: <strong>${user.gameNick}</strong> (${user.id})</p>`;
+    info.innerHTML = `<p style="color:var(--text-primary);">Найден: <strong>${user.gameNick}</strong> (${user.id})</p>`;
 }
 
 async function adminAddViolation() {
@@ -2839,18 +3286,18 @@ async function adminAddViolation() {
 async function adminFindForRemove() {
     const id = document.getElementById('adminRemoveId').value.trim();
     const list = document.getElementById('adminRemoveList');
-    if (!id) { list.innerHTML = '<p style="color:#cc0000;">Введите ID</p>'; return; }
+    if (!id) { list.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
     const user = getUserById(id);
-    if (!user) { list.innerHTML = '<p style="color:#cc0000;">Пользователь не найден</p>'; return; }
+    if (!user) { list.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
     const violations = user.violations.filter(v => !v.resolved);
     if (violations.length === 0) {
-        list.innerHTML = `<p style="color:#444;">У ${user.gameNick} нет активных нарушений</p>`;
+        list.innerHTML = `<p style="color:var(--text-muted);">У ${user.gameNick} нет активных нарушений</p>`;
         return;
     }
-    let html = `<p style="color:#fff; margin-bottom:10px;">${user.gameNick} (${user.id}) — активные нарушения:</p>`;
+    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">${user.gameNick} (${user.id}) — активные нарушения:</p>`;
     violations.forEach(v => {
         html += `
-            <div class="violation-item" style="cursor:pointer; border-left-color:#fff;" onclick="selectForRemove('${v.violationId}')">
+            <div class="violation-item" style="cursor:pointer; border-left-color:var(--text-primary);" onclick="selectForRemove('${v.violationId}')">
                 <div class="v-date">${formatDate(v.date)}</div>
                 <div class="v-type">⚠️ ${v.type || 'Нарушение'}</div>
                 <div class="v-desc">${v.description || 'Нет описания'}</div>
@@ -2869,10 +3316,10 @@ function selectForRemove(violationId) {
     pendingRemoveViolation = violation;
     const list = document.getElementById('adminRemoveList');
     list.innerHTML = `
-        <div style="border:1px solid #222; padding:16px; background:#050505;">
-            <p style="color:#fff;">Выбрано нарушение:</p>
-            <p style="color:#aaa; font-size:13px;">${violation.type} — ${violation.description}</p>
-            <p style="color:#444; font-size:12px;">${formatDate(violation.date)}</p>
+        <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-secondary);">
+            <p style="color:var(--text-primary);">Выбрано нарушение:</p>
+            <p style="color:var(--text-secondary); font-size:13px;">${violation.type} — ${violation.description}</p>
+            <p style="color:var(--text-muted); font-size:12px;">${formatDate(violation.date)}</p>
             <input type="text" id="removeReason" placeholder="Причина снятия" style="margin:10px 0;">
             <div style="display:flex; gap:8px; flex-wrap:wrap;">
                 <button class="btn btn-small" onclick="confirmRemove()" style="width:auto;">Снять</button>
@@ -2893,7 +3340,7 @@ async function confirmRemove() {
     pendingRemoveViolation.resolutionReason = reason;
     pendingRemoveViolation._notifiedResolved = false;
     await saveDB();
-    document.getElementById('adminRemoveList').innerHTML = `<p style="color:#fff;">✅ Нарушение снято у ${pendingRemoveUser.gameNick}</p>`;
+    document.getElementById('adminRemoveList').innerHTML = `<p style="color:var(--text-primary);">✅ Нарушение снято у ${pendingRemoveUser.gameNick}</p>`;
     addHistory(currentUser.id, 'Снятие нарушения', `Снято нарушение у ${pendingRemoveUser.gameNick}: ${reason}`);
     addNotification(pendingRemoveUser.id, '✅ НАРУШЕНИЕ СНЯТО', `С вас снято нарушение. Причина: ${reason}`, 'info');
     if (db.currentSession === pendingRemoveUser.id) {
@@ -2908,7 +3355,7 @@ async function confirmRemove() {
 function cancelRemove() {
     pendingRemoveUser = null;
     pendingRemoveViolation = null;
-    document.getElementById('adminRemoveList').innerHTML = '<p style="color:#444;">Введите ID для поиска</p>';
+    document.getElementById('adminRemoveList').innerHTML = '<p style="color:var(--text-muted);">Введите ID для поиска</p>';
 }
 
 // ================================================================
@@ -2919,13 +3366,13 @@ function loadAdminMembers() {
     const list = document.getElementById('adminMembersList');
     const members = db.users.filter(u => !u.isAdmin);
     if (members.length === 0) {
-        list.innerHTML = '<p style="color:#444;">Нет зарегистрированных членов</p>';
+        list.innerHTML = '<p style="color:var(--text-muted);">Нет зарегистрированных членов</p>';
         return;
     }
-    let html = `<p style="color:#fff; margin-bottom:10px;">Всего: ${members.length}</p>`;
+    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">Всего: ${members.length}</p>`;
     members.forEach(u => {
-        html += `<div style="border-bottom:1px solid #1a1a1a; padding:8px 0; color:#aaa; font-size:13px;">
-            <span style="color:#fff;">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : 'Активен'}
+        html += `<div style="border-bottom:1px solid var(--border-color); padding:8px 0; color:var(--text-secondary); font-size:13px;">
+            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : 'Активен'}
         </div>`;
     });
     list.innerHTML = html;
@@ -2938,13 +3385,13 @@ function loadAdminMembers() {
 async function adminFindForBan() {
     const id = document.getElementById('adminBanId').value.trim();
     const info = document.getElementById('adminBanUserInfo');
-    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:#cc0000;">Введите ID</p>'; return; }
+    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
     const user = getUserById(id);
-    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:#cc0000;">Пользователь не найден</p>'; return; }
-    if (isAdmin(user)) { info.style.display = 'block'; info.innerHTML = '<p style="color:#cc0000;">Нельзя заблокировать администратора</p>'; return; }
+    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
+    if (isAdmin(user)) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Нельзя заблокировать администратора</p>'; return; }
     pendingBanUser = user;
     info.style.display = 'block';
-    info.innerHTML = `<p style="color:#fff;">Найден: <strong>${user.gameNick}</strong> (${user.id}) — ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</p>`;
+    info.innerHTML = `<p style="color:var(--text-primary);">Найден: <strong>${user.gameNick}</strong> (${user.id}) — ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</p>`;
 }
 
 async function adminBanUser() {
@@ -2993,22 +3440,22 @@ async function adminBanUser() {
 async function adminFindForUnban() {
     const id = document.getElementById('adminUnbanId').value.trim();
     const info = document.getElementById('adminUnbanUserInfo');
-    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:#cc0000;">Введите ID</p>'; return; }
+    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
     const user = getUserById(id);
-    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:#cc0000;">Пользователь не найден</p>'; return; }
+    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
     if (!user.isBanned) {
         info.style.display = 'block';
-        info.innerHTML = `<p style="color:#44ff44;">${user.gameNick} (${user.id}) — не заблокирован</p>`;
+        info.innerHTML = `<p style="color:var(--success-color);">${user.gameNick} (${user.id}) — не заблокирован</p>`;
         pendingUnbanUser = null;
         return;
     }
     pendingUnbanUser = user;
     info.style.display = 'block';
     info.innerHTML = `
-        <p style="color:#fff;">🔴 Заблокирован: <strong>${user.gameNick}</strong> (${user.id})</p>
-        <p style="color:#aaa; font-size:13px;">Причина: ${user.banInfo.reason}</p>
-        <p style="color:#aaa; font-size:13px;">Забанил: ${getAdminNick(user.banInfo.bannedBy)}</p>
-        <p style="color:#aaa; font-size:13px;">Разблокировка: ${formatDate(user.banInfo.unbanDate)}</p>
+        <p style="color:var(--text-primary);">🔴 Заблокирован: <strong>${user.gameNick}</strong> (${user.id})</p>
+        <p style="color:var(--text-secondary); font-size:13px;">Причина: ${user.banInfo.reason}</p>
+        <p style="color:var(--text-secondary); font-size:13px;">Забанил: ${getAdminNick(user.banInfo.bannedBy)}</p>
+        <p style="color:var(--text-secondary); font-size:13px;">Разблокировка: ${formatDate(user.banInfo.unbanDate)}</p>
     `;
 }
 
@@ -3058,7 +3505,7 @@ function loadAdminRequests() {
     if (!db.requests) db.requests = [];
     const pending = db.requests.filter(r => r.status === 'pending');
     if (pending.length === 0) {
-        container.innerHTML = '<p style="color:#444;">Нет активных заявок</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noRequests'] || 'Нет активных заявок') + '</p>';
         return;
     }
     let html = '';
@@ -3067,11 +3514,11 @@ function loadAdminRequests() {
         html += `
             <div class="request-item">
                 <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-                    <span style="color:#fff;">${typeText}</span>
+                    <span style="color:var(--text-primary);">${typeText}</span>
                     <span style="color:#ffaa00;">⏳ Ожидает</span>
                 </div>
                 <div class="req-text">От: ${r.userNick} → ${r.targetNick || r.target}</div>
-                <div class="req-text" style="color:#aaa;">${r.type === 'remove' ? r.reason : r.reason}</div>
+                <div class="req-text" style="color:var(--text-secondary);">${r.type === 'remove' ? r.reason : r.reason}</div>
                 <div class="req-meta">${formatDate(r.date || r.requestDate)}</div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
                     <button class="btn btn-small btn-green" onclick="respondRequest('${r.id}', 'approved')" style="width:auto;">Принять</button>
@@ -3112,7 +3559,7 @@ function loadAdminBuildRequests() {
     if (!db.buildRequests) db.buildRequests = [];
     const pending = db.buildRequests.filter(r => r.status === 'pending');
     if (pending.length === 0) {
-        container.innerHTML = '<p style="color:#444;">Нет заявок на строй</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noBuildRequests'] || 'Нет заявок на строй') + '</p>';
         return;
     }
     let html = '';
@@ -3120,13 +3567,13 @@ function loadAdminBuildRequests() {
         html += `
             <div class="request-item">
                 <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-                    <span style="color:#fff;">${r.topic}</span>
+                    <span style="color:var(--text-primary);">${r.topic}</span>
                     <span style="color:#ffaa00;">⏳ Ожидает</span>
                 </div>
                 <div class="req-text">От: ${r.userNick}</div>
-                <div class="req-text" style="color:#aaa;">Начало: ${formatDateShort(r.start)} · Окончание: ${formatDateShort(r.end)}</div>
-                <div class="req-text" style="color:#555;">Обязаны: ${r.required.join(', ')}</div>
-                <div class="req-text" style="color:#555;">Запрещено: ${r.forbidden.join(', ')}</div>
+                <div class="req-text" style="color:var(--text-secondary);">Начало: ${formatDateShort(r.start)} · Окончание: ${formatDateShort(r.end)}</div>
+                <div class="req-text" style="color:var(--text-muted);">Обязаны: ${r.required.join(', ')}</div>
+                <div class="req-text" style="color:var(--text-muted);">Запрещено: ${r.forbidden.join(', ')}</div>
                 <div class="req-meta">${formatDate(r.date)}</div>
                 <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
                     <button class="btn btn-small btn-green" onclick="respondBuildRequest('${r.id}', 'approved')" style="width:auto;">Одобрить</button>
@@ -3290,7 +3737,7 @@ function addRequestField(type) {
                     <span class="field-type">текст</span>
                 </div>
                 <input type="text" id="${fieldId}_label" placeholder="Название поля" style="margin-top:6px;">
-                <label style="color:#555; font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
+                <label style="color:var(--text-muted); font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
                     <input type="checkbox" id="${fieldId}_required"> Обязательное
                 </label>
                 <button class="btn btn-small btn-danger" onclick="removeField('${fieldId}')" style="width:auto; margin-top:6px; padding:4px 12px; font-size:10px;">✕ Удалить</button>
@@ -3306,7 +3753,7 @@ function addRequestField(type) {
                 </div>
                 <input type="text" id="${fieldId}_label" placeholder="Название поля" style="margin-top:6px;">
                 <input type="text" id="${fieldId}_options" placeholder="Варианты через запятую" style="margin-top:4px;">
-                <label style="color:#555; font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
+                <label style="color:var(--text-muted); font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
                     <input type="checkbox" id="${fieldId}_required"> Обязательное
                 </label>
                 <button class="btn btn-small btn-danger" onclick="removeField('${fieldId}')" style="width:auto; margin-top:6px; padding:4px 12px; font-size:10px;">✕ Удалить</button>
@@ -3475,7 +3922,7 @@ function loadAdminPagesManagement() {
     }
     
     if (allPages.length === 0) {
-        container.innerHTML = '<p style="color:#444;">Нет созданных разделов</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noPages'] || 'Нет созданных разделов') + '</p>';
         return;
     }
     
@@ -3483,11 +3930,11 @@ function loadAdminPagesManagement() {
     allPages.forEach(p => {
         const typeIcon = p.type === 'info' ? '📄' : '📝';
         html += `
-            <div style="border:1px solid #1a1a1a; padding:12px 16px; margin:6px 0; background:#050505; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+            <div style="border:1px solid var(--border-color); padding:12px 16px; margin:6px 0; background:var(--bg-secondary); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
                 <div>
-                    <span style="color:#fff;">${typeIcon} ${p.name}</span>
-                    <span style="color:#444; font-size:11px; margin-left:10px;">${p.typeLabel}</span>
-                    <span style="color:#555; font-size:11px; margin-left:10px;">${formatDate(p.createdAt)}</span>
+                    <span style="color:var(--text-primary);">${typeIcon} ${p.name}</span>
+                    <span style="color:var(--text-muted); font-size:11px; margin-left:10px;">${p.typeLabel}</span>
+                    <span style="color:var(--text-muted); font-size:11px; margin-left:10px;">${formatDate(p.createdAt)}</span>
                 </div>
                 <button class="btn btn-small btn-danger" onclick="deletePage('${p.id}')" style="width:auto; padding:4px 16px;">🗑️ Удалить</button>
             </div>
@@ -3499,16 +3946,12 @@ function loadAdminPagesManagement() {
 async function deletePage(pageId) {
     if (!confirm('Вы уверены, что хотите удалить этот раздел?')) return;
     
-    // Удаляем из публичных
     if (pagesDb.publicPages) {
         pagesDb.publicPages = pagesDb.publicPages.filter(p => p.id !== pageId);
     }
     
-    // Удаляем из админских
     if (pagesDb.adminPages) {
         pagesDb.adminPages = pagesDb.adminPages.filter(p => p.id !== pageId);
-        
-        // Также удаляем связанные админские разделы (заявки)
         pagesDb.adminPages = pagesDb.adminPages.filter(p => p.parentId !== pageId);
     }
     
@@ -3526,15 +3969,15 @@ async function deletePage(pageId) {
 function loadHistory() {
     const container = document.getElementById('historyList');
     if (!db.history || db.history.length === 0) {
-        container.innerHTML = '<p style="color:#444;">История пуста</p>';
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noHistory'] || 'История пуста') + '</p>';
         return;
     }
     let html = '';
     db.history.slice(-50).reverse().forEach(h => {
         html += `
-            <div style="border-bottom:1px solid #1a1a1a; padding:6px 0; color:#aaa; font-size:13px;">
-                <span style="color:#fff;">${h.userNick}</span> · ${h.action}
-                <span style="color:#444; font-size:11px; display:block;">${h.details} · ${formatDate(h.date)}</span>
+            <div style="border-bottom:1px solid var(--border-color); padding:6px 0; color:var(--text-secondary); font-size:13px;">
+                <span style="color:var(--text-primary);">${h.userNick}</span> · ${h.action}
+                <span style="color:var(--text-muted); font-size:11px; display:block;">${h.details} · ${formatDate(h.date)}</span>
             </div>
         `;
     });
@@ -3551,12 +3994,12 @@ function loadFamiliesAdmin() {
     
     const alliesContainer = document.getElementById('alliesList');
     if (db.allies.length === 0) {
-        alliesContainer.innerHTML = '<p style="color:#444;">Нет союзников</p>';
+        alliesContainer.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noAllies'] || 'Нет союзников') + '</p>';
     } else {
         let html = '';
         db.allies.forEach((a, i) => {
-            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #1a1a1a;">
-                <span style="color:#aaa;">${a}</span>
+            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--border-color);">
+                <span style="color:var(--text-secondary);">${a}</span>
                 <button class="btn btn-small btn-danger" onclick="removeAlly(${i})" style="width:auto; padding:2px 10px; font-size:10px;">✕</button>
             </div>`;
         });
@@ -3565,12 +4008,12 @@ function loadFamiliesAdmin() {
     
     const enemiesContainer = document.getElementById('enemiesList');
     if (db.enemies.length === 0) {
-        enemiesContainer.innerHTML = '<p style="color:#444;">Нет недружественных семей</p>';
+        enemiesContainer.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noEnemies'] || 'Нет недружественных семей') + '</p>';
     } else {
         let html = '';
         db.enemies.forEach((e, i) => {
-            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #1a1a1a;">
-                <span style="color:#aaa;">${e}</span>
+            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--border-color);">
+                <span style="color:var(--text-secondary);">${e}</span>
                 <button class="btn btn-small btn-danger" onclick="removeEnemy(${i})" style="width:auto; padding:2px 10px; font-size:10px;">✕</button>
             </div>`;
         });
@@ -3614,7 +4057,7 @@ async function addEnemy() {
     loadFamiliesAdmin();
     loadFamiliesDisplay();
     addHistory(currentUser.id, 'Добавление недружественной семьи', `Добавлена семья: ${name}`);
-    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
+    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные', 'info');
 }
 
 async function removeEnemy(index) {
@@ -3635,16 +4078,16 @@ async function removeEnemy(index) {
 async function adminSearchUser() {
     const id = document.getElementById('adminSearchId').value.trim();
     const res = document.getElementById('adminSearchResult');
-    if (!id) { res.innerHTML = '<p style="color:#cc0000;">Введите ID</p>'; return; }
+    if (!id) { res.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
     const user = getUserById(id);
-    if (!user) { res.innerHTML = '<p style="color:#cc0000;">Пользователь не найден</p>'; return; }
+    if (!user) { res.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
     res.innerHTML = `
-        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>ID:</strong> ${user.id}</div>
-        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Игровой ник:</strong> ${user.gameNick}</div>
-        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Telegram:</strong> ${user.tgUser}</div>
-        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Email:</strong> ${user.email || '-'}</div>
-        <div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Статус:</strong> ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</div>
-        ${user.isBanned ? `<div style="border-bottom:1px solid #1a1a1a; padding:6px 0;"><strong>Причина бана:</strong> ${user.banInfo?.reason || '-'}</div>` : ''}
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>ID:</strong> ${user.id}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Игровой ник:</strong> ${user.gameNick}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Telegram:</strong> ${user.tgUser}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Email:</strong> ${user.email || '-'}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Статус:</strong> ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</div>
+        ${user.isBanned ? `<div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Причина бана:</strong> ${user.banInfo?.reason || '-'}</div>` : ''}
         <div style="padding:6px 0;"><strong>Нарушений:</strong> ${(user.violations || []).length}</div>
     `;
 }
@@ -3662,4 +4105,4 @@ setTimeout(() => {
 
 </script>
 </body>
-</html>
+    </html>
