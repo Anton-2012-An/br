@@ -585,53 +585,6 @@
         }
         
         /* ============================================================
-           ПРЕМИИ
-           ============================================================ */
-        .balance-box {
-            border: 2px solid var(--accent-color);
-            padding: 20px;
-            background: var(--bg-card);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .balance-box .balance-amount {
-            font-size: 2.5rem;
-            font-weight: 300;
-            color: var(--accent-color);
-            letter-spacing: 2px;
-        }
-        .balance-box .balance-label {
-            color: var(--text-muted);
-            font-size: 14px;
-            letter-spacing: 2px;
-            margin-top: 4px;
-        }
-        .user-select-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 12px;
-            border: 1px solid var(--border-color);
-            margin: 4px 0;
-            background: var(--bg-secondary);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        .user-select-item:hover {
-            border-color: var(--accent-color);
-        }
-        .user-select-item.selected {
-            border-color: var(--accent-color);
-            background: rgba(212, 168, 67, 0.1);
-        }
-        .user-select-item input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            accent-color: var(--accent-color);
-            cursor: pointer;
-        }
-        
-        /* ============================================================
            УКСП - СТИЛИ
            ============================================================ */
         .uksp-doc {
@@ -1006,6 +959,53 @@
         .families-grid .family-block .empty {
             color: var(--text-muted);
             font-size: 13px;
+        }
+        
+        /* ============================================================
+           ПРЕМИИ
+           ============================================================ */
+        .balance-box {
+            border: 2px solid var(--accent-color);
+            padding: 20px;
+            background: var(--bg-card);
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .balance-box .balance-amount {
+            font-size: 2.5rem;
+            font-weight: 300;
+            color: var(--accent-color);
+            letter-spacing: 2px;
+        }
+        .balance-box .balance-label {
+            color: var(--text-muted);
+            font-size: 14px;
+            letter-spacing: 2px;
+            margin-top: 4px;
+        }
+        .user-select-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            margin: 4px 0;
+            background: var(--bg-secondary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .user-select-item:hover {
+            border-color: var(--accent-color);
+        }
+        .user-select-item.selected {
+            border-color: var(--accent-color);
+            background: rgba(212, 168, 67, 0.1);
+        }
+        .user-select-item input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: var(--accent-color);
+            cursor: pointer;
         }
         
         /* ============================================================
@@ -2350,12 +2350,94 @@ async function loadDB() {
         if (!db.siteContent) {
             db.siteContent = {
                 uksp: 'Полный текст УКСП будет загружен...',
-                rules: 'Полный текст правил строя будет загружен...',
+                rules: `
+<div class="rules-doc">
+    <div class="header">
+        <div class="title">ПРАВИЛА ПРОВЕДЕНИЯ СТРОЯ</div>
+        <div class="subtitle">NIGHTMARE EMPIRE · BLACK RUSSIA</div>
+        <div class="meta">
+            Утверждено: <span>Robert_Salamanca</span> · 
+            Дата: <span>12.08.2026</span>
+        </div>
+    </div>
+
+    <div class="section">
+        <h3>Статья 1. Общие положения</h3>
+        <div class="rule"><span class="code">1.1.</span> <strong>Строй</strong> — официальное собрание членов семьи для обсуждения текущих вопросов, принятия решений и доведения приказов.</div>
+        <div class="rule"><span class="code">1.2.</span> Строй проводится по решению <strong>главы семьи</strong> или <strong>главного зама</strong>.</div>
+        <div class="rule"><span class="code">1.3.</span> Информация о времени и месте сбора доводится до всех членов семьи <strong>не позднее чем за два часа</strong> до начала.</div>
+    </div>
+
+    <div class="section">
+        <h3>Статья 2. Виды строев</h3>
+        <div class="rule"><span class="code">2.1.</span> <strong>Общий строй</strong> — для всех членов семьи.</div>
+        <div class="rule"><span class="code">2.2.</span> <strong>Строй зам-состава</strong> — только для замов, старших замов, ОЗГЗ и главного зама.</div>
+        <div class="rule"><span class="code">2.3.</span> <strong>Экстренный строй</strong> — созывается в случае срочной угрозы или необходимости немедленного решения.</div>
+    </div>
+
+    <div class="section">
+        <h3>Статья 3. Обязанности членов семьи на строю</h3>
+        <div class="rule"><span class="code">3.1.</span> Являться в указанное место <strong>строго к назначенному времени</strong>.</div>
+        <div class="rule"><span class="code">3.2.</span> Иметь при себе средства связи в режиме <strong>«без звука»</strong>.</div>
+        <div class="rule"><span class="code">3.3.</span> Слушать докладывающих, <strong>не перебивать</strong>.</div>
+        <div class="rule"><span class="code">3.4.</span> Задавать вопросы <strong>только после завершения</strong> основной части строя.</div>
+        <div class="rule"><span class="code">3.5.</span> <strong>Не разглашать</strong> информацию, полученную на строю, третьим лицам.</div>
+        <div class="rule danger"><span class="code">3.6.</span> <strong>ЗАПРЕЩАЕТСЯ</strong> разговаривать без разрешения проводящего.</div>
+        <div class="rule danger"><span class="code">3.7.</span> <strong>ЗАПРЕЩАЕТСЯ</strong> вставлять анимации без разрешения проводящего.</div>
+        <div class="rule danger"><span class="code">3.8.</span> <strong>ЗАПРЕЩАЕТСЯ</strong> делать что-либо без разрешения проводящего.</div>
+        <div class="rule danger"><span class="code">3.9.</span> <strong>ЗАПРЕЩАЕТСЯ</strong> перебивать старший состав и проводящего строя.</div>
+        <div class="rule"><span class="code">3.10.</span> Разговаривать со старшим составом <strong>ИСКЛЮЧИТЕЛЬНО НА ВЫ</strong>.</div>
+        <div class="rule"><span class="code">3.11.</span> Повышение тона при нарушении дисциплины в строю <strong>запрещено</strong>.</div>
+        <div class="rule"><span class="code">3.12.</span> Запрещается покидать строй без разрешения проводящего.</div>
+    </div>
+
+    <div class="section">
+        <h3>Статья 4. Ответственность за нарушение правил строя</h3>
+        <div class="rule"><span class="code">4.1.</span> За опоздание на строй без уважительной причины — <strong>выговор</strong>.</div>
+        <div class="rule"><span class="code">4.2.</span> За неявку на строй без уважительной причины — <strong>строгий выговор</strong>.</div>
+        <div class="rule"><span class="code">4.3.</span> За разглашение информации со строя — <strong>увольнение из семьи</strong>.</div>
+        <div class="rule"><span class="code">4.4.</span> За повторную неявку — <strong>понижение в ранге</strong>.</div>
+        <div class="rule"><span class="code">4.5.</span> За нарушение субординации на строю — <strong>дисциплинарное взыскание</strong>.</div>
+    </div>
+
+    <div class="section">
+        <h3>Статья 5. Порядок проведения строя</h3>
+        <div class="rule"><span class="code">5.1.</span> <strong>Сбор и проверка присутствующих</strong> — проводится младшими замами.</div>
+        <div class="rule"><span class="code">5.2.</span> <strong>Доклад о явке</strong> — старшие замы передают ОЗГЗ.</div>
+        <div class="rule"><span class="code">5.3.</span> <strong>Объявление повестки</strong> — главный зам или глава семьи.</div>
+        <div class="rule"><span class="code">5.4.</span> <strong>Обсуждение вопросов</strong> — выступают только назначенные лица.</div>
+        <div class="rule"><span class="code">5.5.</span> <strong>Принятие решений</strong> — фиксируются в протоколе строя.</div>
+        <div class="rule"><span class="code">5.6.</span> <strong>Подведение итогов</strong> — главный зам или глава семьи.</div>
+    </div>
+
+    <div class="section">
+        <h3>Статья 6. Права проводящего строй</h3>
+        <div class="rule"><span class="code">6.1.</span> Проводящий <strong>ИМЕЕТ ПРАВО</strong> на вынесение замечаний и подачи заявки на сайте для вынесения наказания.</div>
+        <div class="rule"><span class="code">6.2.</span> Проводящий <strong>ОБЯЗАН</strong> делать фрапс строя.</div>
+        <div class="rule"><span class="code">6.3.</span> Проводящий <strong>ОБЯЗАН</strong> донести достоверную информацию до каждого.</div>
+        <div class="rule"><span class="code">6.4.</span> Проводящий <strong>ОБЯЗАН</strong> обеспечивать комфортную и спокойную обстановку.</div>
+        <div class="rule"><span class="code">6.5.</span> Проводящий <strong>ОБЯЗАН</strong> докладывать о КАЖДОМ нарушении лидеру семьи или ОЗГЗ.</div>
+        <div class="rule"><span class="code">6.6.</span> Проводящий <strong>НЕ ЗАВЕРШАЕТ</strong> съёмку до полного окончания строя.</div>
+        <div class="rule"><span class="code">6.7.</span> Проводящий имеет право <strong>задавать вопросы</strong> после окончания строя.</div>
+        <div class="rule"><span class="code">6.8.</span> Проводящий <strong>ОБЯЗАН</strong> делать фото и видеофиксацию строя.</div>
+    </div>
+
+    <div class="section">
+        <h3>Статья 7. Заключительные положения</h3>
+        <div class="rule"><span class="code">7.1.</span> Правила вступают в силу с момента подписания.</div>
+        <div class="rule"><span class="code">7.2.</span> Все члены семьи обязаны ознакомиться с правилами под подпись.</div>
+        <div class="rule"><span class="code">7.3.</span> Контроль исполнения возлагается на главного зама <strong>Artemchik_Haunted</strong>.</div>
+    </div>
+
+    <div class="footer">
+        <span>Ответственные за исполнение:</span> Robert_Salamanca · Artemchik_Haunted · Anton_Chebureck
+    </div>
+</div>
+                `,
                 members: 'Состав семьи будет загружен...',
                 family_info: 'Информация о семье будет загружена...'
             };
         }
-        // Добавляем баланс каждому пользователю, если его нет
         db.users.forEach(u => {
             if (u.balance === undefined) u.balance = 0;
             if (!u.premiumHistory) u.premiumHistory = [];
@@ -3056,7 +3138,6 @@ async function submitWithdraw() {
         return;
     }
     
-    // Создаём заявку на вывод
     if (!db.withdrawRequests) db.withdrawRequests = [];
     const request = {
         id: 'w' + Date.now(),
@@ -3076,7 +3157,6 @@ async function submitWithdraw() {
     addNotification(currentUser.id, '📤 ЗАЯВКА НА ВЫВОД', `Заявка на вывод ${withdrawAmount} BYN отправлена`, 'info');
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Заявка на вывод отправлена', 'info');
     
-    // Уведомляем админов
     db.users.forEach(u => {
         if (isAdmin(u)) {
             addNotification(u.id, '📤 НОВАЯ ЗАЯВКА НА ВЫВОД', `${currentUser.gameNick} запросил вывод ${withdrawAmount} BYN`, 'info');
@@ -3219,14 +3299,13 @@ async function respondWithdraw(requestId, status) {
     
     const user = getUserById(request.userId);
     if (status === 'approved' && user) {
-        // Списываем деньги
         const balance = user.balance || 0;
         const withdrawAmount = Math.min(request.amount, balance);
         user.balance = balance - withdrawAmount;
         if (!user.premiumHistory) user.premiumHistory = [];
         user.premiumHistory.push({
             amount: -withdrawAmount,
-            text: `Вывод средств (${status === 'approved' ? 'одобрен' : 'отклонён'})`,
+            text: `Вывод средств (одобрен)`,
             date: new Date().toISOString()
         });
         addNotification(user.id, '✅ ВЫВОД ОДОБРЕН', `Вывод ${withdrawAmount} BYN одобрен. Комментарий: ${comment}`, 'info');
@@ -3245,135 +3324,495 @@ async function respondWithdraw(requestId, status) {
 }
 
 // ================================================================
-// ОСТАЛЬНЫЕ ФУНКЦИИ (сокращены для объёма)
+// ЗАГРУЗКА И РЕДАКТИРОВАНИЕ КОНТЕНТА
 // ================================================================
 
-function loadProfile(user) {
-    document.getElementById('profileId').textContent = user.id;
-    document.getElementById('profileNick').textContent = user.gameNick;
-    document.getElementById('profileTg').textContent = user.tgUser;
-    document.getElementById('profileEmail').textContent = user.email || '-';
-    document.getElementById('profileRegDate').textContent = formatDate(user.registrationDate);
-    const status = user.isBanned ? '🔴 Заблокирован' : 'Активен';
-    document.getElementById('profileStatus').textContent = status;
-    document.getElementById('profileStatus').style.color = user.isBanned ? 'var(--danger-color)' : 'var(--success-color)';
+async function loadEditContent() {
+    const section = document.getElementById('editSection').value;
+    const preview = document.getElementById('editContentPreview');
+    const textarea = document.getElementById('editContent');
+    
+    if (db.siteContent && db.siteContent[section]) {
+        preview.textContent = db.siteContent[section];
+        textarea.value = db.siteContent[section];
+    } else {
+        preview.textContent = 'Нет содержимого';
+        textarea.value = '';
+    }
 }
 
-function openEditProfile() {
-    if (!currentUser) return;
-    document.getElementById('editModal').classList.add('active');
-    document.getElementById('editNick').value = currentUser.gameNick;
-    document.getElementById('editTg').value = currentUser.tgUser;
-    document.getElementById('editEmail').value = currentUser.email || '';
-    document.getElementById('editResult').textContent = '';
-    document.getElementById('editResult').className = 'result-msg';
-}
-
-function closeEditModal() {
-    document.getElementById('editModal').classList.remove('active');
-}
-
-async function saveProfile() {
-    if (!currentUser) return;
-    const nick = document.getElementById('editNick').value.trim();
-    const tg = document.getElementById('editTg').value.trim();
-    const email = document.getElementById('editEmail').value.trim();
+async function saveEditContent() {
+    const section = document.getElementById('editSection').value;
+    const content = document.getElementById('editContent').value;
     const res = document.getElementById('editResult');
     
-    if (!nick || !tg) { 
-        res.textContent = 'Ник и Telegram обязательны'; 
-        res.className = 'result-msg error'; 
-        return; 
-    }
-    if (!isValidNick(nick)) {
-        res.textContent = 'Ник может содержать только буквы, _ и -';
-        res.className = 'result-msg error';
-        return;
-    }
-    
-    const nickExists = db.users.find(u => u.id !== currentUser.id && u.gameNick.toLowerCase() === nick.toLowerCase());
-    if (nickExists) { 
-        res.textContent = 'Этот ник уже занят'; 
-        res.className = 'result-msg error'; 
-        return; 
-    }
-    const tgExists = db.users.find(u => u.id !== currentUser.id && u.tgUser.toLowerCase() === tg.toLowerCase());
-    if (tgExists) { 
-        res.textContent = 'Этот Telegram уже используется'; 
-        res.className = 'result-msg error'; 
-        return; 
-    }
-    
-    currentUser.gameNick = nick;
-    currentUser.tgUser = tg;
-    currentUser.email = email;
+    if (!db.siteContent) db.siteContent = {};
+    db.siteContent[section] = content;
     await saveDB();
-    document.getElementById('displayNick').textContent = nick;
-    loadProfile(currentUser);
     res.textContent = '✅ Информация обновлена';
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Обновление профиля', 'Изменены данные профиля');
-    setTimeout(() => closeEditModal(), 800);
+    addHistory(currentUser.id, 'Изменение информации сайта', `Обновлён раздел: ${section}`);
+    showToast('✅ ИНФОРМАЦИЯ ОБНОВЛЕНА', `Раздел ${section} обновлён`, 'info');
+    loadSiteContent();
+    loadEditContent();
 }
 
-function openChangePassword() {
-    if (!currentUser) return;
-    document.getElementById('passwordModal').classList.add('active');
-    document.getElementById('oldPassword').value = '';
-    document.getElementById('newPassword').value = '';
-    document.getElementById('newPassword2').value = '';
-    document.getElementById('passwordResult').textContent = '';
-    document.getElementById('passwordResult').className = 'result-msg';
+// ================================================================
+// ДОБАВЛЕНИЕ РАЗДЕЛА
+// ================================================================
+
+function openAddPageModal() {
+    document.getElementById('addPageModal').classList.add('active');
+    document.getElementById('addPageStep1').style.display = 'block';
+    document.getElementById('addPageStep2').style.display = 'none';
+    document.getElementById('addPageStep3').style.display = 'none';
+    document.getElementById('addPageTypeResult').textContent = '';
+    document.getElementById('addPageTypeResult').className = 'result-msg';
+    document.getElementById('addPageSubtypeResult').textContent = '';
+    document.getElementById('addPageSubtypeResult').className = 'result-msg';
+    document.getElementById('addPageResult').textContent = '';
+    document.getElementById('addPageResult').className = 'result-msg';
+    document.getElementById('addPageName').value = '';
+    document.getElementById('addPageContent').value = '';
+    document.getElementById('requestFieldsBuilder').innerHTML = '';
+    addPageFields = [];
+    addPageType = null;
+    addPageSubtype = null;
 }
 
-function closePasswordModal() {
-    document.getElementById('passwordModal').classList.remove('active');
+function closeAddPageModal() {
+    document.getElementById('addPageModal').classList.remove('active');
 }
 
-async function changePassword() {
-    if (!currentUser) return;
-    const oldPass = document.getElementById('oldPassword').value;
-    const newPass = document.getElementById('newPassword').value;
-    const newPass2 = document.getElementById('newPassword2').value;
-    const res = document.getElementById('passwordResult');
+function addPageSelectType(type) {
+    addPageType = type;
+    if (type === 'public') {
+        document.getElementById('addPageStep2').style.display = 'block';
+        document.getElementById('addPageStep1').style.display = 'none';
+        document.getElementById('addPageTypeResult').textContent = '✅ Выбран: Публичный раздел';
+        document.getElementById('addPageTypeResult').className = 'result-msg success';
+    } else {
+        addPageSubtype = 'info';
+        document.getElementById('addPageStep1').style.display = 'none';
+        document.getElementById('addPageStep2').style.display = 'none';
+        document.getElementById('addPageStep3').style.display = 'block';
+        document.getElementById('addPageInfoFields').style.display = 'block';
+        document.getElementById('addPageRequestFields').style.display = 'none';
+        document.getElementById('addPageTypeResult').textContent = '✅ Выбран: Админский раздел';
+        document.getElementById('addPageTypeResult').className = 'result-msg success';
+    }
+}
+
+function addPageSelectSubtype(subtype) {
+    addPageSubtype = subtype;
+    document.getElementById('addPageStep2').style.display = 'none';
+    document.getElementById('addPageStep3').style.display = 'block';
+    document.getElementById('addPageSubtypeResult').textContent = `✅ Выбран: ${subtype === 'info' ? 'Информационный' : 'С заявками'}`;
+    document.getElementById('addPageSubtypeResult').className = 'result-msg success';
     
-    if (!oldPass || !newPass || !newPass2) {
-        res.textContent = 'Заполните все поля';
-        res.className = 'result-msg error';
+    if (subtype === 'info') {
+        document.getElementById('addPageInfoFields').style.display = 'block';
+        document.getElementById('addPageRequestFields').style.display = 'none';
+    } else {
+        document.getElementById('addPageInfoFields').style.display = 'none';
+        document.getElementById('addPageRequestFields').style.display = 'block';
+        document.getElementById('requestFieldsBuilder').innerHTML = '';
+        addPageFields = [];
+    }
+}
+
+function addRequestField(type) {
+    const builder = document.getElementById('requestFieldsBuilder');
+    const fieldId = 'field_' + Date.now();
+    
+    if (type === 'text') {
+        builder.innerHTML += `
+            <div class="field-builder" id="${fieldId}">
+                <div class="field-header">
+                    <span class="field-label">📝 Поле ввода</span>
+                    <span class="field-type">текст</span>
+                </div>
+                <input type="text" id="${fieldId}_label" placeholder="Название поля" style="margin-top:6px;">
+                <label style="color:var(--text-muted); font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
+                    <input type="checkbox" id="${fieldId}_required"> Обязательное
+                </label>
+                <button class="btn btn-small btn-danger" onclick="removeField('${fieldId}')" style="width:auto; margin-top:6px; padding:4px 12px; font-size:10px;">✕ Удалить</button>
+            </div>
+        `;
+        addPageFields.push({ id: fieldId, type: 'text' });
+    } else if (type === 'select') {
+        builder.innerHTML += `
+            <div class="field-builder" id="${fieldId}">
+                <div class="field-header">
+                    <span class="field-label">📋 Выбор</span>
+                    <span class="field-type">выбор</span>
+                </div>
+                <input type="text" id="${fieldId}_label" placeholder="Название поля" style="margin-top:6px;">
+                <input type="text" id="${fieldId}_options" placeholder="Варианты через запятую" style="margin-top:4px;">
+                <label style="color:var(--text-muted); font-size:12px; display:flex; align-items:center; gap:6px; margin-top:4px;">
+                    <input type="checkbox" id="${fieldId}_required"> Обязательное
+                </label>
+                <button class="btn btn-small btn-danger" onclick="removeField('${fieldId}')" style="width:auto; margin-top:6px; padding:4px 12px; font-size:10px;">✕ Удалить</button>
+            </div>
+        `;
+        addPageFields.push({ id: fieldId, type: 'select' });
+    }
+}
+
+function removeField(fieldId) {
+    const el = document.getElementById(fieldId);
+    if (el) el.remove();
+    addPageFields = addPageFields.filter(f => f.id !== fieldId);
+}
+
+async function publishNewPage() {
+    const name = document.getElementById('addPageName').value.trim();
+    const result = document.getElementById('addPageResult');
+    
+    if (!name) {
+        result.textContent = 'Введите название раздела';
+        result.className = 'result-msg error';
         return;
     }
     
-    if (oldPass !== currentUser.password) {
-        res.textContent = 'Неверный текущий пароль';
-        res.className = 'result-msg error';
+    if (!addPageType || !addPageSubtype) {
+        result.textContent = 'Выберите тип раздела';
+        result.className = 'result-msg error';
         return;
     }
     
-    if (newPass.length < 4) {
-        res.textContent = 'Новый пароль минимум 4 символа';
-        res.className = 'result-msg error';
+    if (addPageSubtype === 'info') {
+        const content = document.getElementById('addPageContent').value.trim();
+        if (!content) {
+            result.textContent = 'Введите содержимое раздела';
+            result.className = 'result-msg error';
+            return;
+        }
+        
+        const newPage = {
+            id: 'p' + (++pagesDb.pageCounter),
+            name: name,
+            type: 'info',
+            content: content,
+            createdBy: currentUser.gameNick,
+            createdAt: new Date().toISOString(),
+            isPublic: addPageType === 'public'
+        };
+        
+        if (addPageType === 'public') {
+            pagesDb.publicPages.push(newPage);
+        } else {
+            pagesDb.adminPages.push(newPage);
+        }
+        
+        await savePagesDB();
+        result.textContent = '✅ Раздел опубликован!';
+        result.className = 'result-msg success';
+        showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
+        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
+        loadDynamicPages();
+        loadAdminPagesManagement();
+        setTimeout(() => closeAddPageModal(), 1500);
+        
+    } else if (addPageSubtype === 'request') {
+        const fields = [];
+        let allValid = true;
+        let errorMsg = '';
+        
+        addPageFields.forEach(f => {
+            const labelEl = document.getElementById(f.id + '_label');
+            const label = labelEl ? labelEl.value.trim() : '';
+            if (!label) {
+                allValid = false;
+                errorMsg = 'Заполните названия всех полей';
+                return;
+            }
+            
+            const required = document.getElementById(f.id + '_required') ? document.getElementById(f.id + '_required').checked : false;
+            
+            if (f.type === 'text') {
+                fields.push({ type: 'text', label: label, required: required });
+            } else if (f.type === 'select') {
+                const optionsEl = document.getElementById(f.id + '_options');
+                const options = optionsEl ? optionsEl.value.split(',').map(s => s.trim()).filter(s => s) : [];
+                if (options.length === 0) {
+                    allValid = false;
+                    errorMsg = 'Укажите варианты для выбора';
+                    return;
+                }
+                fields.push({ type: 'select', label: label, options: options, required: required });
+            }
+        });
+        
+        if (!allValid) {
+            result.textContent = errorMsg || 'Заполните все поля корректно';
+            result.className = 'result-msg error';
+            return;
+        }
+        
+        if (fields.length === 0) {
+            result.textContent = 'Добавьте хотя бы одно поле';
+            result.className = 'result-msg error';
+            return;
+        }
+        
+        const newPage = {
+            id: 'p' + (++pagesDb.pageCounter),
+            name: name,
+            type: 'request',
+            content: '',
+            fields: fields,
+            requests: [],
+            createdBy: currentUser.gameNick,
+            createdAt: new Date().toISOString(),
+            isPublic: addPageType === 'public'
+        };
+        
+        if (addPageType === 'public') {
+            pagesDb.publicPages.push(newPage);
+            
+            const adminPage = {
+                id: 'p' + (++pagesDb.pageCounter),
+                name: name + ' (заявки)',
+                type: 'request',
+                content: '',
+                fields: fields,
+                requests: [],
+                createdBy: currentUser.gameNick,
+                createdAt: new Date().toISOString(),
+                isPublic: false,
+                parentId: newPage.id
+            };
+            pagesDb.adminPages.push(adminPage);
+            
+        } else {
+            pagesDb.adminPages.push(newPage);
+        }
+        
+        await savePagesDB();
+        result.textContent = '✅ Раздел опубликован!';
+        result.className = 'result-msg success';
+        showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
+        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
+        loadDynamicPages();
+        loadAdminPagesManagement();
+        setTimeout(() => closeAddPageModal(), 1500);
+    }
+}
+
+// ================================================================
+// УПРАВЛЕНИЕ РАЗДЕЛАМИ (УДАЛЕНИЕ)
+// ================================================================
+
+function loadAdminPagesManagement() {
+    const container = document.getElementById('adminPagesList');
+    if (!pagesDb) return;
+    
+    let allPages = [];
+    
+    if (pagesDb.publicPages) {
+        allPages = allPages.concat(pagesDb.publicPages.map(p => ({ ...p, typeLabel: 'Публичный' })));
+    }
+    if (pagesDb.adminPages) {
+        allPages = allPages.concat(pagesDb.adminPages.map(p => ({ ...p, typeLabel: 'Админский' })));
+    }
+    
+    if (allPages.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noPages'] || 'Нет созданных разделов') + '</p>';
         return;
     }
     
-    if (newPass !== newPass2) {
-        res.textContent = 'Новые пароли не совпадают';
-        res.className = 'result-msg error';
-        return;
+    let html = '';
+    allPages.forEach(p => {
+        const typeIcon = p.type === 'info' ? '📄' : '📝';
+        html += `
+            <div style="border:1px solid var(--border-color); padding:12px 16px; margin:6px 0; background:var(--bg-secondary); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap;">
+                <div>
+                    <span style="color:var(--text-primary);">${typeIcon} ${p.name}</span>
+                    <span style="color:var(--text-muted); font-size:11px; margin-left:10px;">${p.typeLabel}</span>
+                    <span style="color:var(--text-muted); font-size:11px; margin-left:10px;">${formatDate(p.createdAt)}</span>
+                </div>
+                <button class="btn btn-small btn-danger" onclick="deletePage('${p.id}')" style="width:auto; padding:4px 16px;">🗑️ Удалить</button>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+async function deletePage(pageId) {
+    if (!confirm('Вы уверены, что хотите удалить этот раздел?')) return;
+    
+    if (pagesDb.publicPages) {
+        pagesDb.publicPages = pagesDb.publicPages.filter(p => p.id !== pageId);
     }
     
-    if (newPass === oldPass) {
-        res.textContent = 'Новый пароль должен отличаться от текущего';
-        res.className = 'result-msg error';
-        return;
+    if (pagesDb.adminPages) {
+        pagesDb.adminPages = pagesDb.adminPages.filter(p => p.id !== pageId);
+        pagesDb.adminPages = pagesDb.adminPages.filter(p => p.parentId !== pageId);
     }
     
-    currentUser.password = newPass;
+    await savePagesDB();
+    loadAdminPagesManagement();
+    loadDynamicPages();
+    addHistory(currentUser.id, 'Удаление раздела', `Удалён раздел ${pageId}`);
+    showToast('🗑️ РАЗДЕЛ УДАЛЁН', 'Раздел удалён', 'info');
+}
+
+// ================================================================
+// УПРАВЛЕНИЕ СЕМЬЯМИ
+// ================================================================
+
+function loadFamiliesAdmin() {
+    if (!db.allies) db.allies = [];
+    if (!db.enemies) db.enemies = [];
+    
+    const alliesContainer = document.getElementById('alliesList');
+    if (db.allies.length === 0) {
+        alliesContainer.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noAllies'] || 'Нет союзников') + '</p>';
+    } else {
+        let html = '';
+        db.allies.forEach((a, i) => {
+            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--border-color);">
+                <span style="color:var(--text-secondary);">${a}</span>
+                <button class="btn btn-small btn-danger" onclick="removeAlly(${i})" style="width:auto; padding:2px 10px; font-size:10px;">✕</button>
+            </div>`;
+        });
+        alliesContainer.innerHTML = html;
+    }
+    
+    const enemiesContainer = document.getElementById('enemiesList');
+    if (db.enemies.length === 0) {
+        enemiesContainer.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noEnemies'] || 'Нет недружественных семей') + '</p>';
+    } else {
+        let html = '';
+        db.enemies.forEach((e, i) => {
+            html += `<div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid var(--border-color);">
+                <span style="color:var(--text-secondary);">${e}</span>
+                <button class="btn btn-small btn-danger" onclick="removeEnemy(${i})" style="width:auto; padding:2px 10px; font-size:10px;">✕</button>
+            </div>`;
+        });
+        enemiesContainer.innerHTML = html;
+    }
+}
+
+async function addAlly() {
+    const name = document.getElementById('newAlly').value.trim();
+    if (!name) { showToast('Ошибка', 'Введите название семьи', 'danger'); return; }
+    if (!db.allies) db.allies = [];
+    if (db.allies.includes(name)) { showToast('Ошибка', 'Такая семья уже в списке', 'danger'); return; }
+    db.allies.push(name);
     await saveDB();
-    res.textContent = '✅ Пароль успешно изменён!';
-    res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Смена пароля', 'Пароль успешно изменён');
-    showToast('✅ ПАРОЛЬ ИЗМЕНЁН', 'Ваш пароль успешно обновлён', 'info');
-    setTimeout(() => closePasswordModal(), 1000);
+    document.getElementById('newAlly').value = '';
+    loadFamiliesAdmin();
+    loadFamiliesDisplay();
+    addHistory(currentUser.id, 'Добавление союзника', `Добавлена семья: ${name}`);
+    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в союзники`, 'info');
+}
+
+async function removeAlly(index) {
+    if (!db.allies) return;
+    const name = db.allies[index];
+    db.allies.splice(index, 1);
+    await saveDB();
+    loadFamiliesAdmin();
+    loadFamiliesDisplay();
+    addHistory(currentUser.id, 'Удаление союзника', `Удалена семья: ${name}`);
+    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из союзников`, 'info');
+}
+
+async function addEnemy() {
+    const name = document.getElementById('newEnemy').value.trim();
+    if (!name) { showToast('Ошибка', 'Введите название семьи', 'danger'); return; }
+    if (!db.enemies) db.enemies = [];
+    if (db.enemies.includes(name)) { showToast('Ошибка', 'Такая семья уже в списке', 'danger'); return; }
+    db.enemies.push(name);
+    await saveDB();
+    document.getElementById('newEnemy').value = '';
+    loadFamiliesAdmin();
+    loadFamiliesDisplay();
+    addHistory(currentUser.id, 'Добавление недружественной семьи', `Добавлена семья: ${name}`);
+    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
+}
+
+async function removeEnemy(index) {
+    if (!db.enemies) return;
+    const name = db.enemies[index];
+    db.enemies.splice(index, 1);
+    await saveDB();
+    loadFamiliesAdmin();
+    loadFamiliesDisplay();
+    addHistory(currentUser.id, 'Удаление недружественной семьи', `Удалена семья: ${name}`);
+    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из недружественных`, 'info');
+}
+
+function loadFamiliesDisplay() {
+    if (!db.allies) db.allies = [];
+    if (!db.enemies) db.enemies = [];
+    
+    const alliesContainer = document.getElementById('alliesDisplay');
+    if (db.allies.length === 0) {
+        alliesContainer.innerHTML = '<p class="empty">' + (translations[currentLang]?.['families.noAllies'] || 'Нет союзников') + '</p>';
+    } else {
+        let html = '';
+        db.allies.forEach(a => {
+            html += `<div class="family-item">🤝 ${a}</div>`;
+        });
+        alliesContainer.innerHTML = html;
+    }
+    
+    const enemiesContainer = document.getElementById('enemiesDisplay');
+    if (db.enemies.length === 0) {
+        enemiesContainer.innerHTML = '<p class="empty">' + (translations[currentLang]?.['families.noEnemies'] || 'Нет недружественных семей') + '</p>';
+    } else {
+        let html = '';
+        db.enemies.forEach(e => {
+            html += `<div class="family-item">⚔️ ${e}</div>`;
+        });
+        enemiesContainer.innerHTML = html;
+    }
+}
+
+// ================================================================
+// ИСТОРИЯ
+// ================================================================
+
+function loadHistory() {
+    const container = document.getElementById('historyList');
+    if (!db.history || db.history.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);">' + (translations[currentLang]?.['admin.noHistory'] || 'История пуста') + '</p>';
+        return;
+    }
+    let html = '';
+    db.history.slice(-50).reverse().forEach(h => {
+        html += `
+            <div style="border-bottom:1px solid var(--border-color); padding:6px 0; color:var(--text-secondary); font-size:13px;">
+                <span style="color:var(--text-primary);">${h.userNick}</span> · ${h.action}
+                <span style="color:var(--text-muted); font-size:11px; display:block;">${h.details} · ${formatDate(h.date)}</span>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+// ================================================================
+// ПОИСК
+// ================================================================
+
+async function adminSearchUser() {
+    const id = document.getElementById('adminSearchId').value.trim();
+    const res = document.getElementById('adminSearchResult');
+    if (!id) { res.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
+    const user = getUserById(id);
+    if (!user) { res.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
+    res.innerHTML = `
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>ID:</strong> ${user.id}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Игровой ник:</strong> ${user.gameNick}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Telegram:</strong> ${user.tgUser}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Email:</strong> ${user.email || '-'}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Статус:</strong> ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</div>
+        ${user.isBanned ? `<div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Причина бана:</strong> ${user.banInfo?.reason || '-'}</div>` : ''}
+        <div style="padding:6px 0;"><strong>Нарушений:</strong> ${(user.violations || []).length}</div>
+    `;
 }
 
 // ================================================================
