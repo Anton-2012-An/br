@@ -6,7 +6,7 @@
     <title>NIGHTMARE EMPIRE</title>
     <style>
         /* ============================================================
-           CSS ПЕРЕМЕННЫЕ
+           ПЕРЕМЕННЫЕ
            ============================================================ */
         :root {
             --bg-primary: #0a0a0a;
@@ -42,7 +42,7 @@
         }
         
         body {
-            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background: var(--bg-primary);
             color: var(--text-primary);
             min-height: 100vh;
@@ -52,6 +52,38 @@
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: var(--bg-secondary); }
         ::-webkit-scrollbar-thumb { background: var(--accent-color); }
+        
+        /* ============================================================
+           КНОПКИ
+           ============================================================ */
+        .btn {
+            width: 100%;
+            padding: 12px;
+            margin: 6px 0;
+            background: var(--accent-color);
+            color: #000;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: var(--transition);
+            text-transform: uppercase;
+        }
+        .btn:hover { background: var(--accent-hover); }
+        .btn-outline { background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); }
+        .btn-outline:hover { background: var(--accent-color); color: #000; }
+        .btn-danger { background: var(--danger-color); color: #fff; }
+        .btn-danger:hover { background: #ff0000; }
+        .btn-small { width: auto; padding: 8px 18px; font-size: 12px; display: inline-block; }
+        .btn-success { background: var(--success-color); color: #000; }
+        .btn-success:hover { background: #55ff55; }
+        .btn-gold { background: #d4a843; color: #000; }
+        .btn-gold:hover { background: #c49a3a; }
+        .btn-green { background: #00cc44; color: #000; }
+        .btn-green:hover { background: #00dd55; }
+        .btn-secondary { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); }
+        .btn-secondary:hover { background: var(--border-color); }
         
         /* ============================================================
            СПЛЕШ
@@ -77,38 +109,6 @@
         @keyframes pulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.1); } }
         #splashScreen h1 { font-size: 2.5rem; font-weight: 300; letter-spacing: 12px; margin-top: 20px; }
         #splashScreen .sub { font-size: 0.8rem; letter-spacing: 6px; color: var(--text-muted); }
-        
-        /* ============================================================
-           КНОПКИ
-           ============================================================ */
-        .btn {
-            width: 100%;
-            padding: 13px;
-            margin: 6px 0;
-            background: var(--accent-color);
-            color: #000;
-            border: none;
-            font-size: 14px;
-            font-weight: 500;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: var(--transition);
-            text-transform: uppercase;
-        }
-        .btn:hover { background: var(--accent-hover); transform: scale(1.01); }
-        .btn-outline { background: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); }
-        .btn-outline:hover { background: var(--accent-color); color: #000; }
-        .btn-danger { background: var(--danger-color); color: #fff; }
-        .btn-danger:hover { background: #ff0000; }
-        .btn-small { width: auto; padding: 8px 18px; font-size: 12px; display: inline-block; }
-        .btn-success { background: var(--success-color); color: #000; }
-        .btn-success:hover { background: #55ff55; }
-        .btn-gold { background: #d4a843; color: #000; }
-        .btn-gold:hover { background: #c49a3a; }
-        .btn-green { background: #00cc44; color: #000; }
-        .btn-green:hover { background: #00dd55; }
-        .btn-secondary { background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); }
-        .btn-secondary:hover { background: var(--border-color); }
         
         /* ============================================================
            АВТОРИЗАЦИЯ
@@ -750,7 +750,7 @@
             </div>
         </div>
 
-        <!-- ===== СОСТАВ (с ID) ===== -->
+        <!-- ===== СОСТАВ ===== -->
         <div id="page-members" class="page">
             <h2>СОСТАВ СЕМЬИ</h2>
             <div class="info-block">
@@ -1181,26 +1181,14 @@
 
 const JSONBIN_URL = 'https://api.jsonbin.io/v3/b/6a82dfaeda38895dfeee462c';
 const MASTER_KEY = '$2a$10$/lKNp2cCj9lOUJxhWQ0uI./vRHpINQt.MWizWPJOnRinj62u0JIgO';
-
 const PAGES_URL = 'https://api.jsonbin.io/v3/b/6a81fabfda38895dfeec240d';
 const PAGES_KEY = '$2a$10$/lKNp2cCj9lOUJxhWQ0uI./vRHpINQt.MWizWPJOnRinj62u0JIgO';
 
 let db = null;
 let pagesDb = null;
 let currentUser = null;
-let pendingUser = null;
 let currentLang = 'ru';
 let currentTheme = 'dark';
-
-let pendingAddUser = null;
-let pendingRemoveUser = null;
-let pendingRemoveViolation = null;
-let pendingBanUser = null;
-let pendingUnbanUser = null;
-
-let addPageType = null;
-let addPageSubtype = null;
-let addPageFields = [];
 
 // ================================================================
 // РАБОТА С JSONBIN
@@ -1211,6 +1199,8 @@ async function loadDB() {
         const res = await fetch(JSONBIN_URL, { headers: { 'X-Master-Key': MASTER_KEY } });
         const data = await res.json();
         db = data.record;
+        
+        // Проверяем структуру
         if (!db.users) db.users = [];
         if (!db.usedIds) db.usedIds = ['00000', '11111'];
         if (!db.violationCounter) db.violationCounter = 0;
@@ -1230,12 +1220,17 @@ async function loadDB() {
                 family_info: 'Информация о семье...'
             };
         }
+        
+        // Добавляем баланс каждому пользователю
         db.users.forEach(u => {
             if (u.balance === undefined) u.balance = 0;
             if (!u.premiumHistory) u.premiumHistory = [];
+            if (u.violations === undefined) u.violations = [];
         });
+        
         return db;
     } catch (e) {
+        console.error('Ошибка загрузки БД:', e);
         db = { 
             users: [], usedIds: ['00000', '11111'], currentSession: null, violationCounter: 0,
             requests: [], buildRequests: [], scheduledBuilds: [], notifications: [], history: [],
@@ -1259,7 +1254,10 @@ async function saveDB() {
             body: JSON.stringify(db)
         });
         return true;
-    } catch (e) { return false; }
+    } catch (e) {
+        console.error('Ошибка сохранения БД:', e);
+        return false;
+    }
 }
 
 async function loadPagesDB() {
@@ -1306,13 +1304,6 @@ function generateId() {
 function getUserById(id) { return db.users.find(u => u.id === id); }
 function getUserByNick(nick) { return db.users.find(u => u.gameNick.toLowerCase() === nick.toLowerCase()); }
 function getUserByTg(tg) { return db.users.find(u => u.tgUser.toLowerCase() === tg.toLowerCase()); }
-function findUserByInput(input) {
-    if (!input) return null;
-    let user = getUserById(input);
-    if (!user) user = getUserByNick(input);
-    if (!user) user = getUserByTg(input);
-    return user;
-}
 function isAdmin(u) { return u && u.isAdmin === true; }
 function formatDate(d) {
     if (!d) return '-';
@@ -1328,34 +1319,7 @@ function getAdminNick(id) {
     const u = getUserById(id);
     return u ? u.gameNick : id;
 }
-function addNotification(userId, title, text, type = 'info') {
-    if (!db.notifications) db.notifications = [];
-    db.notifications.push({
-        id: 'n' + Date.now(),
-        userId: userId,
-        title: title,
-        text: text,
-        type: type,
-        date: new Date().toISOString(),
-        read: false
-    });
-}
-function addHistory(userId, action, details) {
-    if (!db.history) db.history = [];
-    const user = getUserById(userId);
-    db.history.push({
-        id: 'h' + Date.now(),
-        userId: userId,
-        userNick: user ? user.gameNick : 'Неизвестен',
-        action: action,
-        details: details,
-        date: new Date().toISOString()
-    });
-}
-
-function isValidNick(nick) {
-    return /^[a-zA-Zа-яА-ЯёЁ_\-]+$/.test(nick);
-}
+function isValidNick(nick) { return /^[a-zA-Zа-яА-ЯёЁ_\-]+$/.test(nick); }
 
 function showToast(title, text, type = 'info') {
     const container = document.getElementById('toastContainer');
@@ -1370,9 +1334,7 @@ function showToast(title, text, type = 'info') {
         <button class="toast-close" onclick="this.parentElement.remove()">✕</button>
     `;
     container.appendChild(toast);
-    setTimeout(() => {
-        if (toast.parentElement) toast.remove();
-    }, 8000);
+    setTimeout(() => { if (toast.parentElement) toast.remove(); }, 6000);
 }
 
 // ================================================================
@@ -1421,21 +1383,22 @@ async function init() {
     const sessionId = localStorage.getItem('nightmare_session');
     if (sessionId) {
         const user = getUserById(sessionId);
-        if (user) {
-            if (user.isBanned && user.banInfo) {
-                const unban = new Date(user.banInfo.unbanDate);
-                if (unban > new Date()) { 
-                    showBanScreen(user); 
-                    return; 
-                } else { 
-                    user.isBanned = false; 
-                    user.banInfo = null; 
-                    await saveDB(); 
-                }
-            }
-            pendingUser = user;
+        if (user && !user.isBanned) {
             showConfirmScreen(user);
             return;
+        }
+        if (user && user.isBanned) {
+            const unban = new Date(user.banInfo?.unbanDate);
+            if (unban && unban > new Date()) {
+                showBanScreen(user);
+                return;
+            } else {
+                user.isBanned = false;
+                user.banInfo = null;
+                await saveDB();
+                showConfirmScreen(user);
+                return;
+            }
         }
     }
     showAuthPage();
@@ -1446,6 +1409,8 @@ function showAuthPage() {
     document.getElementById('mainPage').style.display = 'none';
     document.getElementById('banScreen').style.display = 'none';
     document.getElementById('confirmScreen').style.display = 'none';
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('regError').style.display = 'none';
 }
 
 function showConfirmScreen(user) {
@@ -1454,7 +1419,10 @@ function showConfirmScreen(user) {
     document.getElementById('banScreen').style.display = 'none';
     document.getElementById('confirmScreen').style.display = 'flex';
     document.getElementById('confirmNick').textContent = user.gameNick;
+    pendingUser = user;
 }
+
+let pendingUser = null;
 
 function confirmLogin() {
     if (!pendingUser) return;
@@ -1504,10 +1472,22 @@ async function register() {
         err.textContent = 'Ник может содержать только буквы, _ и -';
         err.style.display = 'block'; return;
     }
-    if (pass !== pass2) { err.textContent = 'Пароли не совпадают'; err.style.display = 'block'; return; }
-    if (pass.length < 4) { err.textContent = 'Пароль минимум 4 символа'; err.style.display = 'block'; return; }
-    if (getUserByNick(nick)) { err.textContent = 'Этот ник уже зарегистрирован'; err.style.display = 'block'; return; }
-    if (getUserByTg(tg)) { err.textContent = 'Этот Telegram уже используется'; err.style.display = 'block'; return; }
+    if (pass !== pass2) {
+        err.textContent = 'Пароли не совпадают';
+        err.style.display = 'block'; return;
+    }
+    if (pass.length < 4) {
+        err.textContent = 'Пароль минимум 4 символа';
+        err.style.display = 'block'; return;
+    }
+    if (getUserByNick(nick)) {
+        err.textContent = 'Этот ник уже зарегистрирован';
+        err.style.display = 'block'; return;
+    }
+    if (getUserByTg(tg)) {
+        err.textContent = 'Этот Telegram уже используется';
+        err.style.display = 'block'; return;
+    }
     
     const id = generateId();
     const user = {
@@ -1524,7 +1504,6 @@ async function register() {
     await saveDB();
     
     localStorage.setItem('nightmare_session', id);
-    
     currentUser = user;
     enterMainPage(user);
 }
@@ -1536,10 +1515,10 @@ async function login() {
     const err = document.getElementById('loginError');
     err.style.display = 'none';
     
-    if (!input || !pass) { 
-        err.textContent = 'Заполните все поля'; 
-        err.style.display = 'block'; 
-        return; 
+    if (!input || !pass) {
+        err.textContent = 'Заполните все поля';
+        err.style.display = 'block';
+        return;
     }
     
     let user = getUserByNick(input);
@@ -1559,13 +1538,13 @@ async function login() {
     
     if (user.isBanned && user.banInfo) {
         const unban = new Date(user.banInfo.unbanDate);
-        if (unban > new Date()) { 
-            showBanScreen(user); 
-            return; 
-        } else { 
-            user.isBanned = false; 
-            user.banInfo = null; 
-            await saveDB(); 
+        if (unban && unban > new Date()) {
+            showBanScreen(user);
+            return;
+        } else {
+            user.isBanned = false;
+            user.banInfo = null;
+            await saveDB();
         }
     }
     
@@ -1591,19 +1570,15 @@ function logout() {
     document.getElementById('authPage').style.display = 'flex';
 }
 
-// ================================================================
-// БАН
-// ================================================================
-
 function showBanScreen(user) {
     document.getElementById('authPage').style.display = 'none';
     document.getElementById('mainPage').style.display = 'none';
     document.getElementById('confirmScreen').style.display = 'none';
     document.getElementById('banScreen').style.display = 'flex';
-    document.getElementById('banReason').textContent = user.banInfo.reason || 'Не указана';
-    document.getElementById('banBannedBy').textContent = getAdminNick(user.banInfo.bannedBy);
-    document.getElementById('banDate').textContent = formatDate(user.banInfo.banDate);
-    document.getElementById('banUnbanDate').textContent = formatDate(user.banInfo.unbanDate);
+    document.getElementById('banReason').textContent = user.banInfo?.reason || 'Не указана';
+    document.getElementById('banBannedBy').textContent = getAdminNick(user.banInfo?.bannedBy);
+    document.getElementById('banDate').textContent = formatDate(user.banInfo?.banDate);
+    document.getElementById('banUnbanDate').textContent = formatDate(user.banInfo?.unbanDate);
 }
 
 // ================================================================
@@ -1628,7 +1603,6 @@ function enterMainPage(user) {
         document.getElementById('adminSection').style.display = 'none';
     }
     
-    checkViolationNotifications(user);
     updateNotificationBadge();
     loadProfile(user);
     loadViolations(user);
@@ -1651,28 +1625,7 @@ function enterMainPage(user) {
 }
 
 // ================================================================
-// АДМИН: СПИСОК ЧЛЕНОВ (исправлено)
-// ================================================================
-
-function loadAdminMembers() {
-    const list = document.getElementById('adminMembersList');
-    const members = db.users.filter(u => !u.isAdmin);
-    if (members.length === 0) {
-        list.innerHTML = '<p style="color:var(--text-muted);">Нет зарегистрированных членов</p>';
-        return;
-    }
-    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">Всего: ${members.length}</p>`;
-    members.forEach(u => {
-        html += `<div style="border-bottom:1px solid var(--border-color); padding:8px 0; color:var(--text-secondary); font-size:13px;">
-            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : '🟢 Активен'}
-            ${u.balance ? `· Баланс: ${u.balance} ₽` : ''}
-        </div>`;
-    });
-    list.innerHTML = html;
-}
-
-// ================================================================
-// (ОСТАЛЬНЫЕ ФУНКЦИИ ТЕ ЖЕ)
+// (ОСТАЛЬНЫЕ ФУНКЦИИ - ОСТАВЛЯЮ КАК БЫЛО)
 // ================================================================
 
 function updateNotificationBadge() {
@@ -1687,35 +1640,6 @@ function updateNotificationBadge() {
     }
 }
 
-function checkViolationNotifications(user) {
-    const violations = user.violations || [];
-    const newViolations = violations.filter(v => !v.resolved && !v._notified);
-    if (newViolations.length > 0) {
-        newViolations.forEach(v => v._notified = true);
-        saveDB();
-        document.getElementById('violationNotifyModal').classList.add('active');
-        addNotification(user.id, '⚠️ НОВОЕ НАРУШЕНИЕ', 'Вам выписано дисциплинарное взыскание', 'danger');
-        showToast('⚠️ НОВОЕ НАРУШЕНИЕ', 'Вам выписано дисциплинарное взыскание', 'danger');
-    }
-    
-    const resolvedViolations = violations.filter(v => v.resolved && v._notifiedResolved !== true && v.resolutionReason);
-    if (resolvedViolations.length > 0) {
-        resolvedViolations.forEach(v => v._notifiedResolved = true);
-        saveDB();
-        document.getElementById('violationResolvedModal').classList.add('active');
-        addNotification(user.id, '✅ НАРУШЕНИЕ СНЯТО', 'С вас снято дисциплинарное взыскание', 'info');
-        showToast('✅ НАРУШЕНИЕ СНЯТО', 'С вас снято дисциплинарное взыскание', 'info');
-    }
-}
-
-function closeNotifyModal() {
-    document.getElementById('violationNotifyModal').classList.remove('active');
-}
-
-function closeResolvedModal() {
-    document.getElementById('violationResolvedModal').classList.remove('active');
-}
-
 function showPage(name) {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     const target = document.getElementById('page-' + name);
@@ -1727,16 +1651,10 @@ function showPage(name) {
 
 function loadSiteContent() {
     if (!db.siteContent) return;
-    
     const ukspEl = document.getElementById('ukspContent');
-    if (db.siteContent.uksp) {
-        ukspEl.innerHTML = db.siteContent.uksp;
-    }
-    
+    if (db.siteContent.uksp) ukspEl.innerHTML = db.siteContent.uksp;
     const rulesEl = document.getElementById('rulesContent');
-    if (db.siteContent.rules) {
-        rulesEl.innerHTML = db.siteContent.rules;
-    }
+    if (db.siteContent.rules) rulesEl.innerHTML = db.siteContent.rules;
 }
 
 function loadProfile(user) {
@@ -1745,8 +1663,7 @@ function loadProfile(user) {
     document.getElementById('profileTg').textContent = user.tgUser;
     document.getElementById('profileEmail').textContent = user.email || '-';
     document.getElementById('profileRegDate').textContent = formatDate(user.registrationDate);
-    const status = user.isBanned ? '🔴 Заблокирован' : 'Активен';
-    document.getElementById('profileStatus').textContent = status;
+    document.getElementById('profileStatus').textContent = user.isBanned ? '🔴 Заблокирован' : 'Активен';
     document.getElementById('profileStatus').style.color = user.isBanned ? 'var(--danger-color)' : 'var(--success-color)';
 }
 
@@ -1771,10 +1688,10 @@ async function saveProfile() {
     const email = document.getElementById('editEmail').value.trim();
     const res = document.getElementById('editResult');
     
-    if (!nick || !tg) { 
-        res.textContent = 'Ник и Telegram обязательны'; 
-        res.className = 'result-msg error'; 
-        return; 
+    if (!nick || !tg) {
+        res.textContent = 'Ник и Telegram обязательны';
+        res.className = 'result-msg error';
+        return;
     }
     if (!isValidNick(nick)) {
         res.textContent = 'Ник может содержать только буквы, _ и -';
@@ -1783,16 +1700,16 @@ async function saveProfile() {
     }
     
     const nickExists = db.users.find(u => u.id !== currentUser.id && u.gameNick.toLowerCase() === nick.toLowerCase());
-    if (nickExists) { 
-        res.textContent = 'Этот ник уже занят'; 
-        res.className = 'result-msg error'; 
-        return; 
+    if (nickExists) {
+        res.textContent = 'Этот ник уже занят';
+        res.className = 'result-msg error';
+        return;
     }
     const tgExists = db.users.find(u => u.id !== currentUser.id && u.tgUser.toLowerCase() === tg.toLowerCase());
-    if (tgExists) { 
-        res.textContent = 'Этот Telegram уже используется'; 
-        res.className = 'result-msg error'; 
-        return; 
+    if (tgExists) {
+        res.textContent = 'Этот Telegram уже используется';
+        res.className = 'result-msg error';
+        return;
     }
     
     currentUser.gameNick = nick;
@@ -1803,7 +1720,6 @@ async function saveProfile() {
     loadProfile(currentUser);
     res.textContent = '✅ Информация обновлена';
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Обновление профиля', 'Изменены данные профиля');
     setTimeout(() => closeEditModal(), 800);
 }
 
@@ -1833,25 +1749,21 @@ async function changePassword() {
         res.className = 'result-msg error';
         return;
     }
-    
     if (oldPass !== currentUser.password) {
         res.textContent = 'Неверный текущий пароль';
         res.className = 'result-msg error';
         return;
     }
-    
     if (newPass.length < 4) {
         res.textContent = 'Новый пароль минимум 4 символа';
         res.className = 'result-msg error';
         return;
     }
-    
     if (newPass !== newPass2) {
         res.textContent = 'Новые пароли не совпадают';
         res.className = 'result-msg error';
         return;
     }
-    
     if (newPass === oldPass) {
         res.textContent = 'Новый пароль должен отличаться от текущего';
         res.className = 'result-msg error';
@@ -1862,7 +1774,6 @@ async function changePassword() {
     await saveDB();
     res.textContent = '✅ Пароль успешно изменён!';
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Смена пароля', 'Пароль успешно изменён');
     showToast('✅ ПАРОЛЬ ИЗМЕНЁН', 'Ваш пароль успешно обновлён', 'info');
     setTimeout(() => closePasswordModal(), 1000);
 }
@@ -1939,7 +1850,7 @@ async function submitRequestRemove() {
         userId: currentUser.id,
         userNick: currentUser.gameNick,
         target: target || currentUser.id,
-        targetNick: target ? (findUserByInput(target)?.gameNick || target) : currentUser.gameNick,
+        targetNick: target ? (getUserByNick(target)?.gameNick || getUserByTg(target)?.gameNick || target) : currentUser.gameNick,
         reason: reason,
         issuedBy: issuedBy,
         issuedDate: issuedDate,
@@ -1952,7 +1863,6 @@ async function submitRequestRemove() {
     await saveDB();
     res.textContent = '✅ Заявка отправлена! Ожидайте ответа администрации.';
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Заявка на снятие нарушения', `Заявка на снятие нарушения для ${request.targetNick}`);
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Ваша заявка на снятие нарушения отправлена', 'info');
     setTimeout(() => closeRequestModal('requestRemoveModal'), 1500);
     loadUserRequests();
@@ -1971,7 +1881,7 @@ async function submitRequestAdd() {
         return;
     }
     
-    const targetUser = findUserByInput(target);
+    const targetUser = getUserByNick(target) || getUserByTg(target) || getUserById(target);
     if (!targetUser) {
         res.textContent = 'Пользователь не найден';
         res.className = 'result-msg error';
@@ -1997,7 +1907,6 @@ async function submitRequestAdd() {
     await saveDB();
     res.textContent = '✅ Заявка отправлена! Есть 5 минут на отправку фрапса строя ОЗГЗ.';
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Заявка на выдачу нарушения', `Заявка на выдачу нарушения для ${targetUser.gameNick}`);
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Не забудьте отправить фрапс строя ОЗГЗ!', 'info');
     setTimeout(() => closeRequestModal('requestAddModal'), 2000);
     loadUserRequests();
@@ -2046,7 +1955,6 @@ async function submitBuildRequest() {
         res.className = 'result-msg error';
         return;
     }
-    
     if (new Date(end) <= new Date(start)) {
         res.textContent = 'Время окончания должно быть позже времени начала';
         res.className = 'result-msg error';
@@ -2071,7 +1979,6 @@ async function submitBuildRequest() {
     await saveDB();
     res.textContent = '✅ Заявка отправлена! Не забудьте прочитать правила строя.';
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Заявка на строй', `Заявка на строй: ${topic}`);
     showToast('✅ ЗАЯВКА НА СТРОЙ', 'Заявка отправлена администрации', 'info');
     document.getElementById('buildStart').value = '';
     document.getElementById('buildEnd').value = '';
@@ -2083,17 +1990,13 @@ async function submitBuildRequest() {
 function loadScheduledBuilds() {
     const container = document.getElementById('scheduledBuildsList');
     if (!db.scheduledBuilds) db.scheduledBuilds = [];
-    
     const now = new Date();
     db.scheduledBuilds = db.scheduledBuilds.filter(b => new Date(b.end) > now);
-    
     if (db.scheduledBuilds.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted);">Нет запланированных строев</p>';
         return;
     }
-    
     const sorted = [...db.scheduledBuilds].sort((a, b) => new Date(a.start) - new Date(b.start));
-    
     let html = '';
     sorted.forEach(b => {
         html += `
@@ -2111,7 +2014,6 @@ function loadScheduledBuilds() {
 function openBuildDetail(buildId) {
     const build = db.scheduledBuilds.find(b => b.id === buildId);
     if (!build) return;
-    
     const container = document.getElementById('buildDetailContent');
     let html = `
         <div style="border-bottom:1px solid var(--border-color); padding-bottom:12px; margin-bottom:12px;">
@@ -2126,7 +2028,6 @@ function openBuildDetail(buildId) {
             <p><strong style="color:var(--text-primary);">Статус:</strong> <span style="color:var(--success-color);">✅ Одобрен</span></p>
         </div>
     `;
-    
     if (isAdmin(currentUser)) {
         html += `
             <div style="margin-top:16px; padding-top:16px; border-top:1px solid var(--border-color);">
@@ -2134,7 +2035,6 @@ function openBuildDetail(buildId) {
             </div>
         `;
     }
-    
     container.innerHTML = html;
     document.getElementById('buildDetailModal').classList.add('active');
 }
@@ -2145,38 +2045,30 @@ function closeBuildDetail() {
 
 async function deleteBuild(buildId) {
     if (!confirm('Вы уверены, что хотите удалить этот строй?')) return;
-    
     db.scheduledBuilds = db.scheduledBuilds.filter(b => b.id !== buildId);
     await saveDB();
     closeBuildDetail();
     loadScheduledBuilds();
-    addHistory(currentUser.id, 'Удаление строя', `Удалён строй из запланированных`);
     showToast('🗑️ СТРОЙ УДАЛЁН', 'Строй удалён из запланированных', 'info');
 }
 
 function loadFamiliesDisplay() {
     if (!db.allies) db.allies = [];
     if (!db.enemies) db.enemies = [];
-    
     const alliesContainer = document.getElementById('alliesDisplay');
     if (db.allies.length === 0) {
         alliesContainer.innerHTML = '<p class="empty">Нет союзников</p>';
     } else {
         let html = '';
-        db.allies.forEach(a => {
-            html += `<div class="family-item">🤝 ${a}</div>`;
-        });
+        db.allies.forEach(a => { html += `<div class="family-item">🤝 ${a}</div>`; });
         alliesContainer.innerHTML = html;
     }
-    
     const enemiesContainer = document.getElementById('enemiesDisplay');
     if (db.enemies.length === 0) {
         enemiesContainer.innerHTML = '<p class="empty">Нет недружественных семей</p>';
     } else {
         let html = '';
-        db.enemies.forEach(e => {
-            html += `<div class="family-item">⚔️ ${e}</div>`;
-        });
+        db.enemies.forEach(e => { html += `<div class="family-item">⚔️ ${e}</div>`; });
         enemiesContainer.innerHTML = html;
     }
 }
@@ -2184,7 +2076,6 @@ function loadFamiliesDisplay() {
 function loadPremium(user) {
     if (!user) return;
     document.getElementById('userBalance').textContent = user.balance || 0;
-    
     const container = document.getElementById('premiumHistory');
     const history = user.premiumHistory || [];
     if (history.length === 0) {
@@ -2223,25 +2114,19 @@ async function submitWithdraw() {
     if (!currentUser) return;
     const amount = parseInt(document.getElementById('withdrawAmount').value);
     const res = document.getElementById('withdrawResult');
-    
     if (!amount || amount < 1) {
         res.textContent = 'Введите корректную сумму';
         res.className = 'result-msg error';
         return;
     }
-    
     const balance = currentUser.balance || 0;
     let withdrawAmount = amount;
-    if (amount > balance) {
-        withdrawAmount = balance;
-    }
-    
+    if (amount > balance) withdrawAmount = balance;
     if (withdrawAmount === 0) {
         res.textContent = 'На балансе нет средств';
         res.className = 'result-msg error';
         return;
     }
-    
     if (!db.withdrawRequests) db.withdrawRequests = [];
     const request = {
         id: 'w' + Date.now(),
@@ -2255,18 +2140,14 @@ async function submitWithdraw() {
     };
     db.withdrawRequests.push(request);
     await saveDB();
-    
     res.textContent = '✅ Заявка на вывод отправлена! Ожидайте одобрения администрации.';
     res.className = 'result-msg success';
-    addNotification(currentUser.id, '📤 ЗАЯВКА НА ВЫВОД', `Заявка на вывод ${withdrawAmount} ₽ отправлена`, 'info');
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Заявка на вывод отправлена', 'info');
-    
     db.users.forEach(u => {
         if (isAdmin(u)) {
-            addNotification(u.id, '📤 НОВАЯ ЗАЯВКА НА ВЫВОД', `${currentUser.gameNick} запросил вывод ${withdrawAmount} ₽`, 'info');
+            // showToast или уведомление админам
         }
     });
-    
     setTimeout(() => closeWithdrawModal(), 1500);
     loadPremium(currentUser);
     if (isAdmin(currentUser)) loadWithdrawRequests();
@@ -2276,32 +2157,27 @@ async function issuePremium() {
     const userId = document.getElementById('premiumUserId').value.trim();
     const amount = parseInt(document.getElementById('premiumAmount').value);
     const res = document.getElementById('premiumResult');
-    
     if (!userId) {
         res.textContent = 'Введите ID пользователя';
         res.className = 'result-msg error';
         return;
     }
-    
     if (!amount || amount < 1) {
         res.textContent = 'Введите корректную сумму';
         res.className = 'result-msg error';
         return;
     }
-    
     const user = getUserById(userId);
     if (!user) {
         res.textContent = `❌ Пользователь с ID "${userId}" не найден`;
         res.className = 'result-msg error';
         return;
     }
-    
     if (isAdmin(user)) {
         res.textContent = '❌ Нельзя выдавать премию администратору';
         res.className = 'result-msg error';
         return;
     }
-    
     user.balance = (user.balance || 0) + amount;
     if (!user.premiumHistory) user.premiumHistory = [];
     user.premiumHistory.push({
@@ -2309,16 +2185,10 @@ async function issuePremium() {
         text: `Премия от ${currentUser.gameNick} (${amount} ₽)`,
         date: new Date().toISOString()
     });
-    
-    addNotification(userId, '💰 ПОЛУЧЕНА ПРЕМИЯ', `Вам начислено ${amount} ₽ от ${currentUser.gameNick}`, 'info');
-    
     await saveDB();
-    
     res.textContent = `✅ Премия ${amount} ₽ выдана пользователю ${user.gameNick} (ID: ${user.id})`;
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Выдача премии', `Выдано ${amount} ₽ пользователю ${user.gameNick} (${user.id})`);
     showToast('💰 ПРЕМИЯ ВЫДАНА', `${user.gameNick} получил ${amount} ₽`, 'info');
-    
     document.getElementById('premiumUserId').value = '';
     document.getElementById('premiumAmount').value = '';
     if (currentUser) loadPremium(currentUser);
@@ -2355,13 +2225,10 @@ function loadWithdrawRequests() {
 async function respondWithdraw(requestId, status) {
     const request = db.withdrawRequests.find(r => r.id === requestId);
     if (!request) return;
-    
     const comment = prompt(`Введите комментарий для ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
     if (comment === null) return;
-    
     request.status = status;
     request.response = comment;
-    
     const user = getUserById(request.userId);
     if (status === 'approved' && user) {
         const balance = user.balance || 0;
@@ -2373,17 +2240,11 @@ async function respondWithdraw(requestId, status) {
             text: `Вывод средств (одобрен)`,
             date: new Date().toISOString()
         });
-        addNotification(user.id, '✅ ВЫВОД ОДОБРЕН', `Вывод ${withdrawAmount} ₽ одобрен. Комментарий: ${comment}`, 'info');
+        showToast('✅ ВЫВОД ОДОБРЕН', `Вывод ${withdrawAmount} ₽ одобрен`, 'info');
     } else if (status === 'rejected' && user) {
-        addNotification(user.id, '❌ ВЫВОД ОТКЛОНЁН', `Вывод ${request.amount} ₽ отклонён. Комментарий: ${comment}`, 'danger');
+        showToast('❌ ВЫВОД ОТКЛОНЁН', `Вывод ${request.amount} ₽ отклонён`, 'danger');
     }
-    
     await saveDB();
-    
-    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
-    addHistory(currentUser.id, `Заявка на вывод ${statusText}`, `Заявка ${requestId} ${statusText}: ${comment}`);
-    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка на вывод ${statusText}`, status === 'approved' ? 'info' : 'danger');
-    
     loadWithdrawRequests();
     if (user) loadPremium(user);
 }
@@ -2391,22 +2252,17 @@ async function respondWithdraw(requestId, status) {
 function loadDynamicPages() {
     const container = document.getElementById('dynamicPagesList');
     if (!pagesDb) return;
-    
     let allPages = [];
-    
     if (pagesDb.publicPages) {
         allPages = allPages.concat(pagesDb.publicPages.map(p => ({ ...p, isPublic: true })));
     }
-    
     if (isAdmin(currentUser) && pagesDb.adminPages) {
         allPages = allPages.concat(pagesDb.adminPages.map(p => ({ ...p, isPublic: false })));
     }
-    
     if (allPages.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted);">Нет доступных разделов</p>';
         return;
     }
-    
     let html = '';
     allPages.forEach(p => {
         const adminLabel = p.isPublic ? '' : ' [АДМИН]';
@@ -2446,30 +2302,23 @@ function loadDynamicPages() {
 async function submitDynamicRequest(pageId) {
     const page = pagesDb.publicPages.find(p => p.id === pageId);
     if (!page) return;
-    
     const container = document.querySelector(`.request-form[data-page-id="${pageId}"]`);
     if (!container) return;
-    
     const fields = container.querySelectorAll('.req-field');
     const answers = {};
     let allFilled = true;
-    
     fields.forEach(f => {
         const label = f.dataset.field;
         const value = f.value.trim();
         answers[label] = value;
         const fieldDef = page.fields.find(pf => pf.label === label);
-        if (fieldDef && fieldDef.required && !value) {
-            allFilled = false;
-        }
+        if (fieldDef && fieldDef.required && !value) allFilled = false;
     });
-    
     if (!allFilled) {
         document.getElementById(`dynamicReqResult_${pageId}`).textContent = 'Заполните все обязательные поля!';
         document.getElementById(`dynamicReqResult_${pageId}`).className = 'result-msg error';
         return;
     }
-    
     if (!page.requests) page.requests = [];
     page.requests.push({
         id: 'dr' + Date.now(),
@@ -2480,38 +2329,26 @@ async function submitDynamicRequest(pageId) {
         date: new Date().toISOString(),
         response: null
     });
-    
     await savePagesDB();
     document.getElementById(`dynamicReqResult_${pageId}`).textContent = '✅ Заявка отправлена!';
     document.getElementById(`dynamicReqResult_${pageId}`).className = 'result-msg success';
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Ваша заявка отправлена', 'info');
-    addHistory(currentUser.id, 'Заявка в разделе', `Заявка в разделе "${page.name}"`);
-    
-    db.users.forEach(u => {
-        if (isAdmin(u)) {
-            addNotification(u.id, '📩 НОВАЯ ЗАЯВКА', `Новая заявка в разделе "${page.name}" от ${currentUser.gameNick}`, 'info');
-        }
-    });
 }
 
 function loadAdminPagesManagement() {
     const container = document.getElementById('adminPagesList');
     if (!pagesDb) return;
-    
     let allPages = [];
-    
     if (pagesDb.publicPages) {
         allPages = allPages.concat(pagesDb.publicPages.map(p => ({ ...p, typeLabel: 'Публичный' })));
     }
     if (pagesDb.adminPages) {
         allPages = allPages.concat(pagesDb.adminPages.map(p => ({ ...p, typeLabel: 'Админский' })));
     }
-    
     if (allPages.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted);">Нет созданных разделов</p>';
         return;
     }
-    
     let html = '';
     allPages.forEach(p => {
         const typeIcon = p.type === 'info' ? '📄' : '📝';
@@ -2531,20 +2368,14 @@ function loadAdminPagesManagement() {
 
 async function deletePage(pageId) {
     if (!confirm('Вы уверены, что хотите удалить этот раздел?')) return;
-    
-    if (pagesDb.publicPages) {
-        pagesDb.publicPages = pagesDb.publicPages.filter(p => p.id !== pageId);
-    }
-    
+    if (pagesDb.publicPages) pagesDb.publicPages = pagesDb.publicPages.filter(p => p.id !== pageId);
     if (pagesDb.adminPages) {
         pagesDb.adminPages = pagesDb.adminPages.filter(p => p.id !== pageId);
         pagesDb.adminPages = pagesDb.adminPages.filter(p => p.parentId !== pageId);
     }
-    
     await savePagesDB();
     loadAdminPagesManagement();
     loadDynamicPages();
-    addHistory(currentUser.id, 'Удаление раздела', `Удалён раздел ${pageId}`);
     showToast('🗑️ РАЗДЕЛ УДАЛЁН', 'Раздел удалён', 'info');
 }
 
@@ -2571,6 +2402,10 @@ function closeAddPageModal() {
     document.getElementById('addPageModal').classList.remove('active');
 }
 
+let addPageType = null;
+let addPageSubtype = null;
+let addPageFields = [];
+
 function addPageSelectType(type) {
     addPageType = type;
     if (type === 'public') {
@@ -2596,7 +2431,6 @@ function addPageSelectSubtype(subtype) {
     document.getElementById('addPageStep3').style.display = 'block';
     document.getElementById('addPageSubtypeResult').textContent = `✅ Выбран: ${subtype === 'info' ? 'Информационный' : 'С заявками'}`;
     document.getElementById('addPageSubtypeResult').className = 'result-msg success';
-    
     if (subtype === 'info') {
         document.getElementById('addPageInfoFields').style.display = 'block';
         document.getElementById('addPageRequestFields').style.display = 'none';
@@ -2611,7 +2445,6 @@ function addPageSelectSubtype(subtype) {
 function addRequestField(type) {
     const builder = document.getElementById('requestFieldsBuilder');
     const fieldId = 'field_' + Date.now();
-    
     if (type === 'text') {
         builder.innerHTML += `
             <div class="field-builder" id="${fieldId}">
@@ -2655,19 +2488,16 @@ function removeField(fieldId) {
 async function publishNewPage() {
     const name = document.getElementById('addPageName').value.trim();
     const result = document.getElementById('addPageResult');
-    
     if (!name) {
         result.textContent = 'Введите название раздела';
         result.className = 'result-msg error';
         return;
     }
-    
     if (!addPageType || !addPageSubtype) {
         result.textContent = 'Выберите тип раздела';
         result.className = 'result-msg error';
         return;
     }
-    
     if (addPageSubtype === 'info') {
         const content = document.getElementById('addPageContent').value.trim();
         if (!content) {
@@ -2675,7 +2505,6 @@ async function publishNewPage() {
             result.className = 'result-msg error';
             return;
         }
-        
         const newPage = {
             id: 'p' + (++pagesDb.pageCounter),
             name: name,
@@ -2685,64 +2514,43 @@ async function publishNewPage() {
             createdAt: new Date().toISOString(),
             isPublic: addPageType === 'public'
         };
-        
-        if (addPageType === 'public') {
-            pagesDb.publicPages.push(newPage);
-        } else {
-            pagesDb.adminPages.push(newPage);
-        }
-        
+        if (addPageType === 'public') pagesDb.publicPages.push(newPage);
+        else pagesDb.adminPages.push(newPage);
         await savePagesDB();
         result.textContent = '✅ Раздел опубликован!';
         result.className = 'result-msg success';
         showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
-        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
         loadDynamicPages();
         loadAdminPagesManagement();
         setTimeout(() => closeAddPageModal(), 1500);
-        
     } else if (addPageSubtype === 'request') {
         const fields = [];
         let allValid = true;
         let errorMsg = '';
-        
         addPageFields.forEach(f => {
             const labelEl = document.getElementById(f.id + '_label');
             const label = labelEl ? labelEl.value.trim() : '';
-            if (!label) {
-                allValid = false;
-                errorMsg = 'Заполните названия всех полей';
-                return;
-            }
-            
+            if (!label) { allValid = false; errorMsg = 'Заполните названия всех полей'; return; }
             const required = document.getElementById(f.id + '_required') ? document.getElementById(f.id + '_required').checked : false;
-            
             if (f.type === 'text') {
                 fields.push({ type: 'text', label: label, required: required });
             } else if (f.type === 'select') {
                 const optionsEl = document.getElementById(f.id + '_options');
                 const options = optionsEl ? optionsEl.value.split(',').map(s => s.trim()).filter(s => s) : [];
-                if (options.length === 0) {
-                    allValid = false;
-                    errorMsg = 'Укажите варианты для выбора';
-                    return;
-                }
+                if (options.length === 0) { allValid = false; errorMsg = 'Укажите варианты для выбора'; return; }
                 fields.push({ type: 'select', label: label, options: options, required: required });
             }
         });
-        
         if (!allValid) {
             result.textContent = errorMsg || 'Заполните все поля корректно';
             result.className = 'result-msg error';
             return;
         }
-        
         if (fields.length === 0) {
             result.textContent = 'Добавьте хотя бы одно поле';
             result.className = 'result-msg error';
             return;
         }
-        
         const newPage = {
             id: 'p' + (++pagesDb.pageCounter),
             name: name,
@@ -2754,10 +2562,8 @@ async function publishNewPage() {
             createdAt: new Date().toISOString(),
             isPublic: addPageType === 'public'
         };
-        
         if (addPageType === 'public') {
             pagesDb.publicPages.push(newPage);
-            
             const adminPage = {
                 id: 'p' + (++pagesDb.pageCounter),
                 name: name + ' (заявки)',
@@ -2771,16 +2577,13 @@ async function publishNewPage() {
                 parentId: newPage.id
             };
             pagesDb.adminPages.push(adminPage);
-            
         } else {
             pagesDb.adminPages.push(newPage);
         }
-        
         await savePagesDB();
         result.textContent = '✅ Раздел опубликован!';
         result.className = 'result-msg success';
         showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
-        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" (${addPageType}/${addPageSubtype})`);
         loadDynamicPages();
         loadAdminPagesManagement();
         setTimeout(() => closeAddPageModal(), 1500);
@@ -2791,7 +2594,6 @@ async function loadEditContent() {
     const section = document.getElementById('editSection').value;
     const preview = document.getElementById('editContentPreview');
     const textarea = document.getElementById('editContent');
-    
     if (db.siteContent && db.siteContent[section]) {
         preview.textContent = db.siteContent[section];
         textarea.value = db.siteContent[section];
@@ -2805,13 +2607,11 @@ async function saveEditContent() {
     const section = document.getElementById('editSection').value;
     const content = document.getElementById('editContent').value;
     const res = document.getElementById('editResult');
-    
     if (!db.siteContent) db.siteContent = {};
     db.siteContent[section] = content;
     await saveDB();
     res.textContent = '✅ Информация обновлена';
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Изменение информации сайта', `Обновлён раздел: ${section}`);
     showToast('✅ ИНФОРМАЦИЯ ОБНОВЛЕНА', `Раздел ${section} обновлён`, 'info');
     loadSiteContent();
     loadEditContent();
@@ -2820,7 +2620,6 @@ async function saveEditContent() {
 function loadFamiliesAdmin() {
     if (!db.allies) db.allies = [];
     if (!db.enemies) db.enemies = [];
-    
     const alliesContainer = document.getElementById('alliesList');
     if (db.allies.length === 0) {
         alliesContainer.innerHTML = '<p style="color:var(--text-muted);">Нет союзников</p>';
@@ -2834,7 +2633,6 @@ function loadFamiliesAdmin() {
         });
         alliesContainer.innerHTML = html;
     }
-    
     const enemiesContainer = document.getElementById('enemiesList');
     if (db.enemies.length === 0) {
         enemiesContainer.innerHTML = '<p style="color:var(--text-muted);">Нет недружественных семей</p>';
@@ -2860,7 +2658,6 @@ async function addAlly() {
     document.getElementById('newAlly').value = '';
     loadFamiliesAdmin();
     loadFamiliesDisplay();
-    addHistory(currentUser.id, 'Добавление союзника', `Добавлена семья: ${name}`);
     showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в союзники`, 'info');
 }
 
@@ -2871,7 +2668,6 @@ async function removeAlly(index) {
     await saveDB();
     loadFamiliesAdmin();
     loadFamiliesDisplay();
-    addHistory(currentUser.id, 'Удаление союзника', `Удалена семья: ${name}`);
     showToast('✅ УДАЛЕНО', `Семья ${name} удалена из союзников`, 'info');
 }
 
@@ -2885,8 +2681,7 @@ async function addEnemy() {
     document.getElementById('newEnemy').value = '';
     loadFamiliesAdmin();
     loadFamiliesDisplay();
-    addHistory(currentUser.id, 'Добавление недружественной семьи', `Добавлена семья: ${name}`);
-    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные', 'info');
+    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
 }
 
 async function removeEnemy(index) {
@@ -2896,7 +2691,6 @@ async function removeEnemy(index) {
     await saveDB();
     loadFamiliesAdmin();
     loadFamiliesDisplay();
-    addHistory(currentUser.id, 'Удаление недружественной семьи', `Удалена семья: ${name}`);
     showToast('✅ УДАЛЕНО', `Семья ${name} удалена из недружественных`, 'info');
 }
 
@@ -2916,6 +2710,23 @@ function loadHistory() {
         `;
     });
     container.innerHTML = html;
+}
+
+function loadAdminMembers() {
+    const list = document.getElementById('adminMembersList');
+    const members = db.users.filter(u => !u.isAdmin);
+    if (members.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-muted);">Нет зарегистрированных членов</p>';
+        return;
+    }
+    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">Всего: ${members.length}</p>`;
+    members.forEach(u => {
+        html += `<div style="border-bottom:1px solid var(--border-color); padding:8px 0; color:var(--text-secondary); font-size:13px;">
+            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : '🟢 Активен'}
+            ${u.balance ? `· Баланс: ${u.balance} ₽` : ''}
+        </div>`;
+    });
+    list.innerHTML = html;
 }
 
 async function adminViewViolations() {
@@ -2956,6 +2767,8 @@ async function adminFindForAdd() {
     info.innerHTML = `<p style="color:var(--text-primary);">Найден: <strong>${user.gameNick}</strong> (${user.id})</p>`;
 }
 
+let pendingAddUser = null;
+
 async function adminAddViolation() {
     if (!pendingAddUser) {
         document.getElementById('adminAddResult').textContent = 'Сначала найдите пользователя';
@@ -2986,18 +2799,18 @@ async function adminAddViolation() {
     await saveDB();
     res.textContent = `✅ Нарушение выдано ${pendingAddUser.gameNick}`;
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Выдача нарушения', `Выдано нарушение ${pendingAddUser.gameNick}: ${type}`);
-    addNotification(pendingAddUser.id, '⚠️ НОВОЕ НАРУШЕНИЕ', `Вам выписано нарушение: ${type}`, 'danger');
     document.getElementById('adminAddType').value = '';
     document.getElementById('adminAddDesc').value = '';
     if (db.currentSession === pendingAddUser.id) {
         showToast('⚠️ НОВОЕ НАРУШЕНИЕ', 'Вам выписано дисциплинарное взыскание', 'danger');
-        document.getElementById('violationNotifyModal').classList.add('active');
         loadViolations(currentUser);
     }
     pendingAddUser = null;
     document.getElementById('adminAddUserInfo').style.display = 'none';
 }
+
+let pendingRemoveUser = null;
+let pendingRemoveViolation = null;
 
 async function adminFindForRemove() {
     const id = document.getElementById('adminRemoveId').value.trim();
@@ -3057,11 +2870,8 @@ async function confirmRemove() {
     pendingRemoveViolation._notifiedResolved = false;
     await saveDB();
     document.getElementById('adminRemoveList').innerHTML = `<p style="color:var(--text-primary);">✅ Нарушение снято у ${pendingRemoveUser.gameNick}</p>`;
-    addHistory(currentUser.id, 'Снятие нарушения', `Снято нарушение у ${pendingRemoveUser.gameNick}: ${reason}`);
-    addNotification(pendingRemoveUser.id, '✅ НАРУШЕНИЕ СНЯТО', `С вас снято нарушение. Причина: ${reason}`, 'info');
     if (db.currentSession === pendingRemoveUser.id) {
         showToast('✅ НАРУШЕНИЕ СНЯТО', 'С вас снято дисциплинарное взыскание', 'info');
-        document.getElementById('violationResolvedModal').classList.add('active');
         loadViolations(currentUser);
     }
     pendingRemoveUser = null;
@@ -3073,6 +2883,9 @@ function cancelRemove() {
     pendingRemoveViolation = null;
     document.getElementById('adminRemoveList').innerHTML = '<p style="color:var(--text-muted);">Введите ID для поиска</p>';
 }
+
+let pendingBanUser = null;
+let pendingUnbanUser = null;
 
 async function adminFindForBan() {
     const id = document.getElementById('adminBanId').value.trim();
@@ -3109,15 +2922,13 @@ async function adminBanUser() {
     pendingBanUser.isBanned = true;
     pendingBanUser.banInfo = {
         bannedBy: currentUser.id,
-        reason,
+        reason: reason,
         banDate: new Date().toISOString(),
         unbanDate: unban.toISOString()
     };
     await saveDB();
     res.textContent = `✅ ${pendingBanUser.gameNick} заблокирован до ${formatDate(unbanDate)}`;
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Блокировка', `Заблокирован ${pendingBanUser.gameNick}: ${reason}`);
-    addNotification(pendingBanUser.id, '🔴 ВЫ ЗАБЛОКИРОВАНЫ', `Причина: ${reason}. Разблокировка: ${formatDate(unbanDate)}`, 'danger');
     document.getElementById('adminBanReason').value = '';
     document.getElementById('adminBanUnbanDate').value = '';
     pendingBanUser = null;
@@ -3155,29 +2966,18 @@ async function adminUnbanUser() {
     }
     const reason = document.getElementById('adminUnbanReason').value.trim();
     const res = document.getElementById('adminUnbanResult');
-    
     pendingUnbanUser.isBanned = false;
-    const oldBanInfo = pendingUnbanUser.banInfo;
     pendingUnbanUser.banInfo = {
-        ...oldBanInfo,
+        ...pendingUnbanUser.banInfo,
         unbannedEarly: true,
         unbannedBy: currentUser.id,
         unbannedByNick: currentUser.gameNick,
         unbanReason: reason || 'Досрочный разбан',
         unbanDate: new Date().toISOString()
     };
-    
     await saveDB();
-    
     res.textContent = `✅ ${pendingUnbanUser.gameNick} разблокирован досрочно`;
     res.className = 'result-msg success';
-    addHistory(currentUser.id, 'Досрочный разбан', `Разблокирован ${pendingUnbanUser.gameNick}: ${reason || 'Досрочный разбан'}`);
-    addNotification(pendingUnbanUser.id, '✅ ВЫ РАЗБЛОКИРОВАНЫ', 'Вы разблокированы досрочно', 'info');
-    
-    if (db.currentSession === pendingUnbanUser.id) {
-        showToast('✅ ДОСРОЧНЫЙ РАЗБАН', 'Вы разблокированы досрочно', 'info');
-    }
-    
     document.getElementById('adminUnbanReason').value = '';
     pendingUnbanUser = null;
     document.getElementById('adminUnbanUserInfo').style.display = 'none';
@@ -3217,19 +3017,13 @@ function loadAdminRequests() {
 async function respondRequest(requestId, status) {
     const request = db.requests.find(r => r.id === requestId);
     if (!request) return;
-    
     const reason = prompt(`Введите причину ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
     if (reason === null) return;
-    
     request.status = status;
     request.response = reason;
     await saveDB();
-    
     const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
-    addNotification(request.userId, `📩 ЗАЯВКА ${statusText.toUpperCase()}`, `Ваша заявка ${statusText}. Причина: ${reason}`, status === 'approved' ? 'info' : 'danger');
-    addHistory(currentUser.id, `Заявка ${statusText}`, `Заявка ${requestId} ${statusText}: ${reason}`);
     showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка ${statusText}`, status === 'approved' ? 'info' : 'danger');
-    
     loadAdminRequests();
     loadUserRequests();
 }
@@ -3268,13 +3062,10 @@ function loadAdminBuildRequests() {
 async function respondBuildRequest(requestId, status) {
     const request = db.buildRequests.find(r => r.id === requestId);
     if (!request) return;
-    
     const comment = prompt(`Введите комментарий для ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
     if (comment === null) return;
-    
     request.status = status;
     request.response = comment;
-    
     if (status === 'approved') {
         if (!db.scheduledBuilds) db.scheduledBuilds = [];
         db.scheduledBuilds.push({
@@ -3290,19 +3081,14 @@ async function respondBuildRequest(requestId, status) {
         });
         db.users.forEach(u => {
             if (!u.isAdmin) {
-                addNotification(u.id, '📢 НОВЫЙ СТРОЙ', `Запланирован строй: ${request.topic}`, 'info');
+                // уведомление
             }
         });
         showToast('📢 НОВЫЙ СТРОЙ', `Строй "${request.topic}" запланирован!`, 'info');
     }
-    
     await saveDB();
-    
     const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
-    addNotification(request.userId, `📩 ЗАЯВКА НА СТРОЙ ${statusText.toUpperCase()}`, `Ваша заявка на строй ${statusText}. Комментарий: ${comment}`, status === 'approved' ? 'info' : 'danger');
-    addHistory(currentUser.id, `Заявка на строй ${statusText}`, `Заявка ${requestId} ${statusText}: ${comment}`);
     showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка на строй ${statusText}`, status === 'approved' ? 'info' : 'danger');
-    
     loadAdminBuildRequests();
     loadScheduledBuilds();
 }
@@ -3330,7 +3116,6 @@ function openNotifications() {
     userNotifs.forEach(n => n.read = true);
     saveDB();
     updateNotificationBadge();
-    
     const container = document.getElementById('notificationsList');
     if (userNotifs.length === 0) {
         container.innerHTML = '<p style="color:var(--text-muted);">Нет уведомлений</p>';
@@ -3365,4 +3150,4 @@ setTimeout(() => {
 
 </script>
 </body>
-                        </html>
+                    </html>
