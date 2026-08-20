@@ -593,6 +593,7 @@
             <button data-page="adminSearch" onclick="showPage('adminSearch')">Поиск</button>
             <button data-page="adminPremium" onclick="showPage('adminPremium')">💰 Выдать премию</button>
             <button data-page="adminWithdraw" onclick="showPage('adminWithdraw')">📤 Заявки на вывод</button>
+            <button data-page="adminWithdrawMoney" onclick="showPage('adminWithdrawMoney')">💸 Снять деньги со счета</button>
         </div>
     </div>
 
@@ -1029,6 +1030,21 @@
             </div>
         </div>
 
+        <!-- ===== АДМИН: СНЯТЬ ДЕНЬГИ СО СЧЕТА ===== -->
+        <div id="page-adminWithdrawMoney" class="page">
+            <h2>💸 СНЯТЬ ДЕНЬГИ СО СЧЕТА</h2>
+            <div style="border:1px solid var(--border-color); padding:20px; background:var(--bg-card);">
+                <p style="color:var(--text-secondary); margin-bottom:12px;">Введите ID пользователя, сумму и причину списания:</p>
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px;">
+                    <input type="text" id="withdrawMoneyUserId" placeholder="ID пользователя" style="flex:1; min-width:120px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
+                    <input type="number" id="withdrawMoneyAmount" placeholder="Сумма (₽)" style="flex:1; min-width:120px; padding:10px 12px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
+                </div>
+                <input type="text" id="withdrawMoneyReason" placeholder="Причина списания" style="width:100%; padding:10px 12px; margin-bottom:10px; background:var(--bg-input); border:1px solid var(--border-color); color:var(--text-primary); outline:none;">
+                <button class="btn btn-danger" onclick="withdrawMoneyFromUser()" style="width:auto; padding:10px 30px;">💸 Списать деньги</button>
+                <div id="withdrawMoneyResult" class="result-msg" style="margin-top:10px;"></div>
+            </div>
+        </div>
+
     </div>
 </div>
 
@@ -1199,8 +1215,6 @@ async function loadDB() {
         const res = await fetch(JSONBIN_URL, { headers: { 'X-Master-Key': MASTER_KEY } });
         const data = await res.json();
         db = data.record;
-        
-        // Проверяем структуру
         if (!db.users) db.users = [];
         if (!db.usedIds) db.usedIds = ['00000', '11111'];
         if (!db.violationCounter) db.violationCounter = 0;
@@ -1220,14 +1234,11 @@ async function loadDB() {
                 family_info: 'Информация о семье...'
             };
         }
-        
-        // Добавляем баланс каждому пользователю
         db.users.forEach(u => {
             if (u.balance === undefined) u.balance = 0;
             if (!u.premiumHistory) u.premiumHistory = [];
             if (u.violations === undefined) u.violations = [];
         });
-        
         return db;
     } catch (e) {
         console.error('Ошибка загрузки БД:', e);
@@ -1335,6 +1346,33 @@ function showToast(title, text, type = 'info') {
     `;
     container.appendChild(toast);
     setTimeout(() => { if (toast.parentElement) toast.remove(); }, 6000);
+}
+
+function addNotification(userId, title, text, type = 'info') {
+    if (!db.notifications) db.notifications = [];
+    db.notifications.push({
+        id: 'n' + Date.now(),
+        userId: userId,
+        title: title,
+        text: text,
+        type: type,
+        date: new Date().toISOString(),
+        read: false
+    });
+    updateNotificationBadge();
+}
+
+function addHistory(userId, action, details) {
+    if (!db.history) db.history = [];
+    const user = getUserById(userId);
+    db.history.push({
+        id: 'h' + Date.now(),
+        userId: userId,
+        userNick: user ? user.gameNick : 'Неизвестен',
+        action: action,
+        details: details,
+        date: new Date().toISOString()
+    });
 }
 
 // ================================================================
@@ -1624,10 +1662,6 @@ function enterMainPage(user) {
     showPage('profile');
 }
 
-// ================================================================
-// (ОСТАЛЬНЫЕ ФУНКЦИИ - ОСТАВЛЯЮ КАК БЫЛО)
-// ================================================================
-
 function updateNotificationBadge() {
     if (!db.notifications) db.notifications = [];
     const unread = db.notifications.filter(n => !n.read && n.userId === currentUser.id);
@@ -1720,6 +1754,7 @@ async function saveProfile() {
     loadProfile(currentUser);
     res.textContent = '✅ Информация обновлена';
     res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Обновление профиля', 'Изменены данные профиля');
     setTimeout(() => closeEditModal(), 800);
 }
 
@@ -1774,6 +1809,7 @@ async function changePassword() {
     await saveDB();
     res.textContent = '✅ Пароль успешно изменён!';
     res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Смена пароля', 'Пароль успешно изменён');
     showToast('✅ ПАРОЛЬ ИЗМЕНЁН', 'Ваш пароль успешно обновлён', 'info');
     setTimeout(() => closePasswordModal(), 1000);
 }
@@ -1863,6 +1899,7 @@ async function submitRequestRemove() {
     await saveDB();
     res.textContent = '✅ Заявка отправлена! Ожидайте ответа администрации.';
     res.className = 'result-msg success';
+    addNotification(currentUser.id, '📤 ЗАЯВКА ОТПРАВЛЕНА', 'Заявка на снятие нарушения отправлена', 'info');
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Ваша заявка на снятие нарушения отправлена', 'info');
     setTimeout(() => closeRequestModal('requestRemoveModal'), 1500);
     loadUserRequests();
@@ -1907,6 +1944,7 @@ async function submitRequestAdd() {
     await saveDB();
     res.textContent = '✅ Заявка отправлена! Есть 5 минут на отправку фрапса строя ОЗГЗ.';
     res.className = 'result-msg success';
+    addNotification(currentUser.id, '📤 ЗАЯВКА ОТПРАВЛЕНА', 'Заявка на выдачу нарушения отправлена', 'info');
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Не забудьте отправить фрапс строя ОЗГЗ!', 'info');
     setTimeout(() => closeRequestModal('requestAddModal'), 2000);
     loadUserRequests();
@@ -1979,6 +2017,7 @@ async function submitBuildRequest() {
     await saveDB();
     res.textContent = '✅ Заявка отправлена! Не забудьте прочитать правила строя.';
     res.className = 'result-msg success';
+    addNotification(currentUser.id, '📤 ЗАЯВКА НА СТРОЙ', 'Заявка на строй отправлена', 'info');
     showToast('✅ ЗАЯВКА НА СТРОЙ', 'Заявка отправлена администрации', 'info');
     document.getElementById('buildStart').value = '';
     document.getElementById('buildEnd').value = '';
@@ -2049,6 +2088,7 @@ async function deleteBuild(buildId) {
     await saveDB();
     closeBuildDetail();
     loadScheduledBuilds();
+    addHistory(currentUser.id, 'Удаление строя', `Удалён строй из запланированных`);
     showToast('🗑️ СТРОЙ УДАЛЁН', 'Строй удалён из запланированных', 'info');
 }
 
@@ -2142,10 +2182,11 @@ async function submitWithdraw() {
     await saveDB();
     res.textContent = '✅ Заявка на вывод отправлена! Ожидайте одобрения администрации.';
     res.className = 'result-msg success';
+    addNotification(currentUser.id, '📤 ЗАЯВКА НА ВЫВОД', `Заявка на вывод ${withdrawAmount} ₽ отправлена`, 'info');
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Заявка на вывод отправлена', 'info');
     db.users.forEach(u => {
         if (isAdmin(u)) {
-            // showToast или уведомление админам
+            addNotification(u.id, '📤 НОВАЯ ЗАЯВКА НА ВЫВОД', `${currentUser.gameNick} запросил вывод ${withdrawAmount} ₽`, 'info');
         }
     });
     setTimeout(() => closeWithdrawModal(), 1500);
@@ -2153,10 +2194,15 @@ async function submitWithdraw() {
     if (isAdmin(currentUser)) loadWithdrawRequests();
 }
 
+// ================================================================
+// АДМИН: ВЫДАТЬ ПРЕМИЮ
+// ================================================================
+
 async function issuePremium() {
     const userId = document.getElementById('premiumUserId').value.trim();
     const amount = parseInt(document.getElementById('premiumAmount').value);
     const res = document.getElementById('premiumResult');
+    
     if (!userId) {
         res.textContent = 'Введите ID пользователя';
         res.className = 'result-msg error';
@@ -2167,6 +2213,7 @@ async function issuePremium() {
         res.className = 'result-msg error';
         return;
     }
+    
     const user = getUserById(userId);
     if (!user) {
         res.textContent = `❌ Пользователь с ID "${userId}" не найден`;
@@ -2178,6 +2225,7 @@ async function issuePremium() {
         res.className = 'result-msg error';
         return;
     }
+    
     user.balance = (user.balance || 0) + amount;
     if (!user.premiumHistory) user.premiumHistory = [];
     user.premiumHistory.push({
@@ -2185,14 +2233,113 @@ async function issuePremium() {
         text: `Премия от ${currentUser.gameNick} (${amount} ₽)`,
         date: new Date().toISOString()
     });
+    
+    // Уведомление пользователю
+    addNotification(userId, '💰 ПОЛУЧЕНА ПРЕМИЯ', `Вам начислено ${amount} ₽ от ${currentUser.gameNick}`, 'info');
+    
+    // Уведомление админам
+    db.users.forEach(u => {
+        if (isAdmin(u) && u.id !== currentUser.id) {
+            addNotification(u.id, '💰 ВЫДАЧА ПРЕМИИ', `${currentUser.gameNick} выдал ${amount} ₽ пользователю ${user.gameNick}`, 'info');
+        }
+    });
+    
+    // История
+    addHistory(currentUser.id, 'Выдача премии', `Выдано ${amount} ₽ пользователю ${user.gameNick} (${user.id})`);
+    
     await saveDB();
+    
     res.textContent = `✅ Премия ${amount} ₽ выдана пользователю ${user.gameNick} (ID: ${user.id})`;
     res.className = 'result-msg success';
     showToast('💰 ПРЕМИЯ ВЫДАНА', `${user.gameNick} получил ${amount} ₽`, 'info');
+    
     document.getElementById('premiumUserId').value = '';
     document.getElementById('premiumAmount').value = '';
     if (currentUser) loadPremium(currentUser);
 }
+
+// ================================================================
+// АДМИН: СНЯТЬ ДЕНЬГИ СО СЧЕТА
+// ================================================================
+
+async function withdrawMoneyFromUser() {
+    const userId = document.getElementById('withdrawMoneyUserId').value.trim();
+    const amount = parseInt(document.getElementById('withdrawMoneyAmount').value);
+    const reason = document.getElementById('withdrawMoneyReason').value.trim();
+    const res = document.getElementById('withdrawMoneyResult');
+    
+    if (!userId) {
+        res.textContent = 'Введите ID пользователя';
+        res.className = 'result-msg error';
+        return;
+    }
+    if (!amount || amount < 1) {
+        res.textContent = 'Введите корректную сумму';
+        res.className = 'result-msg error';
+        return;
+    }
+    if (!reason) {
+        res.textContent = 'Введите причину списания';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    const user = getUserById(userId);
+    if (!user) {
+        res.textContent = `❌ Пользователь с ID "${userId}" не найден`;
+        res.className = 'result-msg error';
+        return;
+    }
+    if (isAdmin(user)) {
+        res.textContent = '❌ Нельзя списывать деньги у администратора';
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    const currentBalance = user.balance || 0;
+    if (currentBalance < amount) {
+        res.textContent = `❌ Недостаточно средств. Баланс пользователя: ${currentBalance} ₽`;
+        res.className = 'result-msg error';
+        return;
+    }
+    
+    // Списываем деньги
+    user.balance = currentBalance - amount;
+    if (!user.premiumHistory) user.premiumHistory = [];
+    user.premiumHistory.push({
+        amount: -amount,
+        text: `Списание средств администратором ${currentUser.gameNick}: ${reason}`,
+        date: new Date().toISOString()
+    });
+    
+    // Уведомление пользователю
+    addNotification(userId, '💸 СПИСАНИЕ СРЕДСТВ', `Администратор ${currentUser.gameNick} списал ${amount} ₽. Причина: ${reason}`, 'danger');
+    
+    // Уведомление админам
+    db.users.forEach(u => {
+        if (isAdmin(u) && u.id !== currentUser.id) {
+            addNotification(u.id, '💸 СПИСАНИЕ СРЕДСТВ', `${currentUser.gameNick} списал ${amount} ₽ у ${user.gameNick}. Причина: ${reason}`, 'info');
+        }
+    });
+    
+    // История
+    addHistory(currentUser.id, 'Списание средств', `Списано ${amount} ₽ у ${user.gameNick} (${user.id}). Причина: ${reason}`);
+    
+    await saveDB();
+    
+    res.textContent = `✅ Списано ${amount} ₽ у пользователя ${user.gameNick} (ID: ${user.id})`;
+    res.className = 'result-msg success';
+    showToast('💸 ДЕНЬГИ СПИСАНЫ', `${user.gameNick} списано ${amount} ₽`, 'danger');
+    
+    document.getElementById('withdrawMoneyUserId').value = '';
+    document.getElementById('withdrawMoneyAmount').value = '';
+    document.getElementById('withdrawMoneyReason').value = '';
+    if (currentUser) loadPremium(currentUser);
+}
+
+// ================================================================
+// АДМИН: ЗАЯВКИ НА ВЫВОД
+// ================================================================
 
 function loadWithdrawRequests() {
     const container = document.getElementById('withdrawRequestsList');
@@ -2240,14 +2387,485 @@ async function respondWithdraw(requestId, status) {
             text: `Вывод средств (одобрен)`,
             date: new Date().toISOString()
         });
-        showToast('✅ ВЫВОД ОДОБРЕН', `Вывод ${withdrawAmount} ₽ одобрен`, 'info');
+        addNotification(user.id, '✅ ВЫВОД ОДОБРЕН', `Вывод ${withdrawAmount} ₽ одобрен. Комментарий: ${comment}`, 'info');
+        addHistory(currentUser.id, 'Одобрение вывода', `Одобрен вывод ${withdrawAmount} ₽ у ${user.gameNick}`);
     } else if (status === 'rejected' && user) {
-        showToast('❌ ВЫВОД ОТКЛОНЁН', `Вывод ${request.amount} ₽ отклонён`, 'danger');
+        addNotification(user.id, '❌ ВЫВОД ОТКЛОНЁН', `Вывод ${request.amount} ₽ отклонён. Комментарий: ${comment}`, 'danger');
+        addHistory(currentUser.id, 'Отклонение вывода', `Отклонён вывод ${request.amount} ₽ у ${user.gameNick}`);
     }
     await saveDB();
     loadWithdrawRequests();
     if (user) loadPremium(user);
 }
+
+// ================================================================
+// ОСТАЛЬНЫЕ АДМИН-ФУНКЦИИ
+// ================================================================
+
+function loadAdminMembers() {
+    const list = document.getElementById('adminMembersList');
+    const members = db.users.filter(u => !u.isAdmin);
+    if (members.length === 0) {
+        list.innerHTML = '<p style="color:var(--text-muted);">Нет зарегистрированных членов</p>';
+        return;
+    }
+    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">Всего: ${members.length}</p>`;
+    members.forEach(u => {
+        html += `<div style="border-bottom:1px solid var(--border-color); padding:8px 0; color:var(--text-secondary); font-size:13px;">
+            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : '🟢 Активен'}
+            ${u.balance ? `· Баланс: ${u.balance} ₽` : ''}
+        </div>`;
+    });
+    list.innerHTML = html;
+}
+
+function loadHistory() {
+    const container = document.getElementById('historyList');
+    if (!db.history || db.history.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);">История пуста</p>';
+        return;
+    }
+    let html = '';
+    db.history.slice(-50).reverse().forEach(h => {
+        html += `
+            <div style="border-bottom:1px solid var(--border-color); padding:6px 0; color:var(--text-secondary); font-size:13px;">
+                <span style="color:var(--text-primary);">${h.userNick}</span> · ${h.action}
+                <span style="color:var(--text-muted); font-size:11px; display:block;">${h.details} · ${formatDate(h.date)}</span>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+async function adminViewViolations() {
+    const id = document.getElementById('adminVioSearchId').value.trim();
+    const res = document.getElementById('adminVioResult');
+    if (!id) { res.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
+    const user = getUserById(id);
+    if (!user) { res.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
+    const violations = user.violations || [];
+    if (violations.length === 0) {
+        res.innerHTML = `<p style="color:var(--text-muted);">У ${user.gameNick} (${user.id}) нет нарушений</p>`;
+        return;
+    }
+    const sorted = [...violations].sort((a, b) => new Date(b.date) - new Date(a.date));
+    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">${user.gameNick} (${user.id}) — ${violations.length} нарушений</p>`;
+    sorted.forEach(v => {
+        html += `
+            <div class="violation-item ${v.resolved ? 'resolved' : ''}">
+                <div class="v-date">${formatDate(v.date)}</div>
+                <div class="v-type">${v.resolved ? '✅ СНЯТО' : '⚠️'} ${v.type || 'Нарушение'}</div>
+                <div class="v-desc">${v.description || 'Нет описания'}</div>
+                <div class="v-meta">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
+                ${v.resolved ? `<div class="v-resolved">Снято (${formatDate(v.resolvedDate)}) — ${v.resolutionReason || 'Причина не указана'}</div>` : ''}
+            </div>
+        `;
+    });
+    res.innerHTML = html;
+}
+
+async function adminFindForAdd() {
+    const id = document.getElementById('adminAddId').value.trim();
+    const info = document.getElementById('adminAddUserInfo');
+    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
+    const user = getUserById(id);
+    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
+    pendingAddUser = user;
+    info.style.display = 'block';
+    info.innerHTML = `<p style="color:var(--text-primary);">Найден: <strong>${user.gameNick}</strong> (${user.id})</p>`;
+}
+
+let pendingAddUser = null;
+
+async function adminAddViolation() {
+    if (!pendingAddUser) {
+        document.getElementById('adminAddResult').textContent = 'Сначала найдите пользователя';
+        document.getElementById('adminAddResult').className = 'result-msg error';
+        return;
+    }
+    const type = document.getElementById('adminAddType').value.trim();
+    const desc = document.getElementById('adminAddDesc').value.trim();
+    const res = document.getElementById('adminAddResult');
+    if (!type || !desc) {
+        res.textContent = 'Заполните все поля';
+        res.className = 'result-msg error';
+        return;
+    }
+    const violation = {
+        violationId: 'v' + (++db.violationCounter),
+        type, description: desc,
+        date: new Date().toISOString(),
+        issuedBy: currentUser.id,
+        issuedByNick: currentUser.gameNick,
+        resolved: false,
+        resolvedDate: null,
+        resolutionReason: null,
+        _notified: false,
+        _notifiedResolved: false
+    };
+    pendingAddUser.violations.push(violation);
+    await saveDB();
+    res.textContent = `✅ Нарушение выдано ${pendingAddUser.gameNick}`;
+    res.className = 'result-msg success';
+    addNotification(pendingAddUser.id, '⚠️ НОВОЕ НАРУШЕНИЕ', `Вам выписано нарушение: ${type}`, 'danger');
+    addHistory(currentUser.id, 'Выдача нарушения', `Выдано нарушение ${pendingAddUser.gameNick}: ${type}`);
+    document.getElementById('adminAddType').value = '';
+    document.getElementById('adminAddDesc').value = '';
+    if (db.currentSession === pendingAddUser.id) {
+        showToast('⚠️ НОВОЕ НАРУШЕНИЕ', 'Вам выписано дисциплинарное взыскание', 'danger');
+        loadViolations(currentUser);
+    }
+    pendingAddUser = null;
+    document.getElementById('adminAddUserInfo').style.display = 'none';
+}
+
+let pendingRemoveUser = null;
+let pendingRemoveViolation = null;
+
+async function adminFindForRemove() {
+    const id = document.getElementById('adminRemoveId').value.trim();
+    const list = document.getElementById('adminRemoveList');
+    if (!id) { list.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
+    const user = getUserById(id);
+    if (!user) { list.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
+    const violations = user.violations.filter(v => !v.resolved);
+    if (violations.length === 0) {
+        list.innerHTML = `<p style="color:var(--text-muted);">У ${user.gameNick} нет активных нарушений</p>`;
+        return;
+    }
+    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">${user.gameNick} (${user.id}) — активные нарушения:</p>`;
+    violations.forEach(v => {
+        html += `
+            <div class="violation-item" style="cursor:pointer; border-left-color:var(--text-primary);" onclick="selectForRemove('${v.violationId}')">
+                <div class="v-date">${formatDate(v.date)}</div>
+                <div class="v-type">⚠️ ${v.type || 'Нарушение'}</div>
+                <div class="v-desc">${v.description || 'Нет описания'}</div>
+                <div class="v-meta">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
+            </div>
+        `;
+    });
+    list.innerHTML = html;
+    pendingRemoveUser = user;
+}
+
+function selectForRemove(violationId) {
+    if (!pendingRemoveUser) return;
+    const violation = pendingRemoveUser.violations.find(v => v.violationId === violationId);
+    if (!violation) return;
+    pendingRemoveViolation = violation;
+    const list = document.getElementById('adminRemoveList');
+    list.innerHTML = `
+        <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-secondary);">
+            <p style="color:var(--text-primary);">Выбрано нарушение:</p>
+            <p style="color:var(--text-secondary); font-size:13px;">${violation.type} — ${violation.description}</p>
+            <p style="color:var(--text-muted); font-size:12px;">${formatDate(violation.date)}</p>
+            <input type="text" id="removeReason" placeholder="Причина снятия" style="margin:10px 0;">
+            <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                <button class="btn btn-small" onclick="confirmRemove()" style="width:auto;">Снять</button>
+                <button class="btn btn-small btn-outline" onclick="cancelRemove()" style="width:auto;">Отмена</button>
+            </div>
+            <div id="removeResult" class="result-msg"></div>
+        </div>
+    `;
+}
+
+async function confirmRemove() {
+    if (!pendingRemoveUser || !pendingRemoveViolation) return;
+    const reason = document.getElementById('removeReason').value.trim();
+    const res = document.getElementById('removeResult');
+    if (!reason) { res.textContent = 'Введите причину'; res.className = 'result-msg error'; return; }
+    pendingRemoveViolation.resolved = true;
+    pendingRemoveViolation.resolvedDate = new Date().toISOString();
+    pendingRemoveViolation.resolutionReason = reason;
+    pendingRemoveViolation._notifiedResolved = false;
+    await saveDB();
+    document.getElementById('adminRemoveList').innerHTML = `<p style="color:var(--text-primary);">✅ Нарушение снято у ${pendingRemoveUser.gameNick}</p>`;
+    addNotification(pendingRemoveUser.id, '✅ НАРУШЕНИЕ СНЯТО', `С вас снято нарушение. Причина: ${reason}`, 'info');
+    addHistory(currentUser.id, 'Снятие нарушения', `Снято нарушение у ${pendingRemoveUser.gameNick}: ${reason}`);
+    if (db.currentSession === pendingRemoveUser.id) {
+        showToast('✅ НАРУШЕНИЕ СНЯТО', 'С вас снято дисциплинарное взыскание', 'info');
+        loadViolations(currentUser);
+    }
+    pendingRemoveUser = null;
+    pendingRemoveViolation = null;
+}
+
+function cancelRemove() {
+    pendingRemoveUser = null;
+    pendingRemoveViolation = null;
+    document.getElementById('adminRemoveList').innerHTML = '<p style="color:var(--text-muted);">Введите ID для поиска</p>';
+}
+
+let pendingBanUser = null;
+let pendingUnbanUser = null;
+
+async function adminFindForBan() {
+    const id = document.getElementById('adminBanId').value.trim();
+    const info = document.getElementById('adminBanUserInfo');
+    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
+    const user = getUserById(id);
+    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
+    if (isAdmin(user)) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Нельзя заблокировать администратора</p>'; return; }
+    pendingBanUser = user;
+    info.style.display = 'block';
+    info.innerHTML = `<p style="color:var(--text-primary);">Найден: <strong>${user.gameNick}</strong> (${user.id}) — ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</p>`;
+}
+
+async function adminBanUser() {
+    if (!pendingBanUser) {
+        document.getElementById('adminBanResult').textContent = 'Сначала найдите пользователя';
+        document.getElementById('adminBanResult').className = 'result-msg error';
+        return;
+    }
+    const reason = document.getElementById('adminBanReason').value.trim();
+    const unbanDate = document.getElementById('adminBanUnbanDate').value;
+    const res = document.getElementById('adminBanResult');
+    if (!reason || !unbanDate) {
+        res.textContent = 'Заполните все поля';
+        res.className = 'result-msg error';
+        return;
+    }
+    const unban = new Date(unbanDate);
+    if (unban <= new Date()) {
+        res.textContent = 'Дата разблокировки должна быть в будущем';
+        res.className = 'result-msg error';
+        return;
+    }
+    pendingBanUser.isBanned = true;
+    pendingBanUser.banInfo = {
+        bannedBy: currentUser.id,
+        reason: reason,
+        banDate: new Date().toISOString(),
+        unbanDate: unban.toISOString()
+    };
+    await saveDB();
+    res.textContent = `✅ ${pendingBanUser.gameNick} заблокирован до ${formatDate(unbanDate)}`;
+    res.className = 'result-msg success';
+    addNotification(pendingBanUser.id, '🔴 ВЫ ЗАБЛОКИРОВАНЫ', `Причина: ${reason}. Разблокировка: ${formatDate(unbanDate)}`, 'danger');
+    addHistory(currentUser.id, 'Блокировка', `Заблокирован ${pendingBanUser.gameNick}: ${reason}`);
+    document.getElementById('adminBanReason').value = '';
+    document.getElementById('adminBanUnbanDate').value = '';
+    pendingBanUser = null;
+    document.getElementById('adminBanUserInfo').style.display = 'none';
+    loadAdminMembers();
+}
+
+async function adminFindForUnban() {
+    const id = document.getElementById('adminUnbanId').value.trim();
+    const info = document.getElementById('adminUnbanUserInfo');
+    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
+    const user = getUserById(id);
+    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
+    if (!user.isBanned) {
+        info.style.display = 'block';
+        info.innerHTML = `<p style="color:var(--success-color);">${user.gameNick} (${user.id}) — не заблокирован</p>`;
+        pendingUnbanUser = null;
+        return;
+    }
+    pendingUnbanUser = user;
+    info.style.display = 'block';
+    info.innerHTML = `
+        <p style="color:var(--text-primary);">🔴 Заблокирован: <strong>${user.gameNick}</strong> (${user.id})</p>
+        <p style="color:var(--text-secondary); font-size:13px;">Причина: ${user.banInfo.reason}</p>
+        <p style="color:var(--text-secondary); font-size:13px;">Забанил: ${getAdminNick(user.banInfo.bannedBy)}</p>
+        <p style="color:var(--text-secondary); font-size:13px;">Разблокировка: ${formatDate(user.banInfo.unbanDate)}</p>
+    `;
+}
+
+async function adminUnbanUser() {
+    if (!pendingUnbanUser) {
+        document.getElementById('adminUnbanResult').textContent = 'Сначала найдите заблокированного пользователя';
+        document.getElementById('adminUnbanResult').className = 'result-msg error';
+        return;
+    }
+    const reason = document.getElementById('adminUnbanReason').value.trim();
+    const res = document.getElementById('adminUnbanResult');
+    pendingUnbanUser.isBanned = false;
+    pendingUnbanUser.banInfo = {
+        ...pendingUnbanUser.banInfo,
+        unbannedEarly: true,
+        unbannedBy: currentUser.id,
+        unbannedByNick: currentUser.gameNick,
+        unbanReason: reason || 'Досрочный разбан',
+        unbanDate: new Date().toISOString()
+    };
+    await saveDB();
+    res.textContent = `✅ ${pendingUnbanUser.gameNick} разблокирован досрочно`;
+    res.className = 'result-msg success';
+    addNotification(pendingUnbanUser.id, '✅ ВЫ РАЗБЛОКИРОВАНЫ', 'Вы разблокированы досрочно', 'info');
+    addHistory(currentUser.id, 'Досрочный разбан', `Разблокирован ${pendingUnbanUser.gameNick} досрочно`);
+    document.getElementById('adminUnbanReason').value = '';
+    pendingUnbanUser = null;
+    document.getElementById('adminUnbanUserInfo').style.display = 'none';
+    loadAdminMembers();
+}
+
+function loadAdminRequests() {
+    const container = document.getElementById('adminRequestsList');
+    if (!db.requests) db.requests = [];
+    const pending = db.requests.filter(r => r.status === 'pending');
+    if (pending.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);">Нет активных заявок</p>';
+        return;
+    }
+    let html = '';
+    pending.forEach(r => {
+        const typeText = r.type === 'remove' ? 'Снятие нарушения' : 'Выдача нарушения';
+        html += `
+            <div class="request-item">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                    <span style="color:var(--text-primary);">${typeText}</span>
+                    <span style="color:#ffaa00;">⏳ Ожидает</span>
+                </div>
+                <div class="req-text">От: ${r.userNick} → ${r.targetNick || r.target}</div>
+                <div class="req-text" style="color:var(--text-secondary);">${r.type === 'remove' ? r.reason : r.reason}</div>
+                <div class="req-meta">${formatDate(r.date || r.requestDate)}</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                    <button class="btn btn-small btn-green" onclick="respondRequest('${r.id}', 'approved')" style="width:auto;">Принять</button>
+                    <button class="btn btn-small btn-danger" onclick="respondRequest('${r.id}', 'rejected')" style="width:auto;">Отклонить</button>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+async function respondRequest(requestId, status) {
+    const request = db.requests.find(r => r.id === requestId);
+    if (!request) return;
+    const reason = prompt(`Введите причину ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
+    if (reason === null) return;
+    request.status = status;
+    request.response = reason;
+    await saveDB();
+    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
+    addNotification(request.userId, `📩 ЗАЯВКА ${statusText.toUpperCase()}`, `Ваша заявка ${statusText}. Причина: ${reason}`, status === 'approved' ? 'info' : 'danger');
+    addHistory(currentUser.id, `Заявка ${statusText}`, `Заявка ${requestId} ${statusText}: ${reason}`);
+    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка ${statusText}`, status === 'approved' ? 'info' : 'danger');
+    loadAdminRequests();
+    loadUserRequests();
+}
+
+function loadAdminBuildRequests() {
+    const container = document.getElementById('adminBuildList');
+    if (!db.buildRequests) db.buildRequests = [];
+    const pending = db.buildRequests.filter(r => r.status === 'pending');
+    if (pending.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);">Нет заявок на строй</p>';
+        return;
+    }
+    let html = '';
+    pending.forEach(r => {
+        html += `
+            <div class="request-item">
+                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
+                    <span style="color:var(--text-primary);">${r.topic}</span>
+                    <span style="color:#ffaa00;">⏳ Ожидает</span>
+                </div>
+                <div class="req-text">От: ${r.userNick}</div>
+                <div class="req-text" style="color:var(--text-secondary);">Начало: ${formatDateShort(r.start)} · Окончание: ${formatDateShort(r.end)}</div>
+                <div class="req-text" style="color:var(--text-muted);">Обязаны: ${r.required.join(', ')}</div>
+                <div class="req-text" style="color:var(--text-muted);">Запрещено: ${r.forbidden.join(', ')}</div>
+                <div class="req-meta">${formatDate(r.date)}</div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
+                    <button class="btn btn-small btn-green" onclick="respondBuildRequest('${r.id}', 'approved')" style="width:auto;">Одобрить</button>
+                    <button class="btn btn-small btn-danger" onclick="respondBuildRequest('${r.id}', 'rejected')" style="width:auto;">Отклонить</button>
+                </div>
+            </div>
+        `;
+    });
+    container.innerHTML = html;
+}
+
+async function respondBuildRequest(requestId, status) {
+    const request = db.buildRequests.find(r => r.id === requestId);
+    if (!request) return;
+    const comment = prompt(`Введите комментарий для ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
+    if (comment === null) return;
+    request.status = status;
+    request.response = comment;
+    if (status === 'approved') {
+        if (!db.scheduledBuilds) db.scheduledBuilds = [];
+        db.scheduledBuilds.push({
+            id: 's' + Date.now(),
+            topic: request.topic,
+            start: request.start,
+            end: request.end,
+            required: request.required,
+            forbidden: request.forbidden,
+            userNick: request.userNick,
+            organizerNick: request.userNick,
+            date: new Date().toISOString()
+        });
+        db.users.forEach(u => {
+            if (!u.isAdmin) {
+                addNotification(u.id, '📢 НОВЫЙ СТРОЙ', `Запланирован строй: ${request.topic}`, 'info');
+            }
+        });
+        addHistory(currentUser.id, 'Одобрение строя', `Одобрен строй: ${request.topic}`);
+        showToast('📢 НОВЫЙ СТРОЙ', `Строй "${request.topic}" запланирован!`, 'info');
+    } else {
+        addNotification(request.userId, '❌ ЗАЯВКА НА СТРОЙ ОТКЛОНЕНА', `Ваша заявка на строй отклонена. Причина: ${comment}`, 'danger');
+        addHistory(currentUser.id, 'Отклонение строя', `Отклонён строй: ${request.topic}`);
+    }
+    await saveDB();
+    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
+    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка на строй ${statusText}`, status === 'approved' ? 'info' : 'danger');
+    loadAdminBuildRequests();
+    loadScheduledBuilds();
+}
+
+async function adminSearchUser() {
+    const id = document.getElementById('adminSearchId').value.trim();
+    const res = document.getElementById('adminSearchResult');
+    if (!id) { res.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
+    const user = getUserById(id);
+    if (!user) { res.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
+    res.innerHTML = `
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>ID:</strong> ${user.id}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Игровой ник:</strong> ${user.gameNick}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Telegram:</strong> ${user.tgUser}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Email:</strong> ${user.email || '-'}</div>
+        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Статус:</strong> ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</div>
+        ${user.isBanned ? `<div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Причина бана:</strong> ${user.banInfo?.reason || '-'}</div>` : ''}
+        <div style="padding:6px 0;"><strong>Нарушений:</strong> ${(user.violations || []).length}</div>
+    `;
+}
+
+function openNotifications() {
+    if (!db.notifications) db.notifications = [];
+    const userNotifs = db.notifications.filter(n => n.userId === currentUser.id);
+    userNotifs.forEach(n => n.read = true);
+    saveDB();
+    updateNotificationBadge();
+    const container = document.getElementById('notificationsList');
+    if (userNotifs.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-muted);">Нет уведомлений</p>';
+    } else {
+        let html = '';
+        userNotifs.sort((a, b) => new Date(b.date) - new Date(a.date));
+        userNotifs.forEach(n => {
+            const color = n.type === 'danger' ? 'var(--danger-color)' : 'var(--success-color)';
+            html += `
+                <div style="border-bottom:1px solid var(--border-color); padding:10px 0;">
+                    <div style="color:${color};">${n.title}</div>
+                    <div style="color:var(--text-secondary); font-size:13px;">${n.text}</div>
+                    <div style="color:var(--text-muted); font-size:11px;">${formatDate(n.date)}</div>
+                </div>
+            `;
+        });
+        container.innerHTML = html;
+    }
+    document.getElementById('notificationsModal').classList.add('active');
+}
+
+function closeNotifications() {
+    document.getElementById('notificationsModal').classList.remove('active');
+}
+
+// ================================================================
+// ДИНАМИЧЕСКИЕ РАЗДЕЛЫ
+// ================================================================
 
 function loadDynamicPages() {
     const container = document.getElementById('dynamicPagesList');
@@ -2332,6 +2950,7 @@ async function submitDynamicRequest(pageId) {
     await savePagesDB();
     document.getElementById(`dynamicReqResult_${pageId}`).textContent = '✅ Заявка отправлена!';
     document.getElementById(`dynamicReqResult_${pageId}`).className = 'result-msg success';
+    addNotification(currentUser.id, '📤 ЗАЯВКА ОТПРАВЛЕНА', 'Заявка отправлена', 'info');
     showToast('✅ ЗАЯВКА ОТПРАВЛЕНА', 'Ваша заявка отправлена', 'info');
 }
 
@@ -2376,6 +2995,7 @@ async function deletePage(pageId) {
     await savePagesDB();
     loadAdminPagesManagement();
     loadDynamicPages();
+    addHistory(currentUser.id, 'Удаление раздела', `Удалён раздел ${pageId}`);
     showToast('🗑️ РАЗДЕЛ УДАЛЁН', 'Раздел удалён', 'info');
 }
 
@@ -2519,6 +3139,7 @@ async function publishNewPage() {
         await savePagesDB();
         result.textContent = '✅ Раздел опубликован!';
         result.className = 'result-msg success';
+        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}"`);
         showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
         loadDynamicPages();
         loadAdminPagesManagement();
@@ -2583,6 +3204,7 @@ async function publishNewPage() {
         await savePagesDB();
         result.textContent = '✅ Раздел опубликован!';
         result.className = 'result-msg success';
+        addHistory(currentUser.id, 'Создание раздела', `Создан раздел "${name}" с заявками`);
         showToast('✅ РАЗДЕЛ ОПУБЛИКОВАН', `Раздел "${name}" создан`, 'info');
         loadDynamicPages();
         loadAdminPagesManagement();
@@ -2612,6 +3234,7 @@ async function saveEditContent() {
     await saveDB();
     res.textContent = '✅ Информация обновлена';
     res.className = 'result-msg success';
+    addHistory(currentUser.id, 'Изменение информации', `Обновлён раздел: ${section}`);
     showToast('✅ ИНФОРМАЦИЯ ОБНОВЛЕНА', `Раздел ${section} обновлён`, 'info');
     loadSiteContent();
     loadEditContent();
@@ -2658,6 +3281,7 @@ async function addAlly() {
     document.getElementById('newAlly').value = '';
     loadFamiliesAdmin();
     loadFamiliesDisplay();
+    addHistory(currentUser.id, 'Добавление союзника', `Добавлена семья: ${name}`);
     showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в союзники`, 'info');
 }
 
@@ -2668,6 +3292,7 @@ async function removeAlly(index) {
     await saveDB();
     loadFamiliesAdmin();
     loadFamiliesDisplay();
+    addHistory(currentUser.id, 'Удаление союзника', `Удалена семья: ${name}`);
     showToast('✅ УДАЛЕНО', `Семья ${name} удалена из союзников`, 'info');
 }
 
@@ -2681,6 +3306,7 @@ async function addEnemy() {
     document.getElementById('newEnemy').value = '';
     loadFamiliesAdmin();
     loadFamiliesDisplay();
+    addHistory(currentUser.id, 'Добавление врага', `Добавлена семья: ${name}`);
     showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
 }
 
@@ -2691,454 +3317,8 @@ async function removeEnemy(index) {
     await saveDB();
     loadFamiliesAdmin();
     loadFamiliesDisplay();
+    addHistory(currentUser.id, 'Удаление врага', `Удалена семья: ${name}`);
     showToast('✅ УДАЛЕНО', `Семья ${name} удалена из недружественных`, 'info');
-}
-
-function loadHistory() {
-    const container = document.getElementById('historyList');
-    if (!db.history || db.history.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">История пуста</p>';
-        return;
-    }
-    let html = '';
-    db.history.slice(-50).reverse().forEach(h => {
-        html += `
-            <div style="border-bottom:1px solid var(--border-color); padding:6px 0; color:var(--text-secondary); font-size:13px;">
-                <span style="color:var(--text-primary);">${h.userNick}</span> · ${h.action}
-                <span style="color:var(--text-muted); font-size:11px; display:block;">${h.details} · ${formatDate(h.date)}</span>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-function loadAdminMembers() {
-    const list = document.getElementById('adminMembersList');
-    const members = db.users.filter(u => !u.isAdmin);
-    if (members.length === 0) {
-        list.innerHTML = '<p style="color:var(--text-muted);">Нет зарегистрированных членов</p>';
-        return;
-    }
-    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">Всего: ${members.length}</p>`;
-    members.forEach(u => {
-        html += `<div style="border-bottom:1px solid var(--border-color); padding:8px 0; color:var(--text-secondary); font-size:13px;">
-            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : '🟢 Активен'}
-            ${u.balance ? `· Баланс: ${u.balance} ₽` : ''}
-        </div>`;
-    });
-    list.innerHTML = html;
-}
-
-async function adminViewViolations() {
-    const id = document.getElementById('adminVioSearchId').value.trim();
-    const res = document.getElementById('adminVioResult');
-    if (!id) { res.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { res.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    const violations = user.violations || [];
-    if (violations.length === 0) {
-        res.innerHTML = `<p style="color:var(--text-muted);">У ${user.gameNick} (${user.id}) нет нарушений</p>`;
-        return;
-    }
-    const sorted = [...violations].sort((a, b) => new Date(b.date) - new Date(a.date));
-    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">${user.gameNick} (${user.id}) — ${violations.length} нарушений</p>`;
-    sorted.forEach(v => {
-        html += `
-            <div class="violation-item ${v.resolved ? 'resolved' : ''}">
-                <div class="v-date">${formatDate(v.date)}</div>
-                <div class="v-type">${v.resolved ? '✅ СНЯТО' : '⚠️'} ${v.type || 'Нарушение'}</div>
-                <div class="v-desc">${v.description || 'Нет описания'}</div>
-                <div class="v-meta">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
-                ${v.resolved ? `<div class="v-resolved">Снято (${formatDate(v.resolvedDate)}) — ${v.resolutionReason || 'Причина не указана'}</div>` : ''}
-            </div>
-        `;
-    });
-    res.innerHTML = html;
-}
-
-async function adminFindForAdd() {
-    const id = document.getElementById('adminAddId').value.trim();
-    const info = document.getElementById('adminAddUserInfo');
-    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    pendingAddUser = user;
-    info.style.display = 'block';
-    info.innerHTML = `<p style="color:var(--text-primary);">Найден: <strong>${user.gameNick}</strong> (${user.id})</p>`;
-}
-
-let pendingAddUser = null;
-
-async function adminAddViolation() {
-    if (!pendingAddUser) {
-        document.getElementById('adminAddResult').textContent = 'Сначала найдите пользователя';
-        document.getElementById('adminAddResult').className = 'result-msg error';
-        return;
-    }
-    const type = document.getElementById('adminAddType').value.trim();
-    const desc = document.getElementById('adminAddDesc').value.trim();
-    const res = document.getElementById('adminAddResult');
-    if (!type || !desc) {
-        res.textContent = 'Заполните все поля';
-        res.className = 'result-msg error';
-        return;
-    }
-    const violation = {
-        violationId: 'v' + (++db.violationCounter),
-        type, description: desc,
-        date: new Date().toISOString(),
-        issuedBy: currentUser.id,
-        issuedByNick: currentUser.gameNick,
-        resolved: false,
-        resolvedDate: null,
-        resolutionReason: null,
-        _notified: false,
-        _notifiedResolved: false
-    };
-    pendingAddUser.violations.push(violation);
-    await saveDB();
-    res.textContent = `✅ Нарушение выдано ${pendingAddUser.gameNick}`;
-    res.className = 'result-msg success';
-    document.getElementById('adminAddType').value = '';
-    document.getElementById('adminAddDesc').value = '';
-    if (db.currentSession === pendingAddUser.id) {
-        showToast('⚠️ НОВОЕ НАРУШЕНИЕ', 'Вам выписано дисциплинарное взыскание', 'danger');
-        loadViolations(currentUser);
-    }
-    pendingAddUser = null;
-    document.getElementById('adminAddUserInfo').style.display = 'none';
-}
-
-let pendingRemoveUser = null;
-let pendingRemoveViolation = null;
-
-async function adminFindForRemove() {
-    const id = document.getElementById('adminRemoveId').value.trim();
-    const list = document.getElementById('adminRemoveList');
-    if (!id) { list.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { list.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    const violations = user.violations.filter(v => !v.resolved);
-    if (violations.length === 0) {
-        list.innerHTML = `<p style="color:var(--text-muted);">У ${user.gameNick} нет активных нарушений</p>`;
-        return;
-    }
-    let html = `<p style="color:var(--text-primary); margin-bottom:10px;">${user.gameNick} (${user.id}) — активные нарушения:</p>`;
-    violations.forEach(v => {
-        html += `
-            <div class="violation-item" style="cursor:pointer; border-left-color:var(--text-primary);" onclick="selectForRemove('${v.violationId}')">
-                <div class="v-date">${formatDate(v.date)}</div>
-                <div class="v-type">⚠️ ${v.type || 'Нарушение'}</div>
-                <div class="v-desc">${v.description || 'Нет описания'}</div>
-                <div class="v-meta">Выдал: ${v.issuedByNick || v.issuedBy || 'Неизвестен'}</div>
-            </div>
-        `;
-    });
-    list.innerHTML = html;
-    pendingRemoveUser = user;
-}
-
-function selectForRemove(violationId) {
-    if (!pendingRemoveUser) return;
-    const violation = pendingRemoveUser.violations.find(v => v.violationId === violationId);
-    if (!violation) return;
-    pendingRemoveViolation = violation;
-    const list = document.getElementById('adminRemoveList');
-    list.innerHTML = `
-        <div style="border:1px solid var(--border-color); padding:16px; background:var(--bg-secondary);">
-            <p style="color:var(--text-primary);">Выбрано нарушение:</p>
-            <p style="color:var(--text-secondary); font-size:13px;">${violation.type} — ${violation.description}</p>
-            <p style="color:var(--text-muted); font-size:12px;">${formatDate(violation.date)}</p>
-            <input type="text" id="removeReason" placeholder="Причина снятия" style="margin:10px 0;">
-            <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                <button class="btn btn-small" onclick="confirmRemove()" style="width:auto;">Снять</button>
-                <button class="btn btn-small btn-outline" onclick="cancelRemove()" style="width:auto;">Отмена</button>
-            </div>
-            <div id="removeResult" class="result-msg"></div>
-        </div>
-    `;
-}
-
-async function confirmRemove() {
-    if (!pendingRemoveUser || !pendingRemoveViolation) return;
-    const reason = document.getElementById('removeReason').value.trim();
-    const res = document.getElementById('removeResult');
-    if (!reason) { res.textContent = 'Введите причину'; res.className = 'result-msg error'; return; }
-    pendingRemoveViolation.resolved = true;
-    pendingRemoveViolation.resolvedDate = new Date().toISOString();
-    pendingRemoveViolation.resolutionReason = reason;
-    pendingRemoveViolation._notifiedResolved = false;
-    await saveDB();
-    document.getElementById('adminRemoveList').innerHTML = `<p style="color:var(--text-primary);">✅ Нарушение снято у ${pendingRemoveUser.gameNick}</p>`;
-    if (db.currentSession === pendingRemoveUser.id) {
-        showToast('✅ НАРУШЕНИЕ СНЯТО', 'С вас снято дисциплинарное взыскание', 'info');
-        loadViolations(currentUser);
-    }
-    pendingRemoveUser = null;
-    pendingRemoveViolation = null;
-}
-
-function cancelRemove() {
-    pendingRemoveUser = null;
-    pendingRemoveViolation = null;
-    document.getElementById('adminRemoveList').innerHTML = '<p style="color:var(--text-muted);">Введите ID для поиска</p>';
-}
-
-let pendingBanUser = null;
-let pendingUnbanUser = null;
-
-async function adminFindForBan() {
-    const id = document.getElementById('adminBanId').value.trim();
-    const info = document.getElementById('adminBanUserInfo');
-    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    if (isAdmin(user)) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Нельзя заблокировать администратора</p>'; return; }
-    pendingBanUser = user;
-    info.style.display = 'block';
-    info.innerHTML = `<p style="color:var(--text-primary);">Найден: <strong>${user.gameNick}</strong> (${user.id}) — ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</p>`;
-}
-
-async function adminBanUser() {
-    if (!pendingBanUser) {
-        document.getElementById('adminBanResult').textContent = 'Сначала найдите пользователя';
-        document.getElementById('adminBanResult').className = 'result-msg error';
-        return;
-    }
-    const reason = document.getElementById('adminBanReason').value.trim();
-    const unbanDate = document.getElementById('adminBanUnbanDate').value;
-    const res = document.getElementById('adminBanResult');
-    if (!reason || !unbanDate) {
-        res.textContent = 'Заполните все поля';
-        res.className = 'result-msg error';
-        return;
-    }
-    const unban = new Date(unbanDate);
-    if (unban <= new Date()) {
-        res.textContent = 'Дата разблокировки должна быть в будущем';
-        res.className = 'result-msg error';
-        return;
-    }
-    pendingBanUser.isBanned = true;
-    pendingBanUser.banInfo = {
-        bannedBy: currentUser.id,
-        reason: reason,
-        banDate: new Date().toISOString(),
-        unbanDate: unban.toISOString()
-    };
-    await saveDB();
-    res.textContent = `✅ ${pendingBanUser.gameNick} заблокирован до ${formatDate(unbanDate)}`;
-    res.className = 'result-msg success';
-    document.getElementById('adminBanReason').value = '';
-    document.getElementById('adminBanUnbanDate').value = '';
-    pendingBanUser = null;
-    document.getElementById('adminBanUserInfo').style.display = 'none';
-    loadAdminMembers();
-}
-
-async function adminFindForUnban() {
-    const id = document.getElementById('adminUnbanId').value.trim();
-    const info = document.getElementById('adminUnbanUserInfo');
-    if (!id) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { info.style.display = 'block'; info.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    if (!user.isBanned) {
-        info.style.display = 'block';
-        info.innerHTML = `<p style="color:var(--success-color);">${user.gameNick} (${user.id}) — не заблокирован</p>`;
-        pendingUnbanUser = null;
-        return;
-    }
-    pendingUnbanUser = user;
-    info.style.display = 'block';
-    info.innerHTML = `
-        <p style="color:var(--text-primary);">🔴 Заблокирован: <strong>${user.gameNick}</strong> (${user.id})</p>
-        <p style="color:var(--text-secondary); font-size:13px;">Причина: ${user.banInfo.reason}</p>
-        <p style="color:var(--text-secondary); font-size:13px;">Забанил: ${getAdminNick(user.banInfo.bannedBy)}</p>
-        <p style="color:var(--text-secondary); font-size:13px;">Разблокировка: ${formatDate(user.banInfo.unbanDate)}</p>
-    `;
-}
-
-async function adminUnbanUser() {
-    if (!pendingUnbanUser) {
-        document.getElementById('adminUnbanResult').textContent = 'Сначала найдите заблокированного пользователя';
-        document.getElementById('adminUnbanResult').className = 'result-msg error';
-        return;
-    }
-    const reason = document.getElementById('adminUnbanReason').value.trim();
-    const res = document.getElementById('adminUnbanResult');
-    pendingUnbanUser.isBanned = false;
-    pendingUnbanUser.banInfo = {
-        ...pendingUnbanUser.banInfo,
-        unbannedEarly: true,
-        unbannedBy: currentUser.id,
-        unbannedByNick: currentUser.gameNick,
-        unbanReason: reason || 'Досрочный разбан',
-        unbanDate: new Date().toISOString()
-    };
-    await saveDB();
-    res.textContent = `✅ ${pendingUnbanUser.gameNick} разблокирован досрочно`;
-    res.className = 'result-msg success';
-    document.getElementById('adminUnbanReason').value = '';
-    pendingUnbanUser = null;
-    document.getElementById('adminUnbanUserInfo').style.display = 'none';
-    loadAdminMembers();
-}
-
-function loadAdminRequests() {
-    const container = document.getElementById('adminRequestsList');
-    if (!db.requests) db.requests = [];
-    const pending = db.requests.filter(r => r.status === 'pending');
-    if (pending.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">Нет активных заявок</p>';
-        return;
-    }
-    let html = '';
-    pending.forEach(r => {
-        const typeText = r.type === 'remove' ? 'Снятие нарушения' : 'Выдача нарушения';
-        html += `
-            <div class="request-item">
-                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-                    <span style="color:var(--text-primary);">${typeText}</span>
-                    <span style="color:#ffaa00;">⏳ Ожидает</span>
-                </div>
-                <div class="req-text">От: ${r.userNick} → ${r.targetNick || r.target}</div>
-                <div class="req-text" style="color:var(--text-secondary);">${r.type === 'remove' ? r.reason : r.reason}</div>
-                <div class="req-meta">${formatDate(r.date || r.requestDate)}</div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-                    <button class="btn btn-small btn-green" onclick="respondRequest('${r.id}', 'approved')" style="width:auto;">Принять</button>
-                    <button class="btn btn-small btn-danger" onclick="respondRequest('${r.id}', 'rejected')" style="width:auto;">Отклонить</button>
-                </div>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-async function respondRequest(requestId, status) {
-    const request = db.requests.find(r => r.id === requestId);
-    if (!request) return;
-    const reason = prompt(`Введите причину ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
-    if (reason === null) return;
-    request.status = status;
-    request.response = reason;
-    await saveDB();
-    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
-    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка ${statusText}`, status === 'approved' ? 'info' : 'danger');
-    loadAdminRequests();
-    loadUserRequests();
-}
-
-function loadAdminBuildRequests() {
-    const container = document.getElementById('adminBuildList');
-    if (!db.buildRequests) db.buildRequests = [];
-    const pending = db.buildRequests.filter(r => r.status === 'pending');
-    if (pending.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">Нет заявок на строй</p>';
-        return;
-    }
-    let html = '';
-    pending.forEach(r => {
-        html += `
-            <div class="request-item">
-                <div style="display:flex; justify-content:space-between; flex-wrap:wrap;">
-                    <span style="color:var(--text-primary);">${r.topic}</span>
-                    <span style="color:#ffaa00;">⏳ Ожидает</span>
-                </div>
-                <div class="req-text">От: ${r.userNick}</div>
-                <div class="req-text" style="color:var(--text-secondary);">Начало: ${formatDateShort(r.start)} · Окончание: ${formatDateShort(r.end)}</div>
-                <div class="req-text" style="color:var(--text-muted);">Обязаны: ${r.required.join(', ')}</div>
-                <div class="req-text" style="color:var(--text-muted);">Запрещено: ${r.forbidden.join(', ')}</div>
-                <div class="req-meta">${formatDate(r.date)}</div>
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-                    <button class="btn btn-small btn-green" onclick="respondBuildRequest('${r.id}', 'approved')" style="width:auto;">Одобрить</button>
-                    <button class="btn btn-small btn-danger" onclick="respondBuildRequest('${r.id}', 'rejected')" style="width:auto;">Отклонить</button>
-                </div>
-            </div>
-        `;
-    });
-    container.innerHTML = html;
-}
-
-async function respondBuildRequest(requestId, status) {
-    const request = db.buildRequests.find(r => r.id === requestId);
-    if (!request) return;
-    const comment = prompt(`Введите комментарий для ${status === 'approved' ? 'одобрения' : 'отклонения'}:`);
-    if (comment === null) return;
-    request.status = status;
-    request.response = comment;
-    if (status === 'approved') {
-        if (!db.scheduledBuilds) db.scheduledBuilds = [];
-        db.scheduledBuilds.push({
-            id: 's' + Date.now(),
-            topic: request.topic,
-            start: request.start,
-            end: request.end,
-            required: request.required,
-            forbidden: request.forbidden,
-            userNick: request.userNick,
-            organizerNick: request.userNick,
-            date: new Date().toISOString()
-        });
-        db.users.forEach(u => {
-            if (!u.isAdmin) {
-                // уведомление
-            }
-        });
-        showToast('📢 НОВЫЙ СТРОЙ', `Строй "${request.topic}" запланирован!`, 'info');
-    }
-    await saveDB();
-    const statusText = status === 'approved' ? 'одобрена' : 'отклонена';
-    showToast(`✅ ЗАЯВКА ${statusText.toUpperCase()}`, `Заявка на строй ${statusText}`, status === 'approved' ? 'info' : 'danger');
-    loadAdminBuildRequests();
-    loadScheduledBuilds();
-}
-
-async function adminSearchUser() {
-    const id = document.getElementById('adminSearchId').value.trim();
-    const res = document.getElementById('adminSearchResult');
-    if (!id) { res.innerHTML = '<p style="color:var(--danger-color);">Введите ID</p>'; return; }
-    const user = getUserById(id);
-    if (!user) { res.innerHTML = '<p style="color:var(--danger-color);">Пользователь не найден</p>'; return; }
-    res.innerHTML = `
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>ID:</strong> ${user.id}</div>
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Игровой ник:</strong> ${user.gameNick}</div>
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Telegram:</strong> ${user.tgUser}</div>
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Email:</strong> ${user.email || '-'}</div>
-        <div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Статус:</strong> ${user.isBanned ? '🔴 Заблокирован' : 'Активен'}</div>
-        ${user.isBanned ? `<div style="border-bottom:1px solid var(--border-color); padding:6px 0;"><strong>Причина бана:</strong> ${user.banInfo?.reason || '-'}</div>` : ''}
-        <div style="padding:6px 0;"><strong>Нарушений:</strong> ${(user.violations || []).length}</div>
-    `;
-}
-
-function openNotifications() {
-    if (!db.notifications) db.notifications = [];
-    const userNotifs = db.notifications.filter(n => n.userId === currentUser.id);
-    userNotifs.forEach(n => n.read = true);
-    saveDB();
-    updateNotificationBadge();
-    const container = document.getElementById('notificationsList');
-    if (userNotifs.length === 0) {
-        container.innerHTML = '<p style="color:var(--text-muted);">Нет уведомлений</p>';
-    } else {
-        let html = '';
-        userNotifs.sort((a, b) => new Date(b.date) - new Date(a.date));
-        userNotifs.forEach(n => {
-            const color = n.type === 'danger' ? 'var(--danger-color)' : 'var(--success-color)';
-            html += `
-                <div style="border-bottom:1px solid var(--border-color); padding:10px 0;">
-                    <div style="color:${color};">${n.title}</div>
-                    <div style="color:var(--text-secondary); font-size:13px;">${n.text}</div>
-                    <div style="color:var(--text-muted); font-size:11px;">${formatDate(n.date)}</div>
-                </div>
-            `;
-        });
-        container.innerHTML = html;
-    }
-    document.getElementById('notificationsModal').classList.add('active');
-}
-
-function closeNotifications() {
-    document.getElementById('notificationsModal').classList.remove('active');
 }
 
 document.getElementById('editSection').addEventListener('change', loadEditContent);
@@ -3150,4 +3330,4 @@ setTimeout(() => {
 
 </script>
 </body>
-                    </html>
+    </html>
