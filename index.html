@@ -751,7 +751,7 @@
             </div>
         </div>
 
-        <!-- ===== СОСТАВ ===== -->
+        <!-- ===== СОСТАВ (только ник и ID) ===== -->
         <div id="page-members" class="page">
             <h2>СОСТАВ СЕМЬИ</h2>
             <div class="info-block">
@@ -876,7 +876,7 @@
             <div id="adminRemoveList"></div>
         </div>
 
-        <!-- ===== АДМИН: СПИСОК ЧЛЕНОВ ===== -->
+        <!-- ===== АДМИН: СПИСОК ЧЛЕНОВ (ник, ID, Telegram) ===== -->
         <div id="page-adminMembers" class="page">
             <h2>СПИСОК ЧЛЕНОВ</h2>
             <div id="adminMembersList" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
@@ -2234,17 +2234,12 @@ async function issuePremium() {
         date: new Date().toISOString()
     });
     
-    // Уведомление пользователю
     addNotification(userId, '💰 ПОЛУЧЕНА ПРЕМИЯ', `Вам начислено ${amount} ₽ от ${currentUser.gameNick}`, 'info');
-    
-    // Уведомление админам
     db.users.forEach(u => {
         if (isAdmin(u) && u.id !== currentUser.id) {
             addNotification(u.id, '💰 ВЫДАЧА ПРЕМИИ', `${currentUser.gameNick} выдал ${amount} ₽ пользователю ${user.gameNick}`, 'info');
         }
     });
-    
-    // История
     addHistory(currentUser.id, 'Выдача премии', `Выдано ${amount} ₽ пользователю ${user.gameNick} (${user.id})`);
     
     await saveDB();
@@ -2303,7 +2298,6 @@ async function withdrawMoneyFromUser() {
         return;
     }
     
-    // Списываем деньги
     user.balance = currentBalance - amount;
     if (!user.premiumHistory) user.premiumHistory = [];
     user.premiumHistory.push({
@@ -2312,17 +2306,12 @@ async function withdrawMoneyFromUser() {
         date: new Date().toISOString()
     });
     
-    // Уведомление пользователю
     addNotification(userId, '💸 СПИСАНИЕ СРЕДСТВ', `Администратор ${currentUser.gameNick} списал ${amount} ₽. Причина: ${reason}`, 'danger');
-    
-    // Уведомление админам
     db.users.forEach(u => {
         if (isAdmin(u) && u.id !== currentUser.id) {
             addNotification(u.id, '💸 СПИСАНИЕ СРЕДСТВ', `${currentUser.gameNick} списал ${amount} ₽ у ${user.gameNick}. Причина: ${reason}`, 'info');
         }
     });
-    
-    // История
     addHistory(currentUser.id, 'Списание средств', `Списано ${amount} ₽ у ${user.gameNick} (${user.id}). Причина: ${reason}`);
     
     await saveDB();
@@ -2412,7 +2401,7 @@ function loadAdminMembers() {
     let html = `<p style="color:var(--text-primary); margin-bottom:10px;">Всего: ${members.length}</p>`;
     members.forEach(u => {
         html += `<div style="border-bottom:1px solid var(--border-color); padding:8px 0; color:var(--text-secondary); font-size:13px;">
-            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · ${u.isBanned ? '🔴 Заблокирован' : '🟢 Активен'}
+            <span style="color:var(--text-primary);">${u.gameNick}</span> · ID ${u.id} · TG ${u.tgUser} · ${u.isBanned ? '🔴 Заблокирован' : '🟢 Активен'}
             ${u.balance ? `· Баланс: ${u.balance} ₽` : ''}
         </div>`;
     });
@@ -3330,4 +3319,4 @@ setTimeout(() => {
 
 </script>
 </body>
-    </html>
+                        </html>
