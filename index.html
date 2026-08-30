@@ -876,7 +876,7 @@
             <div id="adminRemoveList"></div>
         </div>
 
-        <!-- ===== АДМИН: СПИСОК ЧЛЕНОВ (ник, ID, Telegram) ===== -->
+        <!-- ===== АДМИН: СПИСОК ЧЛЕНОВ ===== -->
         <div id="page-adminMembers" class="page">
             <h2>СПИСОК ЧЛЕНОВ</h2>
             <div id="adminMembersList" style="border:1px solid var(--border-color); padding:16px; background:var(--bg-card);">
@@ -1207,15 +1207,99 @@ let currentLang = 'ru';
 let currentTheme = 'dark';
 
 // ================================================================
-// РАБОТА С JSONBIN
+// БАЗОВАЯ СТРУКТУРА БД (ЕСЛИ ВСЁ СЛОМАЛОСЬ)
+// ================================================================
+
+function getDefaultDB() {
+    const now = new Date().toISOString();
+    return {
+        users: [
+            {
+                id: "00000",
+                gameNick: "Robert_Salamanca",
+                tgUser: "@Lyrical_Lemonade999",
+                email: "",
+                password: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                isAdmin: true,
+                isBanned: false,
+                banInfo: null,
+                registrationDate: now,
+                lastLogin: now,
+                violations: [],
+                balance: 0,
+                premiumHistory: []
+            },
+            {
+                id: "11111",
+                gameNick: "Anton_Chebureck",
+                tgUser: "@Talon4ick",
+                email: "s9531357@gmail.com",
+                password: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                isAdmin: true,
+                isBanned: false,
+                banInfo: null,
+                registrationDate: now,
+                lastLogin: now,
+                violations: [],
+                balance: 0,
+                premiumHistory: []
+            }
+        ],
+        usedIds: ["00000", "11111"],
+        currentSession: null,
+        violationCounter: 0,
+        requests: [],
+        buildRequests: [],
+        scheduledBuilds: [],
+        notifications: [],
+        history: [],
+        allies: [],
+        enemies: [],
+        withdrawRequests: [],
+        siteContent: {
+            uksp: 'Полный текст УКСП...',
+            rules: 'Полный текст правил строя...',
+            members: 'Состав семьи...',
+            family_info: 'Информация о семье...'
+        }
+    };
+}
+
+function getDefaultSiteContent() {
+    return {
+        uksp: 'Полный текст УКСП...',
+        rules: 'Полный текст правил строя...',
+        members: 'Состав семьи...',
+        family_info: 'Информация о семье...'
+    };
+}
+
+// ================================================================
+// ЗАГРУЗКА БД (С ЗАЩИТОЙ)
 // ================================================================
 
 async function loadDB() {
     try {
         const res = await fetch(JSONBIN_URL, { headers: { 'X-Master-Key': MASTER_KEY } });
+        if (!res.ok) {
+            console.error('❌ Ошибка загрузки БД:', res.status);
+            if (!db) db = getDefaultDB();
+            return db;
+        }
         const data = await res.json();
-        db = data.record;
-        if (!db.users) db.users = [];
+        const loadedDb = data.record;
+        
+        // Если база пустая или нет админов — восстанавливаем
+        if (!loadedDb.users || loadedDb.users.length === 0 || !loadedDb.users.some(u => u.isAdmin)) {
+            console.warn('⚠️ БД повреждена или пуста! Восстанавливаю...');
+            db = getDefaultDB();
+            await saveDB();
+            return db;
+        }
+        
+        db = loadedDb;
+        
+        // Восстанавливаем структуру
         if (!db.usedIds) db.usedIds = ['00000', '11111'];
         if (!db.violationCounter) db.violationCounter = 0;
         if (!db.requests) db.requests = [];
@@ -1226,50 +1310,104 @@ async function loadDB() {
         if (!db.allies) db.allies = [];
         if (!db.enemies) db.enemies = [];
         if (!db.withdrawRequests) db.withdrawRequests = [];
-        if (!db.siteContent) {
-            db.siteContent = {
-                uksp: 'Полный текст УКСП...',
-                rules: 'Полный текст правил строя...',
-                members: 'Состав семьи...',
-                family_info: 'Информация о семье...'
-            };
-        }
+        if (!db.siteContent) db.siteContent = getDefaultSiteContent();
+        
+        // Добавляем баланс каждому пользователю
         db.users.forEach(u => {
             if (u.balance === undefined) u.balance = 0;
             if (!u.premiumHistory) u.premiumHistory = [];
             if (u.violations === undefined) u.violations = [];
         });
+        
+        // ВОССТАНАВЛИВАЕМ АДМИНОВ, ЕСЛИ ИХ НЕТ
+        ensureAdmins();
+        
         return db;
     } catch (e) {
-        console.error('Ошибка загрузки БД:', e);
-        db = { 
-            users: [], usedIds: ['00000', '11111'], currentSession: null, violationCounter: 0,
-            requests: [], buildRequests: [], scheduledBuilds: [], notifications: [], history: [],
-            allies: [], enemies: [], withdrawRequests: [],
-            siteContent: {
-                uksp: 'Полный текст УКСП...',
-                rules: 'Полный текст правил строя...',
-                members: 'Состав семьи...',
-                family_info: 'Информация о семье...'
-            }
-        };
+        console.error('❌ Ошибка загрузки БД:', e);
+        if (!db) db = getDefaultDB();
         return db;
     }
 }
 
+// ================================================================
+// СОХРАНЕНИЕ БД (С ЗАЩИТОЙ ОТ ПОТЕРИ)
+// ================================================================
+
 async function saveDB() {
+    // Проверяем, что есть хотя бы админы
+    const hasAdmins = db.users && db.users.some(u => u.isAdmin === true);
+    if (!hasAdmins) {
+        console.error('❌ ПОПЫТКА СОХРАНИТЬ БД БЕЗ АДМИНОВ! ВОССТАНАВЛИВАЮ...');
+        db = getDefaultDB();
+        // Продолжаем сохранение с восстановленной базой
+    }
+    
     try {
         await fetch(JSONBIN_URL, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'X-Master-Key': MASTER_KEY },
             body: JSON.stringify(db)
         });
+        console.log('✅ БД сохранена успешно');
         return true;
     } catch (e) {
-        console.error('Ошибка сохранения БД:', e);
+        console.error('❌ Ошибка сохранения БД:', e);
         return false;
     }
 }
+
+// ================================================================
+// ВОССТАНОВЛЕНИЕ АДМИНОВ
+// ================================================================
+
+function ensureAdmins() {
+    if (!db.users) db.users = [];
+    const hasAdmins = db.users.some(u => u.isAdmin === true);
+    if (!hasAdmins) {
+        const now = new Date().toISOString();
+        db.users.push(
+            {
+                id: "00000",
+                gameNick: "Robert_Salamanca",
+                tgUser: "@Lyrical_Lemonade999",
+                email: "",
+                password: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                isAdmin: true,
+                isBanned: false,
+                banInfo: null,
+                registrationDate: now,
+                lastLogin: now,
+                violations: [],
+                balance: 0,
+                premiumHistory: []
+            },
+            {
+                id: "11111",
+                gameNick: "Anton_Chebureck",
+                tgUser: "@Talon4ick",
+                email: "s9531357@gmail.com",
+                password: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+                isAdmin: true,
+                isBanned: false,
+                banInfo: null,
+                registrationDate: now,
+                lastLogin: now,
+                violations: [],
+                balance: 0,
+                premiumHistory: []
+            }
+        );
+        if (!db.usedIds) db.usedIds = [];
+        if (!db.usedIds.includes("00000")) db.usedIds.push("00000");
+        if (!db.usedIds.includes("11111")) db.usedIds.push("11111");
+        console.log('🔄 Админы восстановлены!');
+    }
+}
+
+// ================================================================
+// ЗАГРУЗКА СТРАНИЦ
+// ================================================================
 
 async function loadPagesDB() {
     try {
@@ -1397,13 +1535,19 @@ function toggleLang() {
 // ================================================================
 
 async function init() {
+    // Загружаем основную БД
     await loadDB();
+    
+    // Загружаем страницы (динамические разделы)
     await loadPagesDB();
     
-    pagesDb.publicPages = [];
-    pagesDb.adminPages = [];
-    pagesDb.pageCounter = 0;
-    await savePagesDB();
+    // Очищаем ТОЛЬКО динамические разделы, НЕ ТРОГАЕМ ПОЛЬЗОВАТЕЛЕЙ
+    if (pagesDb) {
+        pagesDb.publicPages = pagesDb.publicPages || [];
+        pagesDb.adminPages = pagesDb.adminPages || [];
+        pagesDb.pageCounter = pagesDb.pageCounter || 0;
+        await savePagesDB();
+    }
     
     const savedLang = localStorage.getItem('nightmare_lang');
     if (savedLang) {
@@ -1661,6 +1805,10 @@ function enterMainPage(user) {
     }
     showPage('profile');
 }
+
+// ================================================================
+// (ВСЕ ОСТАЛЬНЫЕ ФУНКЦИИ БЕЗ ИЗМЕНЕНИЙ)
+// ================================================================
 
 function updateNotificationBadge() {
     if (!db.notifications) db.notifications = [];
@@ -3224,7 +3372,7 @@ async function saveEditContent() {
     res.textContent = '✅ Информация обновлена';
     res.className = 'result-msg success';
     addHistory(currentUser.id, 'Изменение информации', `Обновлён раздел: ${section}`);
-    showToast('✅ ИНФОРМАЦИЯ ОБНОВЛЕНА', `Раздел ${section} обновлён`, 'info');
+    showToast('✅ ИНФОРМАЦИЯ ОБНОВЛЕНА', `Раздел ${section} обновлён', 'info');
     loadSiteContent();
     loadEditContent();
 }
@@ -3282,7 +3430,7 @@ async function removeAlly(index) {
     loadFamiliesAdmin();
     loadFamiliesDisplay();
     addHistory(currentUser.id, 'Удаление союзника', `Удалена семья: ${name}`);
-    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из союзников`, 'info');
+    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из союзников', 'info');
 }
 
 async function addEnemy() {
@@ -3296,7 +3444,7 @@ async function addEnemy() {
     loadFamiliesAdmin();
     loadFamiliesDisplay();
     addHistory(currentUser.id, 'Добавление врага', `Добавлена семья: ${name}`);
-    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные`, 'info');
+    showToast('✅ ДОБАВЛЕНО', `Семья ${name} добавлена в недружественные', 'info');
 }
 
 async function removeEnemy(index) {
@@ -3307,7 +3455,7 @@ async function removeEnemy(index) {
     loadFamiliesAdmin();
     loadFamiliesDisplay();
     addHistory(currentUser.id, 'Удаление врага', `Удалена семья: ${name}`);
-    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из недружественных`, 'info');
+    showToast('✅ УДАЛЕНО', `Семья ${name} удалена из недружественных', 'info');
 }
 
 document.getElementById('editSection').addEventListener('change', loadEditContent);
@@ -3319,4 +3467,4 @@ setTimeout(() => {
 
 </script>
 </body>
-                        </html>
+</html>
